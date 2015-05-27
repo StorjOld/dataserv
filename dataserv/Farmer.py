@@ -7,6 +7,10 @@ class Farmer:
         """
         self.address = btc_address
 
+        # check if this is a valid BTC address or not
+        if not self.is_btc_address():
+            raise ValueError("Invalid BTC Address.")
+
     def is_btc_address(self):
         """
         Does simple validation of a bitcoin-like address.
