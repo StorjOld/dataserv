@@ -1,4 +1,5 @@
 from flask import Flask
+from sqlalchemy import DateTime
 from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -6,15 +7,25 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 db = SQLAlchemy(app)
 
 
-class Farmer:
-    def __init__(self, btc_address, conn=None):
+class Farmer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    btc_addr = db.Column(db.String(35), unique=True)
+    last_seen = db.Column(DateTime, default=datetime.datetime.utcnow)
+    last_audit = db.Column(DateTime, default=datetime.datetime.utcnow)
+
+    def __init__(self, btc_addr, last_seen=None, last_audit=None):
         """
         A farmer is a un-trusted client that provides some disk space
         in exchange for payment.
 
         """
-        self.address = btc_address
-        self.conn = conn
+
+        self.btc_addr = btc_addr
+        self.last_seen = last_seen
+        self.last_audit = last_audit
+
+    def __repr__(self):
+        return '<BTC Address %r>' % self.btc_addr
 
     def validate(self):
         # check if this is a valid BTC address or not
