@@ -1,17 +1,18 @@
 from flask import Flask
+from datetime import datetime
 from sqlalchemy import DateTime
 from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/db/dataserv.db'
 db = SQLAlchemy(app)
 
 
 class Farmer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     btc_addr = db.Column(db.String(35), unique=True)
-    last_seen = db.Column(DateTime, default=datetime.datetime.utcnow)
-    last_audit = db.Column(DateTime, default=datetime.datetime.utcnow)
+    last_seen = db.Column(DateTime, default=datetime.utcnow)
+    last_audit = db.Column(DateTime, default=datetime.utcnow)
 
     def __init__(self, btc_addr, last_seen=None, last_audit=None):
         """
