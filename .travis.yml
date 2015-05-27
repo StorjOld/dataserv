@@ -1,0 +1,26 @@
+language: python
+python:
+  - "3.4"
+  - "3.3"
+
+# install dependencies, e.g. pip install -r requirements.txt
+install:
+  - pip install Flask btctxstore
+  - pip install coverage coveralls
+
+before_script:
+  - python dataserv/app.py &
+
+# run tests, e.g. python setup.py test
+script:
+#  - coverage run -m unittest discover -v
+  - coverage run --source="dataserv" setup.py test
+
+# run coverage
+after_success:
+  - coveralls
+
+# post to slack
+notifications:
+  slack: storjcommunity:TZfUO9ycY8R9UYwztWZTo0jk
+  email: false
