@@ -1,5 +1,13 @@
+from flask import Flask
+from flask.ext.sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+db = SQLAlchemy(app)
+
+
 class Farmer:
-    def __init__(self, btc_address, conn = None):
+    def __init__(self, btc_address, conn=None):
         """
         A farmer is a un-trusted client that provides some disk space
         in exchange for payment.
