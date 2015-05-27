@@ -55,3 +55,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+dataserv/dataserv.db
+.idea
