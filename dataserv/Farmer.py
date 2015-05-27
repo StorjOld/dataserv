@@ -42,4 +42,5 @@ class Farmer:
         return all((char in chars_ok for char in self.address[1:]))
 
     def register_farmer(self):
-        raise NotImplementedError
+        """Add the farmer to the database."""
+        pass
