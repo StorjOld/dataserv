@@ -22,3 +22,4 @@ def connect_db():
 # Routes
 @app.route('/')
 def index():
+    return "Hello World."
