@@ -26,7 +26,7 @@ class Farmer(db.Model):
         self.last_audit = last_audit
 
     def __repr__(self):
-        return '<BTC Address %r>' % self.btc_addr
+        return '<Farmer BTC Address: %r>' % self.btc_addr
 
     def validate(self):
         # check if this is a valid BTC address or not
