@@ -48,19 +48,20 @@ class Farmer(db.Model):
 
         # We do not check the high length limit of the address.
         # Usually, it is 35, but nobody knows what could happen in the future.
-        if len(self.address) < 27:
+        if len(self.btc_addr) < 27:
             return False
         # Changed from the original code, we do want to check the upper bounds
-        elif len(self.address) > 35:
+        elif len(self.btc_addr) > 35:
             return False
-        elif self.address[0] not in chars_ok_first:
+        elif self.btc_addr[0] not in chars_ok_first:
             return False
 
         # We use the function "all" by passing it an enumerator as parameter.
         # It does a little optimization :
         # if one of the character is not valid, the next ones are not tested.
-        return all((char in chars_ok for char in self.address[1:]))
+        return all((char in chars_ok for char in self.btc_addr[1:]))
 
     def register_farmer(self):
         """Add the farmer to the database."""
-        pass
+        db.session.add(self)
+        db.session.commit()
