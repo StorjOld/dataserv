@@ -1,20 +1,32 @@
 from flask import Flask
+from datetime import datetime
+from sqlalchemy import DateTime
 from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/db/dataserv.db'
 db = SQLAlchemy(app)
 
 
-class Farmer:
-    def __init__(self, btc_address, conn=None):
+class Farmer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    btc_addr = db.Column(db.String(35), unique=True)
+    last_seen = db.Column(DateTime, default=datetime.utcnow)
+    last_audit = db.Column(DateTime, default=datetime.utcnow)
+
+    def __init__(self, btc_addr, last_seen=None, last_audit=None):
         """
         A farmer is a un-trusted client that provides some disk space
         in exchange for payment.
 
         """
-        self.address = btc_address
-        self.conn = conn
+
+        self.btc_addr = btc_addr
+        self.last_seen = last_seen
+        self.last_audit = last_audit
+
+    def __repr__(self):
+        return '<BTC Address %r>' % self.btc_addr
 
     def validate(self):
         # check if this is a valid BTC address or not
@@ -36,19 +48,20 @@ class Farmer:
 
         # We do not check the high length limit of the address.
         # Usually, it is 35, but nobody knows what could happen in the future.
-        if len(self.address) < 27:
+        if len(self.btc_addr) < 27:
             return False
         # Changed from the original code, we do want to check the upper bounds
-        elif len(self.address) > 35:
+        elif len(self.btc_addr) > 35:
             return False
-        elif self.address[0] not in chars_ok_first:
+        elif self.btc_addr[0] not in chars_ok_first:
             return False
 
         # We use the function "all" by passing it an enumerator as parameter.
         # It does a little optimization :
         # if one of the character is not valid, the next ones are not tested.
-        return all((char in chars_ok for char in self.address[1:]))
+        return all((char in chars_ok for char in self.btc_addr[1:]))
 
     def register_farmer(self):
         """Add the farmer to the database."""
-        pass
+        db.session.add(self)
+        db.session.commit()
