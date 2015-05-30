@@ -10,6 +10,8 @@ install:
 
 before_script:
   - python dataserv/app.py &
+  - touch dataserv.db
+  - touch dataserv_test.db
 
 # run tests, e.g. python setup.py test
 script:

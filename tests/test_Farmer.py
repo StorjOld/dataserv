@@ -51,3 +51,8 @@ class FarmerTest(unittest.TestCase):
         self.assertFalse(farmer.address_exists())
         farmer.register()
         self.assertTrue(farmer.address_exists())
+
+    def test_register_fail(self):
+        addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        addr2 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc9999ghjfghj99'
+        addr3 = 'not valid address'
