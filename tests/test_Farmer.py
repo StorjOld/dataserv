@@ -4,8 +4,16 @@ from dataserv.Farmer import Farmer, db
 
 class FarmerTest(unittest.TestCase):
 
+    # not working properly
     SQLALCHEMY_DATABASE_URI = "sqlite://dataserv_test.db"
     TESTING = True
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
 
     def test_valid_address(self):
         addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
@@ -36,13 +44,6 @@ class FarmerTest(unittest.TestCase):
         farmer = Farmer(addr)
         ans = "<Farmer BTC Address: '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'>"
         self.assertEqual(repr(farmer), ans)
-
-    def setUp(self):
-        db.create_all()
-
-    def tearDown(self):
-        db.session.remove()
-        db.drop_all()
 
     def test_register(self):
         addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'

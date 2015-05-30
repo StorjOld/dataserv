@@ -77,4 +77,4 @@ class Farmer(db.Model):
 
     def exists(self):
         """Check to see if this address is already listed."""
-        return db.session.query(Farmer.btc_addr).filter(Farmer.btc_addr==self.btc_addr).count() > 0
+        return db.session.query(Farmer.btc_addr).filter(Farmer.btc_addr == self.btc_addr).count() > 0
