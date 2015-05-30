@@ -36,7 +36,7 @@ class Farmer(db.Model):
         self.btc_addr = btc_addr
         self.last_seen = last_seen
         self.last_audit = last_audit
-        self.iter_seed = None
+        self.iter_num = None
         self.response = None
 
     def __repr__(self):
@@ -68,3 +68,12 @@ class Farmer(db.Model):
     def exists(self):
         """Check to see if this address is already listed."""
         return db.session.query(Farmer.btc_addr).filter(Farmer.btc_addr == self.btc_addr).count() > 0
+
+    def ping(self):
+        """
+        Keep alive for the farmer. Validation can take a long time, sp
+        we just want to know if they are still there.
+        """
+        self = Farmer.query.filter_by(btc_addr=self.btc_addr)
+        self.update(dict(last_seen=datetime.utcnow()))
+

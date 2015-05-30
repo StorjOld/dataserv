@@ -1,4 +1,5 @@
 import unittest
+from dataserv.Farmer import sha256
 from dataserv.Farmer import Farmer, db
 
 
@@ -49,3 +50,19 @@ class FarmerTest(unittest.TestCase):
         # double check they are not in the db
         self.assertFalse(farmer2.exists())
         self.assertFalse(farmer3.exists())
+
+    def test_ping(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        farmer = Farmer(addr)
+        farmer.register()
+
+        register_time = farmer.last_seen
+        farmer.ping()  # should update last seen
+        ping_time = farmer.last_seen
+
+        self.assertNotEqual(register_time, ping_time)
+
+    def test_sha256(self):
+        ans = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
+        self.assertEqual(sha256("storj"), ans)
+        self.assertNotEqual(sha256("not storj"), ans)
