@@ -53,9 +53,9 @@ class FarmerTest(unittest.TestCase):
         farmer2 = Farmer(addr2)
         farmer3 = Farmer(addr3)
 
-        self.assertFalse(farmer1.address_exists())
+        self.assertFalse(farmer1.exists())
         farmer1.register()
-        self.assertTrue(farmer1.address_exists())
+        self.assertTrue(farmer1.exists())
 
         # test duplicate
         self.assertRaises(ValueError, farmer1.register)
@@ -65,5 +65,5 @@ class FarmerTest(unittest.TestCase):
         self.assertRaises(ValueError, farmer3.register)
 
         # double check they are not in the db
-        self.assertFalse(farmer2.address_exists())
-        self.assertFalse(farmer3.address_exists())
+        self.assertFalse(farmer2.exists())
+        self.assertFalse(farmer3.exists())

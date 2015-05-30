@@ -32,7 +32,7 @@ class Farmer(db.Model):
         # check if this is a valid BTC address or not
         if not self.is_btc_address():
             raise ValueError("Invalid BTC Address.")
-        elif self.address_exists():
+        elif self.exists():
             raise ValueError("Address Already Is Registered.")
 
     def is_btc_address(self):
@@ -75,6 +75,6 @@ class Farmer(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def address_exists(self):
+    def exists(self):
         """Check to see if this address is already listed."""
         return db.session.query(Farmer.btc_addr).filter(Farmer.btc_addr==self.btc_addr).count() > 0
