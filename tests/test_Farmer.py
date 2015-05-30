@@ -45,14 +45,14 @@ class FarmerTest(unittest.TestCase):
         db.drop_all()
 
     def test_register(self):
-        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
-        farmer = Farmer(addr)
-
-        self.assertFalse(farmer.address_exists())
-        farmer.register()
-        self.assertTrue(farmer.address_exists())
-
-    def test_register_fail(self):
         addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
         addr2 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc9999ghjfghj99'
         addr3 = 'not valid address'
+
+        farmer1 = Farmer(addr1)
+        farmer2 = Farmer(addr2)
+        farmer3 = Farmer(addr3)
+
+        self.assertFalse(farmer1.address_exists())
+        farmer1.register()
+        self.assertTrue(farmer1.address_exists())
