@@ -77,3 +77,15 @@ class Farmer(db.Model):
         self = Farmer.query.filter_by(btc_addr=self.btc_addr)
         self.update(dict(last_seen=datetime.utcnow()))
 
+    def seed_list(self, height):
+        """Generate a list of seeds for challenges based on the Bitcoin address."""
+        seeds = []
+        last_seed = sha256(self.btc_addr)
+        for i in range(height):
+            seeds.append(last_seed)
+            last_seed =sha256(last_seed)
+        return seeds
+
+    def gen_challenge(self):
+        """Generate a random challenge for the Farmer."""
+        pass
