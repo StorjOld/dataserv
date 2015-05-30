@@ -61,7 +61,18 @@ class Farmer(db.Model):
         # if one of the character is not valid, the next ones are not tested.
         return all((char in chars_ok for char in self.btc_addr[1:]))
 
-    def register_farmer(self):
+    def register(self):
         """Add the farmer to the database."""
+
+        # Make sure the farmer is even a valid address.
+        # Later we will apply rule sets, like if the farmer has the
+        # correct SJCX balance, reputation, etc.
+        self.validate()
+
+        # If everything works correctly then commit to database.
         db.session.add(self)
         db.session.commit()
+
+    def address_exists(self):
+        """Check to see if this address is already listed."""
+        return db.session.query(Farmer.btc_addr).filter(Farmer.btc_addr==self.btc_addr).count() > 0
