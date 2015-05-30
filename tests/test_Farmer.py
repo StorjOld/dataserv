@@ -56,3 +56,14 @@ class FarmerTest(unittest.TestCase):
         self.assertFalse(farmer1.address_exists())
         farmer1.register()
         self.assertTrue(farmer1.address_exists())
+
+        # test duplicate
+        self.assertRaises(ValueError, farmer1.register)
+
+        # these should not be inserted
+        self.assertRaises(ValueError, farmer2.register)
+        self.assertRaises(ValueError, farmer3.register)
+
+        # double check they are not in the db
+        self.assertFalse(farmer2.address_exists())
+        self.assertFalse(farmer3.address_exists())
