@@ -4,7 +4,7 @@ from sqlalchemy import DateTime
 from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/db/dataserv.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dataserv.db'
 db = SQLAlchemy(app)
 
 
