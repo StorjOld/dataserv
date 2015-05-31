@@ -1,4 +1,5 @@
 import random
+import hashlib
 from RandomIO import RandomIO
 from dataserv.Farmer import sha256
 
@@ -34,3 +35,6 @@ class Challenge:
     def gen_shard(self, seed, path):
         return RandomIO(seed).genfile(self.shard_size, path)
 
+    def gen_challenge(self):
+        self.pick_seed()
+        self.gen_shard(self.seed)
