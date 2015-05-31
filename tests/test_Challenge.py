@@ -32,5 +32,5 @@ class ChallengeTest(unittest.TestCase):
     def test_gen_challenge(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
         chal = Challenge(addr, 100, 10*1024*1024)  # 10 MB
-        path = chal.gen_challenge('data/')
+        path = chal.gen_challenge('data/')[1]
         os.remove(path)

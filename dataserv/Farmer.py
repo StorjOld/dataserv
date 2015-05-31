@@ -2,12 +2,16 @@ import hashlib
 from flask import Flask
 from datetime import datetime
 from sqlalchemy import DateTime
+from dataserv.Challenge import Challenge
 from flask.ext.sqlalchemy import SQLAlchemy
 from dataserv.Validator import is_btc_address
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dataserv.db'
 app.config['SEED_HEIGHT'] = 100
+app.config['DATA_DIR'] = 'data/'
+app.config['SHARD_SIZE'] = 10*1024*1024  # 10 MB
 db = SQLAlchemy(app)
 
 
@@ -37,7 +41,7 @@ class Farmer(db.Model):
         self.btc_addr = btc_addr
         self.last_seen = last_seen
         self.last_audit = last_audit
-        self.iter_num = None
+        self.seed = None
         self.response = None
 
     def __repr__(self):
@@ -83,3 +87,8 @@ class Farmer(db.Model):
         else:
             raise LookupError("Farmer not found.")
         return farmer
+
+    def gen_challenge(self):
+        chal = Challenge(self.btc_addr, app.config['SEED_HEIGHT'], app.config['SHARD_SIZE'])
+        self.seed, self.response = chal.gen_challenge(app.config['DATA_DIR'])
+        print(self.seed, self.response)

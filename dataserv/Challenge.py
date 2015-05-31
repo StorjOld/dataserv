@@ -1,6 +1,12 @@
+import hashlib
 import random
 from RandomIO import RandomIO
-from dataserv.Farmer import sha256
+
+
+def sha256(content):
+    """Finds the sha256 hash of the content."""
+    content = content.encode('utf-8')
+    return hashlib.sha256(content).hexdigest()
 
 
 class Challenge:
@@ -22,9 +28,12 @@ class Challenge:
             last_seed = sha256(last_seed)
         return seeds
 
-    def pick_seed(self):
-        """Generate a random challenge for the Farmer."""
-        self.seed = random.choice(self.seed_list)
+    def pick_seed(self, pick=None):
+        """Generate a random challenge or force a choice for the Farmer."""
+        if pick is None:
+            self.seed = random.choice(self.seed_list)
+        else:
+            self.seed = self.seed_list[pick]
         return self.seed
 
     def get_seeds(self):
@@ -38,4 +47,4 @@ class Challenge:
     def gen_challenge(self, path):
         """Generate a challenge set for the farmer."""
         self.pick_seed()
-        return self.gen_shard(self.seed, path)
+        return (self.seed, self.gen_shard(self.seed, path))
