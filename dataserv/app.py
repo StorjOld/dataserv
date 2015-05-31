@@ -11,11 +11,6 @@ def index():
     return "Hello World."
 
 
-# Routes
-@app.route('/api/register')
-def register():
-    return "Register Farmer Here."
-
 if __name__ == '__main__':
     # Run the Flask app
     app.run(

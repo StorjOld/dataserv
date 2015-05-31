@@ -33,8 +33,10 @@ class Challenge:
         return self.seed_list
 
     def gen_shard(self, seed, path):
+        """Generate a file shard from the picked seed."""
         return RandomIO(seed).genfile(self.shard_size, path)
 
     def gen_challenge(self):
+        """Generate a challenge set for the farmer."""
         self.pick_seed()
         self.gen_shard(self.seed)
