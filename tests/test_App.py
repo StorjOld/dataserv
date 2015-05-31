@@ -15,3 +15,24 @@ class AppTest(unittest.TestCase):
     def test_hello_world(self):
         rv = self.app.get('/')
         self.assertEqual(b"Hello World.", rv.data)
+
+    def test_register(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        rv = self.app.get('/api/register/{0}'.format(addr))
+
+        # good registration
+        self.assertEqual(b"User registered.", rv.data)
+        self.assertEqual(rv.status_code, 200)
+
+        # duplicate registration
+        rv = self.app.get('/api/register/{0}'.format(addr))
+        self.assertEqual(b"Registration Failed: Address Already Is Registered.", rv.data)
+        self.assertEqual(rv.status_code, 409)
+
+    def test_register_invalid(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc_this_is_not_an_address'
+        rv = self.app.get('/api/register/{0}'.format(addr))
+
+        # good registration
+        self.assertEqual(b"Registration Failed: Invalid BTC Address.", rv.data)
+        self.assertEqual(rv.status_code, 409)
