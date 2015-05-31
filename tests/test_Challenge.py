@@ -2,6 +2,7 @@ import os
 import unittest
 from dataserv.Challenge import Challenge
 
+
 class ChallengeTest(unittest.TestCase):
 
     def test_seeds(self):

@@ -11,6 +11,7 @@ app = Flask(__name__)
 def index():
     return "Hello World."
 
+
 @app.route('/api/register/<btc_addr>')
 def register(btc_addr):
     # create Farmer object to represent user
@@ -23,8 +24,6 @@ def register(btc_addr):
     except ValueError as e:
         error_msg = "Registration Failed: {0}"
         return make_response(error_msg.format(e), 409)
-
-
 
 
 if __name__ == '__main__':
