@@ -26,6 +26,21 @@ def register(btc_addr):
         return make_response(error_msg.format(e), 409)
 
 
+@app.route('/api/ping/<btc_addr>')
+def ping(btc_addr):
+    # create Farmer object to represent user
+    user = Farmer(btc_addr)
+
+    # attempt to register the farmer/farming address
+    try:
+        user.ping()
+        return make_response("Ping Accepted.", 200)
+    except LookupError as e:
+        error_msg = "Ping Failed: {0}"
+        return make_response(error_msg.format(e), 404)
+
+
+
 if __name__ == '__main__':
     # Run the Flask app
     app.run(

@@ -62,6 +62,14 @@ class FarmerTest(unittest.TestCase):
 
         self.assertNotEqual(register_time, ping_time)
 
+    def test_ping_failed(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        farmer = Farmer(addr)
+        # we don't actually register it this time
+
+        self.assertRaises(LookupError, farmer.ping)
+
+
     def test_sha256(self):
         ans = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
         self.assertEqual(sha256("storj"), ans)

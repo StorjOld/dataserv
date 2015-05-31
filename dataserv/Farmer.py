@@ -72,8 +72,13 @@ class Farmer(db.Model):
 
     def ping(self):
         """
-        Keep alive for the farmer. Validation can take a long time, sp
+        Keep alive for the farmer. Validation can take a long time, so
         we just want to know if they are still there.
         """
-        self = Farmer.query.filter_by(btc_addr=self.btc_addr)
-        self.update(dict(last_seen=datetime.utcnow()))
+        farmer = Farmer.query.filter_by(btc_addr=self.btc_addr).first()
+        if farmer is not None:
+            self = Farmer.query.filter_by(btc_addr=self.btc_addr)
+            self.update(dict(last_seen=datetime.utcnow()))
+        else:
+            raise LookupError("Farmer not found.")
+        return farmer
