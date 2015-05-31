@@ -24,7 +24,7 @@ class Farmer(db.Model):
     last_seen = db.Column(DateTime, default=datetime.utcnow)
     last_audit = db.Column(DateTime, default=datetime.utcnow)
 
-    iter_seed = db.Column(db.Integer)
+    seed = db.Column(db.Integer)
     response = db.Column(db.String(128))
 
     def __init__(self, btc_addr, last_seen=None, last_audit=None):
