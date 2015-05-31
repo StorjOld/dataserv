@@ -1,14 +1,17 @@
 import random
+from RandomIO import RandomIO
 from dataserv.Farmer import sha256
 
 
 class Challenge:
-    def __init__(self, btc_addr, height):
+    def __init__(self, btc_addr, height, shard_size):
         self.btc_addr = btc_addr
         self.height = height
+        self.shard_size = shard_size  # in bytes
 
-        self.seeds = self.gen_seeds()
+        self.seed = None
         self.challenge = None
+        self.seed_list = self.gen_seeds()
 
     def gen_seeds(self):
         """Generate a list of seeds for challenges based on the Bitcoin address."""
@@ -21,7 +24,13 @@ class Challenge:
 
     def pick_seed(self):
         """Generate a random challenge for the Farmer."""
-        return random.choice(self.seeds)
+        self.seed = random.choice(self.seed_list)
+        return self.seed
 
     def get_seeds(self):
-        return self.seeds
+        """Accessor for the challenge seeds."""
+        return self.seed_list
+
+    def gen_shard(self, seed, path):
+        return RandomIO(seed).genfile(self.shard_size, path)
+
