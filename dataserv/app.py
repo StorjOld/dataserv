@@ -40,8 +40,7 @@ def ping(btc_addr):
         return make_response(error_msg.format(e), 404)
 
 
-
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     # Run the Flask app
     app.run(
         host="0.0.0.0",

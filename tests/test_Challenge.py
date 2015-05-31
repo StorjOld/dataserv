@@ -28,3 +28,9 @@ class ChallengeTest(unittest.TestCase):
         seed = chal.pick_seed()
         path = chal.gen_shard(seed, 'data/')
         os.remove(path)
+
+    def test_gen_challenge(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        chal = Challenge(addr, 100, 10*1024*1024)  # 10 MB
+        path = chal.gen_challenge('data/')
+        os.remove(path)

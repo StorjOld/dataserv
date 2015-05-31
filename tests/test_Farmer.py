@@ -69,7 +69,6 @@ class FarmerTest(unittest.TestCase):
 
         self.assertRaises(LookupError, farmer.ping)
 
-
     def test_sha256(self):
         ans = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
         self.assertEqual(sha256("storj"), ans)

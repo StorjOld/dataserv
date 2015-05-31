@@ -76,6 +76,7 @@ class Farmer(db.Model):
         we just want to know if they are still there.
         """
         farmer = Farmer.query.filter_by(btc_addr=self.btc_addr).first()
+
         if farmer is not None:
             self = Farmer.query.filter_by(btc_addr=self.btc_addr)
             self.update(dict(last_seen=datetime.utcnow()))
