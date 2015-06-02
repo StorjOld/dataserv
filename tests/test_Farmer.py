@@ -41,7 +41,7 @@ class FarmerTest(unittest.TestCase):
         self.assertTrue(farmer1.exists())
 
         # test duplicate
-        self.assertRaises(ValueError, farmer1.register)
+        self.assertRaises(LookupError, farmer1.register)
 
         # these should not be inserted
         self.assertRaises(ValueError, farmer2.register)

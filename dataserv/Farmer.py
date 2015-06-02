@@ -56,7 +56,7 @@ class Farmer(db.Model):
         if not self.is_btc_address():
             raise ValueError("Invalid BTC Address.")
         elif self.exists():
-            raise ValueError("Address Already Is Registered.")
+            raise LookupError("Address Already Is Registered.")
 
     def register(self):
         """Add the farmer to the database."""

@@ -17,16 +17,16 @@ def register(btc_addr):
     # create Farmer object to represent user
     user = Farmer(btc_addr)
 
+    # error template
+    error_msg = "Registration Failed: {0}"
+
     # attempt to register the farmer/farming address
     try:
         user.register()
         return make_response("User registered.", 200)
     except ValueError as e:
-        error_msg = "Registration Failed: {0}"
-
-        if str(e) == "Invalid BTC Address.":
             return make_response(error_msg.format(e), 400)
-        elif str(e) == "Address Already Is Registered.":
+    except LookupError as e:
             return make_response(error_msg.format(e), 409)
 
 
