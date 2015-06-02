@@ -89,6 +89,7 @@ class Farmer(db.Model):
         return farmer
 
     def gen_challenge(self):
+        """Generate a random challenge to insert into the database."""
         chal = Challenge(self.btc_addr, app.config['SEED_HEIGHT'], app.config['SHARD_SIZE'])
         self.seed, self.response = chal.gen_challenge(app.config['DATA_DIR'])
         print(self.seed, self.response)

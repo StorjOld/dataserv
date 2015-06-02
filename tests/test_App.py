@@ -36,7 +36,7 @@ class AppTest(unittest.TestCase):
 
         # good registration
         self.assertEqual(b"Registration Failed: Invalid BTC Address.", rv.data)
-        self.assertEqual(rv.status_code, 409)
+        self.assertEqual(rv.status_code, 400)
 
     def test_ping_good(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'

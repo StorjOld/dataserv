@@ -1,4 +1,4 @@
-from dataserv.Farmer import Farmer
+from dataserv.Farmer import Farmer, db
 from flask import Flask, make_response
 
 
@@ -23,7 +23,11 @@ def register(btc_addr):
         return make_response("User registered.", 200)
     except ValueError as e:
         error_msg = "Registration Failed: {0}"
-        return make_response(error_msg.format(e), 409)
+
+        if str(e) == "Invalid BTC Address.":
+            return make_response(error_msg.format(e), 400)
+        elif str(e) == "Address Already Is Registered.":
+            return make_response(error_msg.format(e), 409)
 
 
 @app.route('/api/ping/<btc_addr>')
@@ -41,6 +45,9 @@ def ping(btc_addr):
 
 
 if __name__ == '__main__':  # pragma: no cover
+    # Create Database
+    db.create_all()
+
     # Run the Flask app
     app.run(
         host="0.0.0.0",
