@@ -34,7 +34,6 @@ class AppTest(unittest.TestCase):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc_this_is_not_an_address'
         rv = self.app.get('/api/register/{0}'.format(addr))
 
-        # good registration
         self.assertEqual(b"Registration Failed: Invalid BTC Address.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
@@ -53,7 +52,7 @@ class AppTest(unittest.TestCase):
         self.assertEqual(b"Ping Accepted.", rv.data)
         self.assertEqual(rv.status_code, 200)
 
-    def test_ping_bad(self):
+    def test_ping_not_found(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
         # no registration
 
@@ -63,3 +62,13 @@ class AppTest(unittest.TestCase):
         # good ping
         self.assertEqual(b"Ping Failed: Farmer not found.", rv.data)
         self.assertEqual(rv.status_code, 404)
+
+    def test_ping_invalid_address(self):
+        addr = 'notvalidaddress'
+
+        # now test ping
+        rv = self.app.get('/api/ping/{0}'.format(addr))
+
+        # good ping
+        self.assertEqual(b"Ping Failed: Invalid address.", rv.data)
+        self.assertEqual(rv.status_code, 400)

@@ -35,12 +35,16 @@ def ping(btc_addr):
     # create Farmer object to represent user
     user = Farmer(btc_addr)
 
+    # error template
+    error_msg = "Ping Failed: {0}"
+
     # attempt to register the farmer/farming address
     try:
         user.ping()
         return make_response("Ping Accepted.", 200)
+    except ValueError as e:
+        return make_response(error_msg.format(e), 400)
     except LookupError as e:
-        error_msg = "Ping Failed: {0}"
         return make_response(error_msg.format(e), 404)
 
 

@@ -79,6 +79,9 @@ class Farmer(db.Model):
         Keep alive for the farmer. Validation can take a long time, so
         we just want to know if they are still there.
         """
+        if not self.is_btc_address():
+            raise ValueError("Invalid address.")
+
         farmer = Farmer.query.filter_by(btc_addr=self.btc_addr).first()
 
         if farmer is not None:
@@ -86,6 +89,7 @@ class Farmer(db.Model):
             self.update(dict(last_seen=datetime.utcnow()))
         else:
             raise LookupError("Farmer not found.")
+
         return farmer
 
     def gen_challenge(self):

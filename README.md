@@ -38,3 +38,28 @@ Fail Examples:
     RESPONSE:
         Status Code: 409
         Text: Registration Failed: Address Already Is Registered.
+        
+### Ping-Pong
+The farmer must maintain a rudimentary keep-alive with the node. This way we know if the farmer
+has gone offline, and that we should not issue more challenges.
+
+    GET /api/register/<bitcoin address>/
+    
+Success Example:
+    
+    GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
+    RESPONSE: 
+       Status Code: 200
+       Text: Ping Accepted.
+
+Fail Examples:
+
+    GET /api/ping/notvalidaddress/
+    RESPONSE: 
+        Status Code: 400 
+        Text: Ping Failed: Invalid BTC Address.
+    
+    GET /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/
+    RESPONSE:
+        Status Code: 404
+        Text: Ping Failed: Farmer not found.
