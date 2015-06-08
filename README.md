@@ -7,4 +7,10 @@
 
 # What is this?
 
-Federated server for getting, pushing, and auditing data on untrusted nodes.
+Federated server for getting, pushing, and auditing data on untrusted nodes. Primarily used
+for capacity tests for [Test Group B](http://storj.io/earlyaccess), as well as federated server
+based file transfer.
+
+
+
+
