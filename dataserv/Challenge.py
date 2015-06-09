@@ -47,4 +47,4 @@ class Challenge:
     def gen_challenge(self, path):
         """Generate a challenge set for the farmer."""
         self.pick_seed()
-        return (self.seed, self.gen_shard(self.seed, path))
+        return self.seed, self.gen_shard(self.seed, path)
