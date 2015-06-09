@@ -70,5 +70,5 @@ class AppTest(unittest.TestCase):
         rv = self.app.get('/api/ping/{0}'.format(addr))
 
         # good ping
-        self.assertEqual(b"Ping Failed: Invalid address.", rv.data)
+        self.assertEqual(b"Ping Failed: Invalid BTC Address.", rv.data)
         self.assertEqual(rv.status_code, 400)

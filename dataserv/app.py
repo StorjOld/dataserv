@@ -12,7 +12,7 @@ def index():
     return "Hello World."
 
 
-@app.route('/api/register/<btc_addr>')
+@app.route('/api/register/<btc_addr>', methods=["GET"])
 def register(btc_addr):
     # create Farmer object to represent user
     user = Farmer(btc_addr)
@@ -24,13 +24,15 @@ def register(btc_addr):
     try:
         user.register()
         return make_response("User registered.", 200)
-    except ValueError as e:
-            return make_response(error_msg.format(e), 400)
+    except ValueError:
+            msg = "Invalid BTC Address."
+            return make_response(error_msg.format(msg), 400)
     except LookupError as e:
-            return make_response(error_msg.format(e), 409)
+            msg = "Address Already Is Registered."
+            return make_response(error_msg.format(msg), 409)
 
 
-@app.route('/api/ping/<btc_addr>')
+@app.route('/api/ping/<btc_addr>', methods=["GET"])
 def ping(btc_addr):
     # create Farmer object to represent user
     user = Farmer(btc_addr)
@@ -43,12 +45,14 @@ def ping(btc_addr):
         user.ping()
         return make_response("Ping Accepted.", 200)
     except ValueError as e:
-        return make_response(error_msg.format(e), 400)
+        msg = "Invalid BTC Address."
+        return make_response(error_msg.format(msg), 400)
     except LookupError as e:
-        return make_response(error_msg.format(e), 404)
+        msg = "Farmer not found."
+        return make_response(error_msg.format(msg), 404)
 
 
-@app.route('/api/online')
+@app.route('/api/online', methods=["GET"])
 def online():
     # maximum number of minutes since the last check in for
     # the farmer to be considered an online farmer
