@@ -17,10 +17,12 @@ class ChallengeTest(unittest.TestCase):
         self.assertEqual(iter0, seeds[0])
         self.assertEqual(iter3, seeds[3])
 
-    def test_challenge(self):
+    def test_pick_seed(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
         chal = Challenge(addr, 100, 50)
-        self.assertTrue(chal.pick_seed() in chal.get_seeds())
+        self.assertTrue(chal.pick_seed() in chal.seed_list)
+        res = '66357e60899acae95ce1e31def3d7b32a73d34b2f12ece73cdca025a26e17e32'
+        self.assertTrue(chal.pick_seed(0), res)
 
     def test_shard(self):
         # only making sure this doesn't error out
@@ -36,10 +38,3 @@ class ChallengeTest(unittest.TestCase):
         chal = Challenge(addr, 100, 10*1024*1024)  # 10 MB
         path = chal.gen_challenge('data/')[1]
         os.remove(path)
-
-    def test_pick_seed(self):
-        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
-        chal = Challenge(addr, 100, 50)
-        self.assertTrue(chal.pick_seed() in chal.seed_list)
-        res = '66357e60899acae95ce1e31def3d7b32a73d34b2f12ece73cdca025a26e17e32'
-        self.assertTrue(chal.pick_seed(0), res)
