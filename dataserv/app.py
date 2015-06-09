@@ -48,6 +48,15 @@ def ping(btc_addr):
         return make_response(error_msg.format(e), 404)
 
 
+@app.route('/api/online')
+def online():
+    # maximum number of minutes since the last check in for
+    # the farmer to be considered an online farmer
+    online_time = 10  # minutes
+    query = Farmer.query.order_by(Farmer.id)
+    return str(query)
+
+
 if __name__ == '__main__':  # pragma: no cover
     # Create Database
     db.create_all()
