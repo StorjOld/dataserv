@@ -1,6 +1,7 @@
 import time
 import urllib
 import urllib.request
+import urllib.error
 
 
 # config vars
@@ -10,9 +11,8 @@ reg_delay = 1  # seconds
 alive_delay = 5  # seconds
 
 
-def registration(reg_delay):
+def registration():
     """Attempt to register the config address."""
-
 
     try:
         api_call = "{0}/api/register/{1}".format(url, address)
@@ -36,13 +36,13 @@ def registration(reg_delay):
         return True
 
 
-def keep_alive(alive_delay):
+def keep_alive(delay):
     """Attempt keep-alive with the server."""
     try:
         api_call = "{0}/api/ping/{1}".format(url, address)
         response = urllib.request.urlopen(api_call)
         print("Pinging {0} with address {1}.".format(url, address))
-        time.sleep(alive_delay)
+        time.sleep(delay)
         return True
 
     except urllib.error.HTTPError as e:
@@ -60,7 +60,7 @@ def keep_alive(alive_delay):
 
 if __name__ == "__main__":
     # attempt to register user
-    while registration(reg_delay):
+    while registration():
         # keep-alive with server
         while keep_alive(alive_delay):
             pass
