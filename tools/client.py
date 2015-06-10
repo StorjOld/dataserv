@@ -1,7 +1,8 @@
 import time
 import urllib
-import urllib.request
+import RandomIO
 import urllib.error
+import urllib.request
 
 
 # config vars
