@@ -65,11 +65,14 @@ def online():
     online_farmers = db.session.query(Farmer).filter(Farmer.last_seen > time_ago).all()
     output = ""
     for farmer in online_farmers:
-        seconds_ago =  (current_time - farmer.last_seen).seconds
-        if seconds_ago < 60:
-            output += "{0} {1} seconds<br/>".format(str(farmer.btc_addr), seconds_ago)
+        last_seen = (current_time - farmer.last_seen).seconds
+        last_audit = (current_time - farmer.last_audit).seconds
+        if last_seen < 60:
+            text = "{0} |  Last Seen: {1} seconds | Last Audit: {2} seconds <br/>"
+            output += text.format(str(farmer.btc_addr), last_seen)
         else:
-            output += "{0} {1} minute(s)<br/>".format(str(farmer.btc_addr), int(seconds_ago/60))
+            text = "{0} |  Last Seen: {1} seconds | Last Audit: {2} seconds <br/>"
+            output += text.format(str(farmer.btc_addr), int(last_seen/60))
     return output
 
 if __name__ == '__main__':  # pragma: no cover
