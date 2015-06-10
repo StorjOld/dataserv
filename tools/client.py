@@ -3,7 +3,7 @@ import urllib.request
 
 
 # config vars
-url = "http://localhost:5000"
+url = "http://localhost:5001"
 address = "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc"
 delay = 5  # seconds
 
@@ -20,7 +20,9 @@ except urllib.error.HTTPError as e:
     elif e.code == 400:
         print("Address is not valid.")
         exit()
-
+except urllib.error.URLError as e:
+    print("Could not connect to server.")
+    exit()
 
 # attempt ping cycle
 try:
