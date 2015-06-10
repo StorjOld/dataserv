@@ -63,8 +63,14 @@ def online():
     time_ago = current_time - datetime.timedelta(minutes=online_time)
 
     online_farmers = db.session.query(Farmer).filter(Farmer.last_seen > time_ago).all()
-    return str(online_farmers)
-
+    output = ""
+    for farmer in online_farmers:
+        seconds_ago =  (current_time - farmer.last_seen).seconds
+        if seconds_ago < 60:
+            output += "{0} {1} seconds<br/>".format(str(farmer.btc_addr), seconds_ago)
+        else:
+            output += "{0} {1} minute(s)<br/>".format(str(farmer.btc_addr), int(seconds_ago/60))
+    return output
 
 if __name__ == '__main__':  # pragma: no cover
     # Create Database
