@@ -7,7 +7,6 @@ import urllib.error
 # config vars
 url = "http://localhost:5000"
 address = "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc"
-reg_delay = 1  # seconds
 alive_delay = 5  # seconds
 
 

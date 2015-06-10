@@ -7,6 +7,16 @@ from flask import Flask, make_response
 app = Flask(__name__)
 
 
+# Helper functions
+def secs_to_mins(seconds):  # pragma: no cover
+    if seconds < 60:
+        return "{0} second(s)".format(int(seconds))
+    elif seconds < 3600:
+        return "{0} minute(s)".format(int(seconds/60))
+    else:
+        return "{0} day(s)".format(int(seconds/3600))
+
+
 # Routes
 @app.route('/')
 def index():
@@ -54,7 +64,7 @@ def ping(btc_addr):
 
 
 @app.route('/api/online', methods=["GET"])
-def online():
+def online():  # pragma: no cover
     # maximum number of minutes since the last check in for
     # the farmer to be considered an online farmer
     online_time = 15  # minutes
@@ -65,14 +75,10 @@ def online():
     online_farmers = db.session.query(Farmer).filter(Farmer.last_seen > time_ago).all()
     output = ""
     for farmer in online_farmers:
-        last_seen = (current_time - farmer.last_seen).seconds
-        last_audit = (current_time - farmer.last_audit).seconds
-        if last_seen < 60:
-            text = "{0} |  Last Seen: {1} seconds | Last Audit: {2} seconds <br/>"
-            output += text.format(str(farmer.btc_addr), last_seen)
-        else:
-            text = "{0} |  Last Seen: {1} seconds | Last Audit: {2} seconds <br/>"
-            output += text.format(str(farmer.btc_addr), int(last_seen/60))
+        last_seen = secs_to_mins((current_time - farmer.last_seen).seconds)
+        last_audit = secs_to_mins((current_time - farmer.last_audit).seconds)
+        text = "{0} |  Last Seen: {1} | Last Audit: {2}<br/>"
+        output += text.format(farmer.btc_addr, last_seen, last_audit)
     return output
 
 if __name__ == '__main__':  # pragma: no cover
