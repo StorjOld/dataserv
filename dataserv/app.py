@@ -28,7 +28,7 @@ def register(btc_addr):
     except ValueError:
             msg = "Invalid BTC Address."
             return make_response(error_msg.format(msg), 400)
-    except LookupError as e:
+    except LookupError:
             msg = "Address Already Is Registered."
             return make_response(error_msg.format(msg), 409)
 
@@ -45,10 +45,10 @@ def ping(btc_addr):
     try:
         user.ping()
         return make_response("Ping Accepted.", 200)
-    except ValueError as e:
+    except ValueError:
         msg = "Invalid BTC Address."
         return make_response(error_msg.format(msg), 400)
-    except LookupError as e:
+    except LookupError:
         msg = "Farmer not found."
         return make_response(error_msg.format(msg), 404)
 
@@ -61,6 +61,7 @@ def online():
 
     current_time = datetime.datetime.utcnow()
     time_ago = current_time - datetime.timedelta(minutes=online_time)
+
     online_farmers = db.session.query(Farmer).filter(Farmer.last_seen > time_ago).all()
     return str(online_farmers)
 
