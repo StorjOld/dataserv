@@ -1,3 +1,4 @@
+import datetime
 from dataserv.Farmer import Farmer, db
 from flask import Flask, make_response
 
@@ -56,9 +57,12 @@ def ping(btc_addr):
 def online():
     # maximum number of minutes since the last check in for
     # the farmer to be considered an online farmer
-    online_time = 10  # minutes
-    query = Farmer.query.order_by(Farmer.id)
-    return str(query)
+    online_time = 15  # minutes
+
+    current_time = datetime.datetime.utcnow()
+    time_ago = current_time - datetime.timedelta(minutes=online_time)
+    online_farmers = db.session.query(Farmer).filter(Farmer.last_seen > time_ago).all()
+    return str(online_farmers)
 
 
 if __name__ == '__main__':  # pragma: no cover
