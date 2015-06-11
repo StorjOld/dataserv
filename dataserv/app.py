@@ -1,3 +1,8 @@
+import sys
+import os.path
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 import datetime
 from dataserv.Farmer import Farmer, db
 from flask import Flask, make_response

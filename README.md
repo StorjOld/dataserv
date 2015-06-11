@@ -11,6 +11,19 @@ Federated server for getting, pushing, and auditing data on untrusted nodes. Pri
 for capacity tests for [Test Group B](http://storj.io/earlyaccess), as well as federated server
 based file transfer.
 
+# Setup
+How to install and run on a clean install of Ubuntu 14.04 (LTS):
+
+    apt-get update
+    apt-get upgrade
+    apt-get install screen git python3 python-pip python-dev -y
+    git clone https://github.com/Storj/dataserv
+    cd dataserv
+    python setup.py install
+    cd dataserv
+    touch dataserv.db
+    python app.py
+
 # API
 
 

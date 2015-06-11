@@ -6,9 +6,9 @@ import urllib.request
 
 
 # config vars
-url = "http://localhost:5000"
-address = "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc"
-alive_delay = 5  # seconds
+url = "http://104.236.104.117:5000"
+address = "1CutsncbjcCtZKeRfvQ7bnYFVj28zeU6fo"
+alive_delay = 10  # seconds
 
 
 def registration():
