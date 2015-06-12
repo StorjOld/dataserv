@@ -19,7 +19,7 @@ def secs_to_mins(seconds):  # pragma: no cover
     elif seconds < 3600:
         return "{0} minute(s)".format(int(seconds/60))
     else:
-        return "{0} day(s)".format(int(seconds/3600))
+        return "{0} hour(s)".format(int(seconds/3600))
 
 
 # Routes
