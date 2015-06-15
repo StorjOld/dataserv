@@ -69,25 +69,41 @@ class Farmer(db.Model):
 
     def exists(self):
         """Check to see if this address is already listed."""
-        return db.session.query(Farmer.btc_addr).filter(Farmer.btc_addr == self.btc_addr).count() > 0
+        query = db.session.query(Farmer.btc_addr)
+        return query.filter(Farmer.btc_addr == self.btc_addr).count() > 0
 
-    def ping(self):
-        """
-        Keep alive for the farmer. Validation can take a long time, so
-        we just want to know if they are still there.
-        """
+    def update_time(self, ping = False, audit = False):
+        """Update last_seen and last_audit for each farmer."""
         if not self.is_btc_address():
             raise ValueError("Invalid address.")
 
         farmer = Farmer.query.filter_by(btc_addr=self.btc_addr).first()
 
-        if farmer is not None:
-            farmer.last_seen = datetime.utcnow()
-            db.session.commit()
-        else:
+        if farmer is None:
             raise LookupError("Farmer not found.")
+        else:
+            now = datetime.utcnow()
+            if ping:
+                farmer.last_seen = now
+            if audit:
+                farmer.last_audit = now
+            db.session.commit()
 
-        return farmer
+    def ping(self):
+        """
+        Keep-alive for the farmer. Validation can take a long time, so
+        we just want to know if they are still there.
+        """
+        self.update_time(True)
+
+    def audit(self):
+        """
+        Complete a cryptographic audit of files stored on the farmer. If
+        the farmer completes an audit we also update when we last saw them.
+        """
+        # TODO: Actually do an audit.
+        self.update_time(True, True)
+
 
     def gen_challenge(self):
         """Generate a random challenge to insert into the database."""
