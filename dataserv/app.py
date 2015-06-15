@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 
 # Helper functions
-def secs_to_mins(seconds):  # pragma: no cover
+def secs_to_mins(seconds):
     if seconds < 60:
         return "{0} second(s)".format(int(seconds))
     elif seconds < 3600:

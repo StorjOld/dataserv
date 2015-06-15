@@ -1,6 +1,6 @@
 import unittest
-from dataserv.app import app
 from dataserv.Farmer import db
+from dataserv.app import app, secs_to_mins
 
 
 class AppTest(unittest.TestCase):
@@ -72,3 +72,12 @@ class AppTest(unittest.TestCase):
         # good ping
         self.assertEqual(b"Ping Failed: Invalid BTC Address.", rv.data)
         self.assertEqual(rv.status_code, 400)
+
+    def test_helper_time(self):
+        time1 = 15
+        time2 = 75
+        time3 = 4000
+
+        self.assertEqual(secs_to_mins(time1), "15 second(s)")
+        self.assertEqual(secs_to_mins(time2), "1 minute(s)")
+        self.assertEqual(secs_to_mins(time3), "1 hour(s)")
