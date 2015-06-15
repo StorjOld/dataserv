@@ -8,10 +8,7 @@ from dataserv.Validator import is_btc_address
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dataserv.db'
-app.config['SEED_HEIGHT'] = 100
-app.config['DATA_DIR'] = 'data/'
-app.config['SHARD_SIZE'] = 10*1024*1024  # 10 MB
+app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
 
 
