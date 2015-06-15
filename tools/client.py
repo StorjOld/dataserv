@@ -7,7 +7,7 @@ import urllib.request
 # config vars
 url = "http://104.236.104.117"
 address = "1CutsncbjcCtZKeRfvQ7bnYFVj28zeU6fo"
-alive_delay = 10  # seconds
+alive_delay = 15  # seconds
 
 
 def registration():
@@ -34,6 +34,11 @@ def registration():
         time.sleep(15)
         return True
 
+    except ConnectionResetError:
+        print("Could not connect to server.")
+        time.sleep(15)
+        return True
+
 
 def keep_alive(delay):
     """Attempt keep-alive with the server."""
@@ -55,6 +60,9 @@ def keep_alive(delay):
             print("Server Error.")
 
     except urllib.error.URLError:
+        print("Could not connect to server.")
+
+    except ConnectionResetError:
         print("Could not connect to server.")
 
     return False
