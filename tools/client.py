@@ -1,12 +1,11 @@
 import time
 import urllib
-import RandomIO
 import urllib.error
 import urllib.request
 
 
 # config vars
-url = "http://104.236.104.117:5000"
+url = "http://104.236.104.117"
 address = "1CutsncbjcCtZKeRfvQ7bnYFVj28zeU6fo"
 alive_delay = 10  # seconds
 
@@ -51,6 +50,9 @@ def keep_alive(delay):
 
         elif e.code == 404:
             print("Farmer not found.")
+
+        elif e.code == 500:
+            print("Server Error.")
 
     except urllib.error.URLError:
         print("Could not connect to server.")

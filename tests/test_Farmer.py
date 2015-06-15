@@ -60,7 +60,7 @@ class FarmerTest(unittest.TestCase):
         farmer.ping()  # should update last seen
         ping_time = farmer.last_seen
 
-        self.assertNotEqual(register_time, ping_time)
+        self.assertTrue(register_time < ping_time)
 
     def test_ping_failed(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'

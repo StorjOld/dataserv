@@ -85,8 +85,8 @@ class Farmer(db.Model):
         farmer = Farmer.query.filter_by(btc_addr=self.btc_addr).first()
 
         if farmer is not None:
-            self = Farmer.query.filter_by(btc_addr=self.btc_addr)
-            self.update(dict(last_seen=datetime.utcnow()))
+            farmer.last_seen = datetime.utcnow()
+            db.session.commit()
         else:
             raise LookupError("Farmer not found.")
 
