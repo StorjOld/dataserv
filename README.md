@@ -8,8 +8,8 @@
 # What is this?
 
 Federated server for getting, pushing, and auditing data on untrusted nodes. Primarily used
-for capacity tests for [Test Group B](http://storj.io/earlyaccess), as well as federated server
-based file transfer.
+for capacity tests for [Test Group B](http://storj.io/earlyaccess), as well as federated
+server based file transfer.
 
 # Setup
 How to install and run on a clean install of Ubuntu 14.04 (LTS):
@@ -73,6 +73,75 @@ Fail Examples:
         Text: Ping Failed: Invalid BTC Address.
     
     GET /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/
+    RESPONSE:
+        Status Code: 404
+        Text: Ping Failed: Farmer not found.
+        
+# Get Data
+After the farmer completes registration, they need to get some data. Using these
+parameters the farmer and node can generate the same data using
+[RandomIO](https://github.com/storj/randomio). This allows us to avoid large data 
+transfer during Test Group B as we just want to make sure the audit algorithm scales. 
+
+    GET /api/get_data/<bitcoin address>/
+    
+Success Example:
+
+    GET /api/get_data/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
+    RESPONSE: 
+       Status Code: 200
+       Payload: 
+            {
+                "type": "RandomIO",
+                "seed": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc",
+                "shard-size": 1024,
+                "num-shards": 10
+            }
+            
+Fail Examples:
+
+    GET /api/get_data/notvalidaddress/
+    RESPONSE: 
+        Status Code: 400 
+        Text: Ping Failed: Invalid BTC Address.
+    
+    GET /api/get_data/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/
+    RESPONSE:
+        Status Code: 404
+        Text: Ping Failed: Farmer not found.
+          
+# Check Data
+After we call the get data command we need to perform some validation to make sure that
+the data on the farmer is the same as the data on the server. We do this by having the 
+farmer pass a loose "checksum" of the data which is simply the hash of all the data items.
+This does not check file integrity but is sanity check before we start performing audits
+on the files/data.
+
+    GET /api/check_data/<bitcoin_address>/<check_hash>
+    
+Success Example:
+    
+    GET /api/check_data/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/66357e60899acae95ce1e31def3d7b32a73d34b2f12ece73cdca025a26e17e32/
+    RESPONSE: 
+        Status Code: 200 
+        Text: 
+            {
+                "data-check": True
+            }
+            
+  Fail Examples:      
+  
+    GET /api/check_data/notvalidaddress/66357e60899acae95ce1e31def3d7b32a73d34b2f12ece73cdca025a26e17e32/
+    RESPONSE: 
+        Status Code: 400 
+        Text: Ping Failed: Invalid BTC Address.
+    
+    GET /api/check_data/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/notvalidcheckhash/
+    RESPONSE: 
+        Status Code: 400 
+        Text: Ping Failed: Invalid Check Hash.
+    
+    GET /api/get_data/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/66357e60899acae95ce1e31def3d7b32a73d34b2f12ece73cdca025a26e17e32/
     RESPONSE:
         Status Code: 404
         Text: Ping Failed: Farmer not found.
