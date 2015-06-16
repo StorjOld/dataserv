@@ -98,4 +98,9 @@ Success Examples:
             18RZNu2nxTdeNyuDCwAMq8aBpgC3FFERPp | Last Seen: 3 second(s) | Last Audit: 11 hour(s)
             1CgLoZT1ZuSHPBp3H4rLTXJvEUDV3kK7QK | Last Seen: 13 second(s) | Last Audit: 11 hour(s)
             1QACy1Tx5JFzGDyPd8J3oU8SrjhkZkru4H | Last Seen: 14 second(s) | Last Audit: 11 hour(s)
-    
+
+# Client
+1. Download and install [Python 3.4](https://www.python.org/downloads/release/python-343/)
+2. Download the [client](https://github.com/Storj/dataserv/blob/master/tools/client.py)
+3. Change `address = "YOUR ADDRESS HERE"` to whatever your Bitcoin address is
+4. Run the script

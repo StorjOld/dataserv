@@ -6,7 +6,7 @@ import urllib.request
 
 # config vars
 url = "http://104.236.104.117"
-address = "1CutsncbjcCtZKeRfvQ7bnYFVj28zeU6fo"
+address = "YOUR ADDRESS HERE"
 alive_delay = 15  # seconds
 
 
