@@ -2,7 +2,6 @@ import hashlib
 from flask import Flask
 from datetime import datetime
 from sqlalchemy import DateTime
-from dataserv.Challenge import Challenge
 from flask.ext.sqlalchemy import SQLAlchemy
 from dataserv.Validator import is_btc_address
 
@@ -103,9 +102,3 @@ class Farmer(db.Model):
         """
         # TODO: Actually do an audit.
         self.update_time(True, True)
-
-    def gen_challenge(self):
-        """Generate a random challenge to insert into the database."""
-        chal = Challenge(self.btc_addr, app.config['SEED_HEIGHT'], app.config['SHARD_SIZE'])
-        self.seed, self.response = chal.gen_challenge(app.config['DATA_DIR'])
-        print(self.seed, self.response)

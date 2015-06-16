@@ -5,7 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 import datetime
 from dataserv.Farmer import Farmer, db
-from flask import Flask, make_response, jsonify
+from flask import Flask, make_response
 
 
 # Initialize the Flask application
@@ -91,21 +91,6 @@ def online():
         output += text.format(farmer.btc_addr, last_seen, last_audit)
 
     return output
-
-
-@app.route('/api/get_data/<btc_addr>', methods=["GET"])
-def get_data(btc_addr):
-    # response payload template
-    response = {
-        "type": "RandomIO",
-        "seed": app.config['SEED'],
-        "shard-size": app.config['SHARD_SIZE'],
-        "num_shards": app.config['NUM_SHARDS']
-    }
-
-    return make_response(jsonify(response), 200)
-
-
 
 
 if __name__ == '__main__':  # pragma: no cover
