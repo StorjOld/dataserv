@@ -76,8 +76,31 @@ Fail Examples:
     RESPONSE:
         Status Code: 404
         Text: Ping Failed: Farmer not found.
+
+### Online Status
+This API call was build to be human readable rather than machine readable. We get a simple
+list of the all the farmers, their addresses, and when they did their last audit. We only 
+display farmers that have done a ping in the last `online_time` minutes, which by default
+is 15 minutes. 
+
+    GET /api/online/
+
+Success Examples:
+
+    GET /api/online/
+    RESPONSE: 
+        Status Code: 200 
+        Text:
+            1NeV1z5BMmFpCXgotwVeZjuN5k124W76MA | Last Seen: 14 second(s) | Last Audit: 22 hour(s)
+            137x69jwmcyy4mYCBtQUVoxa21p9Fxyss5 | Last Seen: 7 second(s) | Last Audit: 19 hour(s)
+            14wLMb2A9APqrdXJhTQArYLyivmEAf7Y1r | Last Seen: 10 second(s) | Last Audit: 17 hour(s)
+            18RZNu2nxTdeNyuDCwAMq8aBpgC3FFERPp | Last Seen: 3 second(s) | Last Audit: 11 hour(s)
+            1CgLoZT1ZuSHPBp3H4rLTXJvEUDV3kK7QK | Last Seen: 13 second(s) | Last Audit: 11 hour(s)
+            1QACy1Tx5JFzGDyPd8J3oU8SrjhkZkru4H | Last Seen: 14 second(s) | Last Audit: 11 hour(s)
+
+
         
-# Get Data
+### Get Data
 After the farmer completes registration, they need to get some data. Using these
 parameters the farmer and node can generate the same data using
 [RandomIO](https://github.com/storj/randomio). This allows us to avoid large data 
@@ -110,7 +133,7 @@ Fail Examples:
         Status Code: 404
         Text: Ping Failed: Farmer not found.
           
-# Check Data
+### Check Data
 After we call the get data command we need to perform some validation to make sure that
 the data on the farmer is the same as the data on the server. We do this by having the 
 farmer pass a loose "checksum" of the data which is simply the hash of all the data items.
