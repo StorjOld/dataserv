@@ -5,11 +5,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 import datetime
 from dataserv.Farmer import Farmer, db
-from flask import Flask, make_response
+from flask import Flask, make_response, jsonify
 
 
 # Initialize the Flask application
 app = Flask(__name__)
+app.config.from_pyfile('config.py')
 
 
 # Helper functions
@@ -68,8 +69,21 @@ def ping(btc_addr):
         return make_response(error_msg.format(msg), 404)
 
 
+@app.route('/api/get_data/<btc_addr>', methods=["GET"])
+def get_data(btc_addr):
+    # response payload template
+    response = {
+        "type": "RandomIO",
+        "seed": app.config['SEED'],
+        "shard-size": app.config['SHARD_SIZE'],
+        "num_shards": app.config['NUM_SHARDS']
+    }
+
+    return make_response(jsonify(response), 200)
+
+
 @app.route('/api/online', methods=["GET"])
-def online():  # pragma: no cover
+def online():
     # maximum number of minutes since the last check in for
     # the farmer to be considered an online farmer
     online_time = 15  # minutes

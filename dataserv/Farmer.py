@@ -72,7 +72,7 @@ class Farmer(db.Model):
         query = db.session.query(Farmer.btc_addr)
         return query.filter(Farmer.btc_addr == self.btc_addr).count() > 0
 
-    def update_time(self, ping = False, audit = False):
+    def update_time(self, ping=False, audit=False):
         """Update last_seen and last_audit for each farmer."""
         if not self.is_btc_address():
             raise ValueError("Invalid address.")
@@ -103,7 +103,6 @@ class Farmer(db.Model):
         """
         # TODO: Actually do an audit.
         self.update_time(True, True)
-
 
     def gen_challenge(self):
         """Generate a random challenge to insert into the database."""
