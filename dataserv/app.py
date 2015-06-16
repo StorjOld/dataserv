@@ -69,6 +69,30 @@ def ping(btc_addr):
         return make_response(error_msg.format(msg), 404)
 
 
+@app.route('/api/online', methods=["GET"])
+def online():
+    # maximum number of minutes since the last check in for
+    # the farmer to be considered an online farmer
+    online_time = app.config["ONLINE_TIME"]
+
+    # find the time object online_time minutes in the past
+    current_time = datetime.datetime.utcnow()
+    time_ago = current_time - datetime.timedelta(minutes=online_time)
+
+    # give us all farmers that have been around for the past online_time
+    online_farmers = db.session.query(Farmer).filter(Farmer.last_seen > time_ago).all()
+
+    output = ""
+
+    for farmer in online_farmers:
+        last_seen = secs_to_mins((current_time - farmer.last_seen).seconds)
+        last_audit = secs_to_mins((current_time - farmer.last_audit).seconds)
+        text = "{0} |  Last Seen: {1} | Last Audit: {2}<br/>"
+        output += text.format(farmer.btc_addr, last_seen, last_audit)
+
+    return output
+
+
 @app.route('/api/get_data/<btc_addr>', methods=["GET"])
 def get_data(btc_addr):
     # response payload template
@@ -82,23 +106,7 @@ def get_data(btc_addr):
     return make_response(jsonify(response), 200)
 
 
-@app.route('/api/online', methods=["GET"])
-def online():
-    # maximum number of minutes since the last check in for
-    # the farmer to be considered an online farmer
-    online_time = 15  # minutes
 
-    current_time = datetime.datetime.utcnow()
-    time_ago = current_time - datetime.timedelta(minutes=online_time)
-
-    online_farmers = db.session.query(Farmer).filter(Farmer.last_seen > time_ago).all()
-    output = ""
-    for farmer in online_farmers:
-        last_seen = secs_to_mins((current_time - farmer.last_seen).seconds)
-        last_audit = secs_to_mins((current_time - farmer.last_audit).seconds)
-        text = "{0} |  Last Seen: {1} | Last Audit: {2}<br/>"
-        output += text.format(farmer.btc_addr, last_seen, last_audit)
-    return output
 
 if __name__ == '__main__':  # pragma: no cover
     # Create Database

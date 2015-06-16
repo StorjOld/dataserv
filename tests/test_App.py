@@ -81,3 +81,20 @@ class AppTest(unittest.TestCase):
         self.assertEqual(secs_to_mins(time1), "15 second(s)")
         self.assertEqual(secs_to_mins(time2), "1 minute(s)")
         self.assertEqual(secs_to_mins(time3), "1 hour(s)")
+
+    def test_online(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        rv = self.app.get('/api/register/{0}'.format(addr))
+
+        # good registration
+        self.assertEqual(b"User registered.", rv.data)
+        self.assertEqual(rv.status_code, 200)
+
+        # now test ping
+        self.app.get('/api/ping/{0}'.format(addr))
+
+         # get online data
+        rv = self.app.get('/api/online')
+        # see if that address is in the online status
+        self.assertTrue(addr in str(rv.data))
+
