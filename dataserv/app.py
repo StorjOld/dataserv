@@ -92,6 +92,17 @@ def online():
 
     return output
 
+# TODO: Finish Contract
+@app.route('/api/contract/new/<btc_addr>', methods=["GET"])
+def new_contract(btc_addr):
+    contract_template = {
+        "btc_addr": None,
+        "contract-type": None,
+        "file_hash": None,
+        "byte_size": None,
+        "seed": None
+    }
+
 
 if __name__ == '__main__':  # pragma: no cover
     # Create Database

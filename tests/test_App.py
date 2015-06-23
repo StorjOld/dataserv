@@ -5,6 +5,7 @@ from dataserv.app import app, secs_to_mins
 
 class AppTest(unittest.TestCase):
 
+    # setup and tear down
     def setUp(self):
         self.app = app.test_client()
         db.create_all()
@@ -13,10 +14,12 @@ class AppTest(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
+    # simple index test
     def test_hello_world(self):
         rv = self.app.get('/')
         self.assertEqual(b"Hello World.", rv.data)
 
+    # register call
     def test_register(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
         rv = self.app.get('/api/register/{0}'.format(addr))
@@ -37,6 +40,7 @@ class AppTest(unittest.TestCase):
         self.assertEqual(b"Registration Failed: Invalid BTC Address.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
+    # ping call
     def test_ping_good(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
         rv = self.app.get('/api/register/{0}'.format(addr))
@@ -73,6 +77,7 @@ class AppTest(unittest.TestCase):
         self.assertEqual(b"Ping Failed: Invalid BTC Address.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
+    # time helper
     def test_helper_time(self):
         time1 = 15
         time2 = 75
@@ -82,6 +87,7 @@ class AppTest(unittest.TestCase):
         self.assertEqual(secs_to_mins(time2), "1 minute(s)")
         self.assertEqual(secs_to_mins(time3), "1 hour(s)")
 
+    # online call
     def test_online(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
         rv = self.app.get('/api/register/{0}'.format(addr))
@@ -93,8 +99,19 @@ class AppTest(unittest.TestCase):
         # now test ping
         self.app.get('/api/ping/{0}'.format(addr))
 
-         # get online data
+        # get online data
         rv = self.app.get('/api/online')
         # see if that address is in the online status
         self.assertTrue(addr in str(rv.data))
 
+    # TODO: new contract call
+    def test_new_contract(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        rv = self.app.get('/api/register/{0}'.format(addr))
+
+         # good registration
+        self.assertEqual(b"User registered.", rv.data)
+        self.assertEqual(rv.status_code, 200)
+
+        # grab a contract
+        rv = self.app.get('/api/contract/new/{0}'.format(addr))
