@@ -5,7 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 import datetime
 from dataserv.Farmer import Farmer, db
-from flask import Flask, make_response
+from flask import Flask, make_response, jsonify
 
 
 # Initialize the Flask application
@@ -95,6 +95,10 @@ def online():
 # TODO: Finish Contract
 @app.route('/api/contract/new/<btc_addr>', methods=["GET"])
 def new_contract(btc_addr):
+    # create Farmer object to represent user
+    user = Farmer(btc_addr)
+
+    # payload template
     contract_template = {
         "btc_addr": None,
         "contract-type": None,
@@ -102,6 +106,20 @@ def new_contract(btc_addr):
         "byte_size": None,
         "seed": None
     }
+
+    # error template
+    error_msg = "Contract Failed: {0}"
+
+    # attempt to register the farmer/farming address
+    try:
+        # user.new_contract()
+        return make_response(jsonify(contract_template), 200)
+    except ValueError:
+        msg = "Invalid BTC Address."
+        return make_response(error_msg.format(msg), 400)
+    except LookupError:
+        msg = "Farmer not found."
+        return make_response(error_msg.format(msg), 404)
 
 
 if __name__ == '__main__':  # pragma: no cover

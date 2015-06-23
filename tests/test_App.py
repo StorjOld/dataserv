@@ -115,3 +115,17 @@ class AppTest(unittest.TestCase):
 
         # grab a contract
         rv = self.app.get('/api/contract/new/{0}'.format(addr))
+        print(rv.data)
+        self.assertEqual(rv.status_code, 200)
+
+    def test_new_contract_fail(self):
+        addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        addr2 = 'notvalidaddress'
+
+        # grab a contract with no farmer registered
+        rv = self.app.get('/api/contract/new/{0}'.format(addr1))
+        self.assertEqual(rv.status_code, 404)
+
+        # grab a contract with invalid btc address
+        rv = self.app.get('/api/contract/new/{0}'.format(addr2))
+        self.assertEqual(rv.status_code, 400)
