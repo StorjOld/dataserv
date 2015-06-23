@@ -1,3 +1,4 @@
+import json
 import unittest
 from dataserv.Farmer import db
 from dataserv.app import app, secs_to_mins
@@ -79,6 +80,7 @@ class AppTest(unittest.TestCase):
 
     # time helper
     def test_helper_time(self):
+
         time1 = 15
         time2 = 75
         time3 = 4000
@@ -115,8 +117,13 @@ class AppTest(unittest.TestCase):
 
         # grab a contract
         rv = self.app.get('/api/contract/new/{0}'.format(addr))
-        print(rv.data)
         self.assertEqual(rv.status_code, 200)
+        json_data = json.loads(rv.data.decode("utf-8"))
+
+        # check type 0 contracts
+        self.assertEqual(json_data["btc_addr"], addr)
+        self.assertEqual(json_data["contract-type"], 0)
+
 
     def test_new_contract_fail(self):
         addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'

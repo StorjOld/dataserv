@@ -24,9 +24,6 @@ class Farmer(db.Model):
     last_seen = db.Column(DateTime, default=datetime.utcnow)
     last_audit = db.Column(DateTime, default=datetime.utcnow)
 
-    seed = db.Column(db.Integer)
-    response = db.Column(db.String(128))
-
     def __init__(self, btc_addr, last_seen=None, last_audit=None):
         """
         A farmer is a un-trusted client that provides some disk space
@@ -110,3 +107,13 @@ class Farmer(db.Model):
 
     def new_contract(self):
         farmer = self.lookup()
+
+        contract_template = {
+            "btc_addr": self.btc_addr,
+            "contract-type": 0,
+            "file_hash": None,
+            "byte_size": None,
+            "seed": None
+        }
+
+        return contract_template

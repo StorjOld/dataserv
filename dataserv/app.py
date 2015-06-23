@@ -98,22 +98,13 @@ def new_contract(btc_addr):
     # create Farmer object to represent user
     user = Farmer(btc_addr)
 
-    # payload template
-    contract_template = {
-        "btc_addr": None,
-        "contract-type": None,
-        "file_hash": None,
-        "byte_size": None,
-        "seed": None
-    }
-
     # error template
     error_msg = "Contract Failed: {0}"
 
     # attempt to register the farmer/farming address
     try:
-        user.new_contract()
-        return make_response(jsonify(contract_template), 200)
+        contract_payload = user.new_contract()
+        return make_response(jsonify(contract_payload), 200)
     except ValueError:
         msg = "Invalid BTC Address."
         return make_response(error_msg.format(msg), 400)
