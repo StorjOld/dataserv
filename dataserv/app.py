@@ -112,7 +112,7 @@ def new_contract(btc_addr):
 
     # attempt to register the farmer/farming address
     try:
-        # user.new_contract()
+        user.new_contract()
         return make_response(jsonify(contract_template), 200)
     except ValueError:
         msg = "Invalid BTC Address."

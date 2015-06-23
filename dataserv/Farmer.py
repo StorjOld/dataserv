@@ -71,8 +71,7 @@ class Farmer(db.Model):
         query = db.session.query(Farmer.btc_addr)
         return query.filter(Farmer.btc_addr == self.btc_addr).count() > 0
 
-    def update_time(self, ping=False, audit=False):
-        """Update last_seen and last_audit for each farmer."""
+    def lookup(self):
         if not self.is_btc_address():
             raise ValueError("Invalid address.")
 
@@ -80,13 +79,19 @@ class Farmer(db.Model):
 
         if farmer is None:
             raise LookupError("Farmer not found.")
-        else:
-            now = datetime.utcnow()
-            if ping:
-                farmer.last_seen = now
-            if audit:
-                farmer.last_audit = now
-            db.session.commit()
+
+        return farmer
+
+    def update_time(self, ping=False, audit=False):
+        """Update last_seen and last_audit for each farmer."""
+        farmer = self.lookup()
+
+        now = datetime.utcnow()
+        if ping:
+            farmer.last_seen = now
+        if audit:
+            farmer.last_audit = now
+        db.session.commit()
 
     def ping(self):
         """
@@ -102,3 +107,6 @@ class Farmer(db.Model):
         """
         # TODO: Actually do an audit.
         self.update_time(True, True)
+
+    def new_contract(self):
+        farmer = self.lookup()
