@@ -1,4 +1,7 @@
+import os
 import hashlib
+import binascii
+import RandomIO
 from flask import Flask
 from datetime import datetime
 from sqlalchemy import DateTime
@@ -105,15 +108,25 @@ class Farmer(db.Model):
         # TODO: Actually do an audit.
         self.update_time(True, True)
 
-    def new_contract(self):
+    def new_contract(self, hexseed = None):
         farmer = self.lookup()
+
+        seed = os.urandom(12)
+        hexseed = binascii.hexlify(seed).decode('ascii')
+        filesize = 10*1024*1024
+        print('Pair {0}: Generating hash for {1} bytes file with seed {2}...'.format(0, filesize, hexseed))
+        hash = hashlib.sha256(RandomIO.RandomIO(seed).read(filesize)).hexdigest()
+        print('{0} {1}\n'.format(hexseed, hash))
 
         contract_template = {
             "btc_addr": self.btc_addr,
             "contract-type": 0,
-            "file_hash": None,
-            "byte_size": None,
-            "seed": None
+            "file_hash": hash,
+            "byte_size": filesize,
+            "seed": hexseed
         }
 
         return contract_template
+
+    def list_contracts(self):
+        pass

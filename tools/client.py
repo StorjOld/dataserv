@@ -5,9 +5,9 @@ import urllib.request
 
 
 # config vars
-url = "http://104.236.104.117"
-address = "YOUR ADDRESS HERE"
-alive_delay = 15  # seconds
+url = "http://localhost:5000"
+address = "1CutsncbjcCtZKeRfvQ7bnYFVj28zeU6fo"
+alive_delay = 5  # seconds
 
 
 def registration():
@@ -67,10 +67,39 @@ def keep_alive(delay):
 
     return False
 
+def new_contract():
+    try:
+        api_call = "{0}/api/contract/new/{1}".format(url, address)
+        response = urllib.request.urlopen(api_call)
+        print(response)
+        return True
+
+    except urllib.error.HTTPError as e:
+        if e.code == 400:
+            print("Address is not valid.")
+
+        elif e.code == 404:
+            print("Farmer not found.")
+            print(e)
+
+        elif e.code == 500:
+            print("Server Error.")
+
+    except urllib.error.URLError:
+        print("Could not connect to server.")
+
+    except ConnectionResetError:
+        print("Could not connect to server.")
+
+    return False
+
 
 if __name__ == "__main__":
     # attempt to register user
     while registration():
         # keep-alive with server
+        contract = 3
         while keep_alive(alive_delay):
-            pass
+            while contract >=0 and new_contract():
+                contract -= 1
+                print("contract")
