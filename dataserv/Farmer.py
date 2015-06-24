@@ -100,3 +100,9 @@ class Farmer(db.Model):
         con = Contract(self.btc_addr)
         con.new_contract(seed)
         return con.to_json()
+
+    def list_contracts(self):
+        self.lookup()
+
+        con = Contract(self.btc_addr)
+        return con.list_contracts()

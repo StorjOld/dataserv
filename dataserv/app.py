@@ -1,7 +1,7 @@
 import sys
 import os.path
 import datetime
-from flask import Flask, make_response, jsonify
+from flask import make_response, jsonify
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
@@ -90,7 +90,6 @@ def online():
     return output
 
 
-# TODO: Finish Contract
 @app.route('/api/contract/new/<btc_addr>', methods=["GET"])
 def new_contract(btc_addr):
     # create Farmer object to represent user
@@ -112,6 +111,24 @@ def new_contract(btc_addr):
     except MemoryError:
         msg = "Contract Capacity Limit Reached."
         return make_response(error_msg.format(msg), 413)
+
+
+@app.route('/api/contract/list/<btc_addr>', methods=["GET"])
+def list_contracts(btc_addr):
+    # create Farmer object to represent user
+    user = Farmer(btc_addr)
+
+    # attempt to register the farmer/farming address
+    try:
+        contract_payload = user.list_contracts()
+        return make_response(jsonify(contract_payload), 200)
+    except ValueError:
+        msg = "Invalid BTC Address."
+        return make_response(msg, 400)
+    except LookupError:
+        msg = "Farmer Not Found."
+        return make_response(msg, 404)
+    # no contracts 204
 
 
 if __name__ == '__main__':  # pragma: no cover

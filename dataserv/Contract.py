@@ -68,3 +68,15 @@ class Contract(db.Model):
     def save(self):
         db.session.add(self)
         db.session.commit()
+
+    def list_contracts(self):
+        contracts = Contract.query.filter_by(btc_addr=self.btc_addr).all()
+        json_contracts = []
+        for contract in contracts:
+            json_contracts.append(contract.to_json())
+
+        payload_template = {
+            "contracts": json_contracts
+        }
+
+        return payload_template

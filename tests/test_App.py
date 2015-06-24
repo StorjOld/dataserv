@@ -105,7 +105,6 @@ class AppTest(unittest.TestCase):
         # see if that address is in the online status
         self.assertTrue(addr in str(rv.data))
 
-    # TODO: new contract call
     def test_new_contract(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
         rv = self.app.get('/api/register/{0}'.format(addr))
@@ -135,3 +134,32 @@ class AppTest(unittest.TestCase):
         # grab a contract with invalid btc address
         rv = self.app.get('/api/contract/new/{0}'.format(addr2))
         self.assertEqual(rv.status_code, 400)
+
+    def test_max_contracts(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        rv = self.app.get('/api/register/{0}'.format(addr))
+
+        # force app config to testing params
+        app.config["BYTE_SIZE"] = 10*1024*1024  # 10 MB
+        app.config["BYTE_FARMER_MAX"] = 30*1024*1024  # 30 MB
+
+        self.app.get('/api/contract/new/{0}'.format(addr))
+        self.app.get('/api/contract/new/{0}'.format(addr))
+        self.app.get('/api/contract/new/{0}'.format(addr))
+        rv = self.app.get('/api/contract/new/{0}'.format(addr))
+        self.assertEqual(rv.status_code, 413)
+
+    def test_list_contracts(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        rv = self.app.get('/api/register/{0}'.format(addr))
+
+        # force app config to testing params
+        app.config["BYTE_SIZE"] = 10*1024*1024  # 10 MB
+        app.config["BYTE_FARMER_MAX"] = 30*1024*1024  # 30 MB
+
+        self.app.get('/api/contract/new/{0}'.format(addr))
+        self.app.get('/api/contract/new/{0}'.format(addr))
+        self.app.get('/api/contract/new/{0}'.format(addr))
+
+        rv = self.app.get('/api/contract/list/{0}'.format(addr))
+        print(rv)
