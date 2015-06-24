@@ -92,6 +92,7 @@ def online():
 
     return output
 
+
 # TODO: Finish Contract
 @app.route('/api/contract/new/<btc_addr>', methods=["GET"])
 def new_contract(btc_addr):

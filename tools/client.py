@@ -67,6 +67,7 @@ def keep_alive(delay):
 
     return False
 
+
 def new_contract():
     try:
         api_call = "{0}/api/contract/new/{1}".format(url, address)
@@ -100,6 +101,6 @@ if __name__ == "__main__":
         # keep-alive with server
         contract = 3
         while keep_alive(alive_delay):
-            while contract >=0 and new_contract():
+            while contract >= 0 and new_contract():
                 contract -= 1
                 print("contract")

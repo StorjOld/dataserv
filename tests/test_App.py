@@ -111,7 +111,7 @@ class AppTest(unittest.TestCase):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
         rv = self.app.get('/api/register/{0}'.format(addr))
 
-         # good registration
+        # good registration
         self.assertEqual(b"User registered.", rv.data)
         self.assertEqual(rv.status_code, 200)
 
@@ -123,7 +123,6 @@ class AppTest(unittest.TestCase):
         # check type 0 contracts
         self.assertEqual(json_data["btc_addr"], addr)
         self.assertEqual(json_data["contract-type"], 0)
-
 
     def test_new_contract_fail(self):
         addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
