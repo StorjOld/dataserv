@@ -1,17 +1,17 @@
 import sys
 import os.path
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
 import datetime
-from dataserv.Farmer import Farmer, db
+from flask.ext.sqlalchemy import SQLAlchemy
 from flask import Flask, make_response, jsonify
-
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # Initialize the Flask application
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
+db = SQLAlchemy(app)
 
+# Import modules
+from dataserv.Farmer import Farmer
 
 # Helper functions
 def secs_to_mins(seconds):

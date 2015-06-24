@@ -2,16 +2,10 @@ import os
 import hashlib
 import binascii
 import RandomIO
-from flask import Flask
+from dataserv.app import db
 from datetime import datetime
 from sqlalchemy import DateTime
-from flask.ext.sqlalchemy import SQLAlchemy
 from dataserv.Validator import is_btc_address
-
-
-app = Flask(__name__)
-app.config.from_pyfile('config.py')
-db = SQLAlchemy(app)
 
 
 def sha256(content):
