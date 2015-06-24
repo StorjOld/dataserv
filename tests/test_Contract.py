@@ -57,3 +57,8 @@ class ContractTest(unittest.TestCase):
         con3.new_contract('b780bd4852b8c8a62859a50c', 1024)
         self.assertFalse(con3.below_limit(2000))
         self.assertTrue(con3.below_limit(3073))
+
+        # change config to break limit
+        app.config["BYTE_FARMER_MAX"] = 1024
+        with self.assertRaises(MemoryError):
+            con3.new_contract('b780bd4852b8c8a62859a50c', 1024)

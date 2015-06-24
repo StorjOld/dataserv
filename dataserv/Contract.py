@@ -43,6 +43,10 @@ class Contract(db.Model):
         """Build a new contract."""
         self.contract_type = 0
 
+        # make sure that farmer can actually create new contracts
+        if not self.below_limit():
+            raise MemoryError("Contract Capacity Limit Reached.")
+
         # take in a seed, if not generate it ourselves
         if seed is None:
             seed = os.urandom(12)

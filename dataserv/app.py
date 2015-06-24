@@ -1,7 +1,7 @@
 import sys
 import os.path
 import datetime
-from flask import make_response, jsonify
+from flask import Flask, make_response, jsonify
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
@@ -62,7 +62,7 @@ def ping(btc_addr):
         msg = "Invalid BTC Address."
         return make_response(error_msg.format(msg), 400)
     except LookupError:
-        msg = "Farmer not found."
+        msg = "Farmer Not Found."
         return make_response(error_msg.format(msg), 404)
 
 
@@ -107,8 +107,11 @@ def new_contract(btc_addr):
         msg = "Invalid BTC Address."
         return make_response(error_msg.format(msg), 400)
     except LookupError:
-        msg = "Farmer not found."
+        msg = "Farmer Not Found."
         return make_response(error_msg.format(msg), 404)
+    except MemoryError:
+        msg = "Contract Capacity Limit Reached."
+        return make_response(error_msg.format(msg), 413)
 
 
 if __name__ == '__main__':  # pragma: no cover

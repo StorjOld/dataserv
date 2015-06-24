@@ -64,7 +64,7 @@ class AppTest(unittest.TestCase):
         rv = self.app.get('/api/ping/{0}'.format(addr))
 
         # good ping
-        self.assertEqual(b"Ping Failed: Farmer not found.", rv.data)
+        self.assertEqual(b"Ping Failed: Farmer Not Found.", rv.data)
         self.assertEqual(rv.status_code, 404)
 
     def test_ping_invalid_address(self):
