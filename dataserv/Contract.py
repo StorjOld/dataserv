@@ -2,19 +2,19 @@ import os
 import hashlib
 import binascii
 import RandomIO
-from dataserv.app import db, app
+from dataserv.app2 import app, db
 
 
 class Contract(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    btc_addr = db.Column(db.String(35), unique=True)
+    btc_addr = db.Column(db.String(35))
     contract_type = db.Column(db.Integer, default=0)
     file_hash = db.Column(db.String(128))
     byte_size = db.Column(db.Integer, default=0)
-    seed = db.Column(db.String(128))
+    seed = db.Column(db.String(128), unique=True)
 
-    def __init__(self):
-        pass
+    def __init__(self, btc_addr):
+        self.btc_addr = btc_addr
 
     def to_json(self):
         """JSON dump of the contract object."""
@@ -30,7 +30,7 @@ class Contract(db.Model):
 
     def below_limit(self, limit=None):
         current_size = 0
-        contracts = Contract.query.filter_by(btc_addr=self.btc_addr)
+        contracts = Contract.query.filter_by(btc_addr=self.btc_addr).all()
         for single_contract in contracts:
             current_size += single_contract.byte_size
 
@@ -39,9 +39,8 @@ class Contract(db.Model):
         else:
             return current_size < limit
 
-    def new_contract(self, btc_addr, seed=None, byte_size=None):
+    def new_contract(self, seed=None, byte_size=None):
         """Build a new contract."""
-        self.btc_addr = btc_addr
         self.contract_type = 0
 
         # take in a seed, if not generate it ourselves

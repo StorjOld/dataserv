@@ -1,5 +1,5 @@
 import hashlib
-from dataserv.app import db
+from dataserv.app2 import db
 from datetime import datetime
 from sqlalchemy import DateTime
 from dataserv.Contract import Contract
@@ -94,9 +94,9 @@ class Farmer(db.Model):
         """
         self.update_time(True, True)
 
-    def new_contract(self, hexseed=None):
-        farmer = self.lookup()
+    def new_contract(self, seed=None):
+        self.lookup()
 
-        con = Contract()
-        con.new_contract(self.btc_addr)
+        con = Contract(self.btc_addr)
+        con.new_contract(seed)
         return con.to_json()
