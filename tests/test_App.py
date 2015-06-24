@@ -1,7 +1,7 @@
 import json
 import unittest
-from dataserv.app import app, db, secs_to_mins
-
+from dataserv.app import secs_to_mins
+from dataserv.app2 import app, db
 
 class AppTest(unittest.TestCase):
 
