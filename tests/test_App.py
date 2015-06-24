@@ -121,7 +121,7 @@ class AppTest(unittest.TestCase):
 
         # check type 0 contracts
         self.assertEqual(json_data["btc_addr"], addr)
-        self.assertEqual(json_data["contract-type"], 0)
+        self.assertEqual(json_data["contract_type"], 0)
 
     def test_new_contract_fail(self):
         addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'

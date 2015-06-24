@@ -108,7 +108,7 @@ class Farmer(db.Model):
 
         contract_template = {
             "btc_addr": self.btc_addr,
-            "contract-type": 0,
+            "contract_type": 0,
             "file_hash": myhash,
             "byte_size": filesize,
             "seed": hexseed
