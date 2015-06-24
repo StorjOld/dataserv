@@ -1,5 +1,5 @@
 import unittest
-from dataserv.app import db
+from dataserv.app import db, app
 from dataserv.Contract import Contract
 
 class ContractTest(unittest.TestCase):
@@ -28,6 +28,7 @@ class ContractTest(unittest.TestCase):
         my_contract.new_contract(addr)
         self.assertEqual(my_contract.btc_addr, addr)
         self.assertEqual(my_contract.contract_type, 0)
+        self.assertEqual(my_contract.byte_size, app.config["BYTE_SIZE"])
 
     def test_new_contract_json(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'

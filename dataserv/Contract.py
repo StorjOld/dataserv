@@ -28,6 +28,17 @@ class Contract(db.Model):
 
         return contract_template
 
+    def below_limit(self, limit=None):
+        current_size = 0
+        contracts = Contract.query.filter_by(btc_addr=self.btc_addr)
+        for single_contract in contracts:
+            current_size += single_contract.byte_size
+
+        if limit is None:
+            return current_size < app.config["BYTE_FARMER_MAX"]
+        else:
+            return current_size < limit
+
     def new_contract(self, btc_addr, seed=None, byte_size=None):
         """Build a new contract."""
         self.btc_addr = btc_addr
@@ -42,9 +53,15 @@ class Contract(db.Model):
 
         # take in a byte_size, if not then get it from config
         if byte_size is None:
-            self.byte_size = app.config["SHARD_SIZE"]
+            self.byte_size = app.config["BYTE_SIZE"]
         else:
             self.byte_size = byte_size
 
         gen_file = RandomIO.RandomIO(seed).read(self.byte_size)
         self.file_hash = hashlib.sha256(gen_file).hexdigest()
+
+        self.save()
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()

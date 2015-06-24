@@ -1,10 +1,8 @@
-import os
 import hashlib
-import binascii
-import RandomIO
 from dataserv.app import db
 from datetime import datetime
 from sqlalchemy import DateTime
+from dataserv.Contract import Contract
 from dataserv.Validator import is_btc_address
 
 
@@ -99,19 +97,6 @@ class Farmer(db.Model):
     def new_contract(self, hexseed=None):
         farmer = self.lookup()
 
-        seed = os.urandom(12)
-        hexseed = binascii.hexlify(seed).decode('ascii')
-        filesize = 10*1024*1024
-        print('Pair {0}: Generating hash for {1} bytes file with seed {2}...'.format(0, filesize, hexseed))
-        myhash = hashlib.sha256(RandomIO.RandomIO(seed).read(filesize)).hexdigest()
-        print('{0} {1}\n'.format(hexseed, myhash))
-
-        contract_template = {
-            "btc_addr": self.btc_addr,
-            "contract_type": 0,
-            "file_hash": myhash,
-            "byte_size": filesize,
-            "seed": hexseed
-        }
-
-        return contract_template
+        con = Contract()
+        con.new_contract(self.btc_addr)
+        return con.to_json()
