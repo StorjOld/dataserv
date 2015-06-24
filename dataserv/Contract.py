@@ -33,10 +33,18 @@ class Contract(db.Model):
         self.btc_addr = btc_addr
         self.contract_type = 0
 
-        # generate a random seed
-        seed = os.urandom(12)
-        self.seed = binascii.hexlify(seed).decode('ascii')
+        # take in a seed, if not generate it ourselves
+        if seed is None:
+            seed = os.urandom(12)
+            self.seed = binascii.hexlify(seed).decode('ascii')
+        else:
+            self.seed = seed
 
-        self.byte_size = app.config["SHARD_SIZE"]
+        # take in a byte_size, if not then get it from config
+        if byte_size is None:
+            self.byte_size = app.config["SHARD_SIZE"]
+        else:
+            self.byte_size = byte_size
+
         gen_file = RandomIO.RandomIO(seed).read(self.byte_size)
         self.file_hash = hashlib.sha256(gen_file).hexdigest()
