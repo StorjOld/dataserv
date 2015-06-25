@@ -4,13 +4,42 @@ import urllib.error
 import urllib.request
 
 
-# config vars
-url = "http://104.236.104.117"
-address = "YOUR ADDRESS HERE"
-alive_delay = 15  # seconds
+class AddressAlreadyRegistered(Exception):
+
+    def __init__(self, address, url):
+        msg = "Address {0} already registered at {1}!".format(address, url)
+        super(AddressAlreadyRegistered, self).__init__(msg)
 
 
-def registration():
+class FarmerNotFound(Exception):
+
+    def __init__(self, url):
+        msg = "Farmer not found at {0}!".format(url)
+        super(FarmerNotFound, self).__init__(msg)
+
+
+class FarmerError(Exception):
+
+    def __init__(self, url):
+        msg = "Farmer error at {0}!".format(url)
+        super(FarmerError, self).__init__(msg)
+
+
+class InvalidAddress(Exception):
+
+    def __init__(self, address):
+        msg = "Address {0} not valid!".format(address)
+        super(InvalidAddress, self).__init__(msg)
+
+
+class ConnectionError(Exception):
+
+    def __init__(self, url):
+        msg = "Could not connect to server {0}!".format(url)
+        super(ConnectionError, self).__init__(msg)
+
+
+def register(address, url="http://104.236.104.117"):
     """Attempt to register the config address."""
 
     try:
@@ -22,55 +51,43 @@ def registration():
 
     except urllib.error.HTTPError as e:
         if e.code == 409:
-            print("Address {0} already registered.".format(address))
-            return True
-
+            raise AddressAlreadyRegistered(address, url)
+        elif e.code == 404:
+            raise FarmerNotFound(url)
         elif e.code == 400:
-            print("Address is not valid.")
-            return False
-
+            raise InvalidAddress(address)  # TODO test
+        elif e.code == 500:
+            raise FarmerError(url)
+        else:
+            raise e
     except urllib.error.URLError:
-        print("Could not connect to server.")
-        time.sleep(15)
-        return True
-
-    except ConnectionResetError:
-        print("Could not connect to server.")
-        time.sleep(15)
-        return True
+        raise ConnectionError(url)
 
 
-def keep_alive(delay):
+def ping(address, url="http://104.236.104.117"):
     """Attempt keep-alive with the server."""
     try:
         api_call = "{0}/api/ping/{1}".format(url, address)
         response = urllib.request.urlopen(api_call)
         print("Pinging {0} with address {1}.".format(url, address))
-        time.sleep(delay)
         return True
 
     except urllib.error.HTTPError as e:
         if e.code == 400:
-            print("Address is not valid.")
-
+            raise InvalidAddress(address)  # TODO test
         elif e.code == 404:
-            print("Farmer not found.")
-
+            raise FarmerNotFound(url)
         elif e.code == 500:
-            print("Server Error.")
-
+            raise FarmerError(url)
+        else:
+            raise e
     except urllib.error.URLError:
-        print("Could not connect to server.")
-
-    except ConnectionResetError:
-        print("Could not connect to server.")
-
-    return False
+        raise ConnectionError(url)
 
 
-if __name__ == "__main__":
-    # attempt to register user
-    while registration():
-        # keep-alive with server
-        while keep_alive(alive_delay):
-            pass
+def keep_alive(address, delay=15):
+    register(address)
+    while ping(address):
+        time.sleep(delay)
+
+
