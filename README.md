@@ -112,21 +112,13 @@ show command help:
 
     $ ./tools/client.py <COMMAND> --help
 
-register address with default farmer:
+register address with default node:
 
     $ ./tools/client.py register <YOUR_BITCOIN_ADDRESS>
 
-register address with custom farmer:
+register address with custom node:
 
     $ ./tools/client.py register <YOUR_BITCOIN_ADDRESS> --url=<FARMER_URL>
-
-ping address with default farmer:
-
-    $ ./tools/client.py ping <YOUR_BITCOIN_ADDRESS>
-
-ping address with custom farmer:
-
-    $ ./tools/client.py ping <YOUR_BITCOIN_ADDRESS> --url=<FARMER_URL>
 
 continuously ping address with default farmer in 15sec intervals:
 
@@ -135,8 +127,3 @@ continuously ping address with default farmer in 15sec intervals:
 continuously ping address with custom farmer in 15sec intervals:
 
     $ ./tools/client.py poll <YOUR_BITCOIN_ADDRESS> --url=<FARMER_URL>
-
-continuously ping address with farmer using a given delay in seconds:
-
-    $ ./tools/client.py poll <YOUR_BITCOIN_ADDRESS> --delay=<SECONDS>
-
