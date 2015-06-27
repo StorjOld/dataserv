@@ -120,10 +120,10 @@ register address with custom node:
 
     $ ./tools/client.py register <YOUR_BITCOIN_ADDRESS> --url=<FARMER_URL>
 
-continuously ping address with default farmer in 15sec intervals:
+continuously ping default node in 15 sec intervals:
 
     $ ./tools/client.py poll <YOUR_BITCOIN_ADDRESS>
 
-continuously ping address with custom farmer in 15sec intervals:
+continuously ping custom node in 15 sec intervals:
 
     $ ./tools/client.py poll <YOUR_BITCOIN_ADDRESS> --url=<FARMER_URL>
