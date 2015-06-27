@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+
 import sys
 import time
 import urllib
@@ -162,9 +165,9 @@ def _parse_args():
         help="Deley between each ping."
     )
     poll_parser.add_argument(
-        '--register', action='store_true',             
+        '--register', action='store_true',
         help="Register address before polling."
-    )  
+    )
 
     # get values
     arguments = vars(parser.parse_args())

@@ -28,51 +28,51 @@ python app.py
 # API
 
 
-### Registration 
+### Registration
 Registration of farmers into the database. All farmers must register with the node before they
-can perform any other actions. 
-    
+can perform any other actions.
+
     GET /api/register/<bitcoin address>/
 
 Success Example:
 
     GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
-    RESPONSE: 
+    RESPONSE:
         Status Code: 200
         Text: User registered.
-    
+
 Fail Examples:
-    
+
     GET /api/register/notvalidaddress/
-    RESPONSE: 
-        Status Code: 400 
+    RESPONSE:
+        Status Code: 400
         Text: Registration Failed: Invalid BTC Address.
-    
+
     GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
     RESPONSE:
         Status Code: 409
         Text: Registration Failed: Address Already Is Registered.
-        
+
 ### Ping-Pong
 The farmer must maintain a rudimentary keep-alive with the node. This way we know if the farmer
 has gone offline, and that we should not issue more challenges.
 
     GET /api/register/<bitcoin address>/
-    
+
 Success Example:
-    
+
     GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
-    RESPONSE: 
+    RESPONSE:
        Status Code: 200
        Text: Ping Accepted.
 
 Fail Examples:
 
     GET /api/ping/notvalidaddress/
-    RESPONSE: 
-        Status Code: 400 
+    RESPONSE:
+        Status Code: 400
         Text: Ping Failed: Invalid BTC Address.
-    
+
     GET /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/
     RESPONSE:
         Status Code: 404
@@ -80,17 +80,17 @@ Fail Examples:
 
 ### Online Status
 This API call was build to be human readable rather than machine readable. We get a simple
-list of the all the farmers, their addresses, and when they did their last audit. We only 
+list of the all the farmers, their addresses, and when they did their last audit. We only
 display farmers that have done a ping in the last `online_time` minutes, which by default
-is 15 minutes. 
+is 15 minutes.
 
     GET /api/online/
 
 Success Examples:
 
     GET /api/online/
-    RESPONSE: 
-        Status Code: 200 
+    RESPONSE:
+        Status Code: 200
         Text:
             1NeV1z5BMmFpCXgotwVeZjuN5k124W76MA | Last Seen: 14 second(s) | Last Audit: 22 hour(s)
             137x69jwmcyy4mYCBtQUVoxa21p9Fxyss5 | Last Seen: 7 second(s) | Last Audit: 19 hour(s)
@@ -102,5 +102,41 @@ Success Examples:
 # Client
 1. Download and install [Python 3.4](https://www.python.org/downloads/release/python-343/)
 2. Download the [client](https://github.com/Storj/dataserv/blob/master/tools/client.py)
-3. Change `address = "YOUR ADDRESS HERE"` to whatever your Bitcoin address is
-4. Run the script
+3. Run the script
+
+show programm help:
+
+    $ ./tools/client.py --help
+
+show command help:
+
+    $ ./tools/client.py <COMMAND> --help
+
+register address with default farmer:
+
+    $ ./tools/client.py register <YOUR_BITCOIN_ADDRESS>
+
+register address with custom farmer:
+
+    $ ./tools/client.py register <YOUR_BITCOIN_ADDRESS> --url=<FARMER_URL>
+
+ping address with default farmer:
+
+    $ ./tools/client.py ping <YOUR_BITCOIN_ADDRESS>
+
+ping address with custom farmer:
+
+    $ ./tools/client.py ping <YOUR_BITCOIN_ADDRESS> --url=<FARMER_URL>
+
+continuously ping address with default farmer in 15sec intervals:
+
+    $ ./tools/client.py poll <YOUR_BITCOIN_ADDRESS>
+
+continuously ping address with custom farmer in 15sec intervals:
+
+    $ ./tools/client.py poll <YOUR_BITCOIN_ADDRESS> --url=<FARMER_URL>
+
+continuously ping address with farmer using a given delay in seconds:
+
+    $ ./tools/client.py poll <YOUR_BITCOIN_ADDRESS> --delay=<SECONDS>
+
