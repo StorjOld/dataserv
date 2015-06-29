@@ -57,11 +57,11 @@ Fail Examples:
 The farmer must maintain a rudimentary keep-alive with the node. This way we know if the farmer
 has gone offline, and that we should not issue more challenges.
 
-    GET /api/register/<bitcoin address>/
+    GET /api/ping/<bitcoin address>/
 
 Success Example:
 
-    GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
+    GET /api/ping/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
     RESPONSE:
        Status Code: 200
        Text: Ping Accepted.
