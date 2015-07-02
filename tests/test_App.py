@@ -1,7 +1,8 @@
 import json
 import unittest
+from dataserv.run import app, db
 from dataserv.app import secs_to_mins
-from dataserv.app2 import app, db
+
 
 class AppTest(unittest.TestCase):
 
@@ -137,7 +138,7 @@ class AppTest(unittest.TestCase):
 
     def test_max_contracts(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
-        rv = self.app.get('/api/register/{0}'.format(addr))
+        self.app.get('/api/register/{0}'.format(addr))
 
         # force app config to testing params
         app.config["BYTE_SIZE"] = 10*1024*1024  # 10 MB
@@ -151,7 +152,7 @@ class AppTest(unittest.TestCase):
 
     def test_list_contracts(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
-        rv = self.app.get('/api/register/{0}'.format(addr))
+        self.app.get('/api/register/{0}'.format(addr))
 
         # force app config to testing params
         app.config["BYTE_SIZE"] = 10*1024*1024  # 10 MB
@@ -162,6 +163,7 @@ class AppTest(unittest.TestCase):
         self.app.get('/api/contract/new/{0}'.format(addr))
 
         rv = self.app.get('/api/contract/list/{0}'.format(addr))
+        self.assertEqual(rv.status_code, 200)
 
     def test_list_contract_no_register(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'

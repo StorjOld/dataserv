@@ -3,7 +3,7 @@ import os
 import hashlib
 import binascii
 import RandomIO
-from dataserv.app2 import app, db
+from dataserv.run import app, db
 
 
 class Contract(db.Model):

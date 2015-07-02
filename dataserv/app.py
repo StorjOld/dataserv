@@ -6,7 +6,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 
 # Import modules
-from dataserv.app2 import app, db
+from dataserv.run import app, db
 from dataserv.Farmer import Farmer
 
 
@@ -128,15 +128,3 @@ def list_contracts(btc_addr):
     except LookupError:
         msg = "Farmer Not Found."
         return make_response(msg, 404)
-
-
-if __name__ == '__main__':  # pragma: no cover
-    # Create Database
-    db.create_all()
-
-    # Run the Flask app
-    app.run(
-        host="0.0.0.0",
-        port=int("5000"),
-        debug=True
-    )
