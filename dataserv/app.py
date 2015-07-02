@@ -1,16 +1,13 @@
 import sys
 import os.path
-
+import datetime
+from flask import make_response, jsonify
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-import datetime
-from dataserv.Farmer import Farmer, db
-from flask import Flask, make_response
 
-
-# Initialize the Flask application
-app = Flask(__name__)
-app.config.from_pyfile('config.py')
+# Import modules
+from dataserv.app2 import app, db
+from dataserv.Farmer import Farmer
 
 
 # Helper functions
@@ -65,7 +62,7 @@ def ping(btc_addr):
         msg = "Invalid BTC Address."
         return make_response(error_msg.format(msg), 400)
     except LookupError:
-        msg = "Farmer not found."
+        msg = "Farmer Not Found."
         return make_response(error_msg.format(msg), 404)
 
 
@@ -91,6 +88,46 @@ def online():
         output += text.format(farmer.btc_addr, last_seen, last_audit)
 
     return output
+
+
+@app.route('/api/contract/new/<btc_addr>', methods=["GET"])
+def new_contract(btc_addr):
+    # create Farmer object to represent user
+    user = Farmer(btc_addr)
+
+    # error template
+    error_msg = "Contract Failed: {0}"
+
+    # attempt to register the farmer/farming address
+    try:
+        contract_payload = user.new_contract()
+        return make_response(jsonify(contract_payload), 200)
+    except ValueError:
+        msg = "Invalid BTC Address."
+        return make_response(error_msg.format(msg), 400)
+    except LookupError:
+        msg = "Farmer Not Found."
+        return make_response(error_msg.format(msg), 404)
+    except MemoryError:
+        msg = "Contract Capacity Limit Reached."
+        return make_response(error_msg.format(msg), 413)
+
+
+@app.route('/api/contract/list/<btc_addr>', methods=["GET"])
+def list_contracts(btc_addr):
+    # create Farmer object to represent user
+    user = Farmer(btc_addr)
+
+    # attempt to register the farmer/farming address
+    try:
+        contract_payload = user.list_contracts()
+        return make_response(jsonify(contract_payload), 200)
+    except ValueError:
+        msg = "Invalid BTC Address."
+        return make_response(msg, 400)
+    except LookupError:
+        msg = "Farmer Not Found."
+        return make_response(msg, 404)
 
 
 if __name__ == '__main__':  # pragma: no cover

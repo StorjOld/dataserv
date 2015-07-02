@@ -1,13 +1,10 @@
 import unittest
+from dataserv.app import db
 from dataserv.Farmer import sha256
-from dataserv.Farmer import Farmer, db
+from dataserv.Farmer import Farmer
 
 
 class FarmerTest(unittest.TestCase):
-
-    # not working properly
-    SQLALCHEMY_DATABASE_URI = "sqlite://dataserv_test.db"
-    TESTING = True
 
     def setUp(self):
         db.create_all()
