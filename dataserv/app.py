@@ -128,7 +128,6 @@ def list_contracts(btc_addr):
     except LookupError:
         msg = "Farmer Not Found."
         return make_response(msg, 404)
-    # no contracts 204
 
 
 if __name__ == '__main__':  # pragma: no cover

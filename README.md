@@ -111,11 +111,11 @@ Success Example:
         Status Code: 200
         Text:
             {
-                "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc"
-                "contract-type": 0, 
-                "file_hash": "c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8",
-                "byte_size": 510,
-                "seed": "someseed"
+              "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc",
+              "byte_size": 10485760,
+              "contract_type": 0,
+              "file_hash": "d83c2384e8607e3f521eb00fa4866ceb6c8032983c31e8ab614d7bac5ff49475",
+              "seed": "102255e2105f2e6b4fe0579b"
             }
             
 Partial-Fail Example:
@@ -124,7 +124,7 @@ Generating state "0" contracts takes a little processing power on the node side.
 
     GET /api/contract/new/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
         Status Code: 102
-        Text: No available contracts. 
+        Text: Contract Failed: Contract Capacity Limit Reached.
             
 Fail Example:
 
@@ -150,19 +150,32 @@ Success Example:
         Status Code: 200
         Text:
             {
-                "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc"
-                "contracts": {
-                    {"file_hash": "c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8", "state": 0},
-                    {"file_hash": "85cd8077b4c5b306d74b6a77fe839d1bc6aecb221ab4b473134430b3a124197f", "state": 0},
+              "contracts": [
+                {
+                  "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc",
+                  "byte_size": 10485760,
+                  "contract_type": 0,
+                  "file_hash": "d83c2384e8607e3f521eb00fa4866ceb6c8032983c31e8ab614d7bac5ff49475",
+                  "seed": "102255e2105f2e6b4fe0579b"
+                },
+                {
+                  "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc",
+                  "byte_size": 10485760,
+                  "contract_type": 0,
+                  "file_hash": "cc5f1a89e3a07e6f5c03b4066382ef1514ca20a81f597ff72480ec999cdca9b1",
+                  "seed": "49ea747563eba1e51d824e50"
+                },
+                {
+                  "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc",
+                  "byte_size": 10485760,
+                  "contract_type": 0,
+                  "file_hash": "d6d360e3d1aebee804556203d18a728cf25695ceaf66bc3efe7ad6e997502c41",
+                  "seed": "08c339176c805439ca8a12d9"
                 }
+              ]
             }
             
 Fail Example:
-
-    GET /api/contract/list/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
-    RESPONSE: 
-        Status Code: 204
-        Text: No contracts.
 
     GET /api/contract/list/notvalidaddress/
     RESPONSE: 
