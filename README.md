@@ -185,33 +185,4 @@ Fail Example:
     GET /api/contract/list/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/
     RESPONSE:
         Status Code: 404
-        Text: Farmer not found.           
-
-# Client
-1. Download and install [Python 3.4](https://www.python.org/downloads/release/python-343/)
-2. Download the [client](https://github.com/Storj/dataserv/blob/master/tools/client.py)
-3. Run the script
-
-show programm help:
-
-    $ ./tools/client.py --help
-
-show command help:
-
-    $ ./tools/client.py <COMMAND> --help
-
-register address with default node:
-
-    $ ./tools/client.py register <YOUR_BITCOIN_ADDRESS>
-
-register address with custom node:
-
-    $ ./tools/client.py register <YOUR_BITCOIN_ADDRESS> --url=<FARMER_URL>
-
-continuously ping default node in 15 sec intervals:
-
-    $ ./tools/client.py poll <YOUR_BITCOIN_ADDRESS>
-
-continuously ping custom node in 15 sec intervals:
-
-    $ ./tools/client.py poll <YOUR_BITCOIN_ADDRESS> --url=<FARMER_URL>
+        Text: Farmer not found.
