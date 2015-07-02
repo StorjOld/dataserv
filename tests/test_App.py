@@ -162,4 +162,13 @@ class AppTest(unittest.TestCase):
         self.app.get('/api/contract/new/{0}'.format(addr))
 
         rv = self.app.get('/api/contract/list/{0}'.format(addr))
-        print(rv)
+
+    def test_list_contract_no_register(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        rv = self.app.get('/api/contract/list/{0}'.format(addr))
+        self.assertEqual(rv.status_code, 404)
+
+    def test_list_contract_no_bad_address(self):
+        addr = 'notvalidaddress'
+        rv = self.app.get('/api/contract/list/{0}'.format(addr))
+        self.assertEqual(rv.status_code, 400)

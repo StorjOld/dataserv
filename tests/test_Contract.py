@@ -62,3 +62,13 @@ class ContractTest(unittest.TestCase):
         app.config["BYTE_FARMER_MAX"] = 1024
         with self.assertRaises(MemoryError):
             con3.new_contract('b780bd4852b8c8a62859a50c', 1024)
+
+    def test_address_errors(self):
+        addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        addr2 = 'notvalidaddress'
+
+        con1 = Contract(addr1)
+        con2 = Contract(addr2)
+
+        self.assertRaises(LookupError, con1.new_contract('ba17da75c580a0749b6c3d32', 1024))
+        self.assertRaises(ValueError, con2.new_contract('ad797d10dc8e12e8553f370e', 1024))
