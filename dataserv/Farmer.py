@@ -22,10 +22,10 @@ class Farmer(db.Model):
     def __init__(self, btc_addr, last_seen=None, last_audit=None):
         """
         A farmer is a un-trusted client that provides some disk space
-        in exchange for payment.
+        in exchange for payment. We use this object to keep track of
+        farmers connected to this node.
 
         """
-
         self.btc_addr = btc_addr
         self.last_seen = last_seen
         self.last_audit = last_audit
@@ -34,6 +34,7 @@ class Farmer(db.Model):
         return '<Farmer BTC Address: %r>' % self.btc_addr
 
     def is_btc_address(self):
+        """Check if the address is a valid Bitcoin public key."""
         return is_btc_address(self.btc_addr)
 
     def validate(self, register=False):
@@ -48,10 +49,6 @@ class Farmer(db.Model):
 
     def register(self):
         """Add the farmer to the database."""
-
-        # Make sure the farmer is even a valid address.
-        # Later we will apply rule sets, like if the farmer has the
-        # correct SJCX balance, reputation, etc.
         self.validate(True)
 
         # If everything works correctly then commit to database.
@@ -64,6 +61,7 @@ class Farmer(db.Model):
         return query.filter(Farmer.btc_addr == self.btc_addr).count() > 0
 
     def lookup(self):
+        """Return the Farmer object for the bitcoin address passed."""
         self.validate()
         farmer = Farmer.query.filter_by(btc_addr=self.btc_addr).first()
         return farmer
@@ -83,6 +81,7 @@ class Farmer(db.Model):
         """
         Keep-alive for the farmer. Validation can take a long time, so
         we just want to know if they are still there.
+
         """
         self.update_time(True)
 
@@ -91,18 +90,21 @@ class Farmer(db.Model):
         """
         Complete a cryptographic audit of files stored on the farmer. If
         the farmer completes an audit we also update when we last saw them.
+
         """
         self.update_time(True, True)
 
     def new_contract(self, seed=None):
-        self.lookup()
+        """Generate a new contract for the farmer."""
+        self.validate()
 
         con = Contract(self.btc_addr)
         con.new_contract(seed)
         return con.to_json()
 
     def list_contracts(self):
-        self.lookup()
+        """List all current contracts for the farmer."""
+        self.validate()
 
         con = Contract(self.btc_addr)
         return con.list_contracts()

@@ -39,11 +39,11 @@ def register(btc_addr):
         user.register()
         return make_response("User registered.", 200)
     except ValueError:
-            msg = "Invalid BTC Address."
-            return make_response(error_msg.format(msg), 400)
+        msg = "Invalid BTC Address."
+        return make_response(error_msg.format(msg), 400)
     except LookupError:
-            msg = "Address Already Is Registered."
-            return make_response(error_msg.format(msg), 409)
+        msg = "Address Already Is Registered."
+        return make_response(error_msg.format(msg), 409)
 
 
 @app.route('/api/ping/<btc_addr>', methods=["GET"])
@@ -54,7 +54,7 @@ def ping(btc_addr):
     # error template
     error_msg = "Ping Failed: {0}"
 
-    # attempt to register the farmer/farming address
+    # attempt to ping the farmer/farming address
     try:
         user.ping()
         return make_response("Ping Accepted.", 200)
@@ -79,8 +79,9 @@ def online():
     # give us all farmers that have been around for the past online_time
     online_farmers = db.session.query(Farmer).filter(Farmer.last_seen > time_ago).all()
 
+    # this could be formatted a bit better, but we just want to publicly display
+    # that status of the farmers connected to the node
     output = ""
-
     for farmer in online_farmers:
         last_seen = secs_to_mins((current_time - farmer.last_seen).seconds)
         last_audit = secs_to_mins((current_time - farmer.last_audit).seconds)

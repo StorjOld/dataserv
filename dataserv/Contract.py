@@ -15,6 +15,7 @@ class Contract(db.Model):
     seed = db.Column(db.String(128), unique=True)
 
     def __init__(self, btc_addr):
+        """Contracts contain the file information for file objects to be stored by the Farmer."""
         self.btc_addr = btc_addr
 
     def to_json(self):
@@ -30,11 +31,15 @@ class Contract(db.Model):
         return contract_template
 
     def below_limit(self, limit=None):
-        current_size = 0
+        """Check if farmer is currently below the contract file size limit for the node."""
+        current_size = 0  # bytes
+
         contracts = Contract.query.filter_by(btc_addr=self.btc_addr).all()
+        # add up the file size for all the contracts registered to that farmer
         for single_contract in contracts:
             current_size += single_contract.byte_size
 
+        # use the node limit or a passed limit
         if limit is None:
             return current_size < app.config["BYTE_FARMER_MAX"]
         else:
@@ -61,18 +66,22 @@ class Contract(db.Model):
         else:
             self.byte_size = byte_size
 
+        # generate the file in memory, then get the file hash
         gen_file = RandomIO.RandomIO(seed).read(self.byte_size)
         self.file_hash = hashlib.sha256(gen_file).hexdigest()
 
         self.save()
 
     def save(self):
+        """Save the contract to the database."""
         db.session.add(self)
         db.session.commit()
 
     def list_contracts(self):
+        """List all the contracts for the farmer."""
         contracts = Contract.query.filter_by(btc_addr=self.btc_addr).all()
         json_contracts = []
+
         for contract in contracts:
             json_contracts.append(contract.to_json())
 
