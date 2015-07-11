@@ -70,6 +70,7 @@ class Contract(db.Model):
         gen_file = RandomIO.RandomIO(seed).read(self.byte_size)
         self.file_hash = hashlib.sha256(gen_file).hexdigest()
 
+        # save contract to db
         self.save()
 
     def save(self):
