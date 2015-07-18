@@ -1,40 +1,69 @@
-# dataserv
+########
+dataserv
+########
 
-[![Build Status](https://travis-ci.org/Storj/dataserv.svg?branch=master)](https://travis-ci.org/Storj/dataserv)
-[![Coverage Status](https://coveralls.io/repos/Storj/dataserv/badge.svg)](https://coveralls.io/r/Storj/dataserv)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/storj/dataserv/master/LICENSE)
-[![GitHub issues](https://img.shields.io/github/issues/storj/dataserv.svg)](https://github.com/storj/dataserv/issues)
 
-# What is this?
+|BuildLink|_ |CoverageLink|_ |LicenseLink|_ |IssuesLink|_
+
+
+.. |BuildLink| image:: https://travis-ci.org/Storj/dataserv.svg
+.. _BuildLink: https://travis-ci.org/Storj/dataserv
+
+.. |CoverageLink| image:: https://coveralls.io/repos/Storj/dataserv/badge.svg
+.. _CoverageLink: https://coveralls.io/r/Storj/dataserv
+
+.. |LicenseLink| image:: https://img.shields.io/badge/license-MIT-blue.svg
+.. _LicenseLink: https://raw.githubusercontent.com/Storj/dataserv
+
+.. |IssuesLink| image:: https://img.shields.io/github/issues/Storj/dataserv.svg
+.. _IssuesLink: https://github.com/Storj/dataserv
+
+
+#############
+What is this?
+#############
 
 Federated server for getting, pushing, and auditing data on untrusted nodes. Primarily used
-for capacity tests for [Test Group B](http://storj.io/earlyaccess), as well as federated
+for capacity tests for `Test Group B <http://storj.io/earlyaccess>`_ , as well as federated
 server based file transfer.
 
-# Setup
+#####
+Setup
+#####
+
 How to install and run on a clean install of Ubuntu 14.04 (LTS):
-```sh
-apt-get update
-apt-get upgrade
-apt-get install screen git python3 python-pip python-dev -y
-git clone https://github.com/Storj/dataserv
-cd dataserv
-python setup.py install
-cd dataserv
-touch dataserv.db
-python app.py
-```
 
-# API
+::
+
+    sh
+    apt-get update
+    apt-get upgrade
+    apt-get install screen git python3 python-pip python-dev -y
+    git clone https://github.com/Storj/dataserv
+    cd dataserv
+    python setup.py install
+    cd dataserv
+    touch dataserv.db
+    python app.py
+
+###
+API
+###
 
 
-### Registration
+Registration
+************
+
 Registration of farmers into the database. All farmers must register with the node before they
 can perform any other actions.
+
+::
 
     GET /api/register/<bitcoin address>/
 
 Success Example:
+
+::
 
     GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
     RESPONSE:
@@ -42,6 +71,8 @@ Success Example:
         Text: User registered.
 
 Fail Examples:
+
+::
 
     GET /api/register/notvalidaddress/
     RESPONSE:
@@ -53,13 +84,19 @@ Fail Examples:
         Status Code: 409
         Text: Registration Failed: Address Already Is Registered.
 
-### Ping-Pong
+Ping-Pong
+*********
+
 The farmer must maintain a rudimentary keep-alive with the node. This way we know if the farmer
 has gone offline, and that we should not issue more challenges.
+
+::
 
     GET /api/ping/<bitcoin address>/
 
 Success Example:
+
+::
 
     GET /api/ping/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
     RESPONSE:
@@ -67,6 +104,8 @@ Success Example:
        Text: Ping Accepted.
 
 Fail Examples:
+
+::
 
     GET /api/ping/notvalidaddress/
     RESPONSE:
@@ -78,15 +117,21 @@ Fail Examples:
         Status Code: 404
         Text: Ping Failed: Farmer not found.
 
-### Online Status
+Online Status
+*************
+
 This API call was build to be human readable rather than machine readable. We get a simple
 list of the all the farmers, their addresses, and when they did their last audit. We only
 display farmers that have done a ping in the last `online_time` minutes, which by default
 is 15 minutes.
 
+::
+
     GET /api/online/
 
 Success Examples:
+
+::
 
     GET /api/online/
     RESPONSE:
@@ -99,15 +144,21 @@ Success Examples:
             1CgLoZT1ZuSHPBp3H4rLTXJvEUDV3kK7QK | Last Seen: 13 second(s) | Last Audit: 11 hour(s)
             1QACy1Tx5JFzGDyPd8J3oU8SrjhkZkru4H | Last Seen: 14 second(s) | Last Audit: 11 hour(s)
 
-### New Contract
-Farmer want to get a new contract. We want to give them a "proof of capacity" contract, also known as a state "0" contract. 
- 
+New Contract
+************
+
+Farmer want to get a new contract. We want to give them a "proof of capacity" contract, also known as a state "0" contract.
+
+::
+
     GET /api/contract/new/<btc_address>
-    
+
 Success Example:
-    
+
+::
+
     GET /api/contract/new/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
-    RESPONSE: 
+    RESPONSE:
         Status Code: 200
         Text:
             {
@@ -117,36 +168,46 @@ Success Example:
               "file_hash": "d83c2384e8607e3f521eb00fa4866ceb6c8032983c31e8ab614d7bac5ff49475",
               "seed": "102255e2105f2e6b4fe0579b"
             }
-            
+
 Partial-Fail Example:
 
-Generating state "0" contracts takes a little processing power on the node side. We have to use [RandomIO](https://github.com/Storj/RandomIO) to first generate the file for ourselves. If the number of clients requesting data outstrips the nodes capacity to generate this data, you will get this error.
+Generating state "0" contracts takes a little processing power on the node side. We have to use `RandomIO <https://github.com/Storj/RandomIO>`_ to first generate the file for ourselves. If the number of clients requesting data outstrips the nodes capacity to generate this data, you will get this error.
+
+::
 
     GET /api/contract/new/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
         Status Code: 102
         Text: Contract Failed: Contract Capacity Limit Reached.
-            
+
 Fail Example:
 
+::
+
     GET /api/contract/new/notvalidaddress/
-    RESPONSE: 
-        Status Code: 400 
+    RESPONSE:
+        Status Code: 400
         Text: Contract Failed: Invalid BTC Address.
-    
+
     GET /api/contract/new/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/
     RESPONSE:
         Status Code: 404
         Text: Contract Failed: Farmer not found.
-        
-### List Contracts
+
+List Contracts
+**************
+
 We want to know what contracts the node thinks the node the farmer should be storing.
 
+::
+
     GET /api/contract/list/<btc_address>
-  
+
 Success Example:
 
+::
+
     GET /api/contract/list/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
-    RESPONSE: 
+    RESPONSE:
         Status Code: 200
         Text:
             {
@@ -174,14 +235,16 @@ Success Example:
                 }
               ]
             }
-            
+
 Fail Example:
 
+::
+
     GET /api/contract/list/notvalidaddress/
-    RESPONSE: 
-        Status Code: 400 
+    RESPONSE:
+        Status Code: 400
         Text: Invalid BTC Address.
-    
+
     GET /api/contract/list/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/
     RESPONSE:
         Status Code: 404
