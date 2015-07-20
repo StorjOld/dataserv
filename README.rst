@@ -6,7 +6,7 @@ dataserv
 |BuildLink|_ |CoverageLink|_ |LicenseLink|_ |IssuesLink|_
 
 
-.. |BuildLink| image:: https://travis-ci.org/Storj/dataserv.svg
+.. |BuildLink| image:: https://travis-ci.org/Storj/dataserv.svg?branch=master
 .. _BuildLink: https://travis-ci.org/Storj/dataserv
 
 .. |CoverageLink| image:: https://coveralls.io/repos/Storj/dataserv/badge.svg
