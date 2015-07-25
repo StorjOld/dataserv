@@ -1,9 +1,12 @@
-
-import os
 import hashlib
-import binascii
 import RandomIO
 from dataserv.run import app, db
+
+
+def sha256(content):
+    """Finds the sha256 hash of the content."""
+    content = content.encode('utf-8')
+    return hashlib.sha256(content).hexdigest()
 
 
 class Contract(db.Model):
@@ -29,6 +32,13 @@ class Contract(db.Model):
         }
 
         return contract_template
+
+    def build_seed(self, height):
+        """Deterministically build a seed."""
+        self.seed = sha256(self.btc_addr)
+        for i in range(height):
+            self.seed = sha256(self.seed)
+        return self.seed
 
     def below_limit(self, limit=None):
         """Check if farmer is currently below the contract file size limit for the node."""
@@ -60,8 +70,7 @@ class Contract(db.Model):
 
         # take in a seed, if not generate it ourselves
         if seed is None:
-            seed = os.urandom(12)
-            self.seed = binascii.hexlify(seed).decode('ascii')
+            self.build_seed(self.num_contracts())
         else:
             self.seed = seed
 

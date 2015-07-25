@@ -1,3 +1,4 @@
+from pprint import pprint
 import unittest
 from dataserv.app import db, app
 from dataserv.Contract import Contract
@@ -87,11 +88,29 @@ class ContractTest(unittest.TestCase):
         self.assertEqual(con.num_contracts(), 1)
 
         # should not create a new contract
-        con.new_contract()
-        self.assertEqual(con.num_contracts(), 1)
+        #con.new_contract()
+        #self.assertEqual(con.num_contracts(), 1)
 
         # create two new contracts
         Contract(addr).new_contract()
         Contract(addr).new_contract()
 
         self.assertEqual(con.num_contracts(), 3)
+
+    def test_seed(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        con = Contract(addr)
+
+        ans1 = '66357e60899acae95ce1e31def3d7b32a73d34b2f12ece73cdca025a26e17e32'
+        ans2 = 'd2ca029cecd360302709a2df5d3b02cc58930db5bf7cfa47d0f6743a98c5589a'
+
+        self.assertEqual(con.build_seed(0), ans1)
+        self.assertEqual(con.build_seed(2), ans2)
+
+        Contract(addr).new_contract()
+        Contract(addr).new_contract()
+        Contract(addr).new_contract()
+
+        contracts = con.list_contracts()
+        self.assertEqual(contracts['contracts'][0]['seed'], ans1)
+        self.assertEqual(contracts['contracts'][2]['seed'], ans2)
