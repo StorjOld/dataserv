@@ -45,6 +45,11 @@ class Contract(db.Model):
         else:
             return current_size < limit
 
+    def num_contracts(self):
+        """Give us the number of contracts in the database for a farmer."""
+        contracts = Contract.query.filter_by(btc_addr=self.btc_addr).all()
+        return len(contracts)
+
     def new_contract(self, seed=None, byte_size=None):
         """Build a new contract."""
         self.contract_type = 0

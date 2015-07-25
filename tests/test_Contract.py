@@ -72,3 +72,26 @@ class ContractTest(unittest.TestCase):
 
         self.assertRaises(LookupError, con1.new_contract('ba17da75c580a0749b6c3d32', 1024))
         self.assertRaises(ValueError, con2.new_contract('ad797d10dc8e12e8553f370e', 1024))
+
+    def test_num_contracts(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        con = Contract(addr)
+
+        # set config
+        app.config["BYTE_SIZE"] = 1024
+        app.config["BYTE_FARMER_MAX"] = 1024 * 10
+
+        self.assertEqual(con.num_contracts(), 0)
+
+        con.new_contract()
+        self.assertEqual(con.num_contracts(), 1)
+
+        # should not create a new contract
+        con.new_contract()
+        self.assertEqual(con.num_contracts(), 1)
+
+        # create two new contracts
+        Contract(addr).new_contract()
+        Contract(addr).new_contract()
+
+        self.assertEqual(con.num_contracts(), 3)
