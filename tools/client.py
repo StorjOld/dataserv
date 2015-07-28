@@ -1,9 +1,10 @@
 import hashlib
 import RandomIO
 
+
 # config vars
 address = "1CutsncbjcCtZKeRfvQ7bnYFVj28zeU6fo"
-byte_size = 1024*1024*10
+byte_size = 1024
 
 
 # lib functions

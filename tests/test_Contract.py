@@ -1,4 +1,3 @@
-from pprint import pprint
 import unittest
 from dataserv.app import db, app
 from dataserv.Contract import Contract
@@ -88,8 +87,8 @@ class ContractTest(unittest.TestCase):
         self.assertEqual(con.num_contracts(), 1)
 
         # should not create a new contract
-        #con.new_contract()
-        #self.assertEqual(con.num_contracts(), 1)
+        # con.new_contract()
+        # self.assertEqual(con.num_contracts(), 1)
 
         # create two new contracts
         Contract(addr).new_contract()

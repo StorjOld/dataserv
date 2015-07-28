@@ -1,4 +1,3 @@
-import json
 import unittest
 from dataserv.app import db
 from dataserv.Farmer import sha256
