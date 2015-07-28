@@ -4,8 +4,9 @@ import RandomIO
 
 # config vars
 address = "1CutsncbjcCtZKeRfvQ7bnYFVj28zeU6fo"
-byte_size = 1024
-
+store_path = "C://Farm/"
+shard_size = 1024*1024*128  # 128 MB
+max_size = 1024*1024*640  # 640 MB
 
 # lib functions
 def sha256(content):
@@ -23,21 +24,20 @@ def build_seed(height):
 
 
 # code stuff
-def build(x):
-    for i in range(x):
-        seed = build_seed(i)
-        print(seed)
+def build():
+    for shard_num in range(int(max_size/shard_size)):
+        seed = build_seed(shard_num)
 
         # get hash
-        gen_file = RandomIO.RandomIO(seed).read(byte_size)
+        gen_file = RandomIO.RandomIO(seed).read(shard_size)
         file_hash = hashlib.sha256(gen_file).hexdigest()
 
         # save it
-        RandomIO.RandomIO(seed).genfile(byte_size, 'tmp/'+file_hash)
+        RandomIO.RandomIO(seed).genfile(shard_size, store_path+file_hash)
 
-        print(file_hash)
-        print("")
+        # info
+        print("Saving seed {0} with SHA-256 hash {1}.".format(seed, file_hash))
 
 
-# run it
-build(5)
+if __name__ == "__main__":
+    build()
