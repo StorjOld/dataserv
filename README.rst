@@ -151,7 +151,7 @@ We want to know what contracts the node thinks the node the farmer should be sto
 
 ::
 
-    GET /api/contract/list/<btc_address>
+    GET /api/contract/list/<btc_address>/
 
 Success Example:
 
