@@ -7,7 +7,7 @@ import RandomIO
 my_address = "1CutsncbjcCtZKeRfvQ7bnYFVj28zeU6fo"
 my_store_path = "C://Farm/"
 my_shard_size = 1024*1024*128  # 128 MB
-my_max_size = 1024*1024*640  # 640 MB
+my_max_size = 1024*1024*1025  # 1 GB
 
 
 class Builder:
