@@ -4,10 +4,10 @@ import RandomIO
 
 
 # config vars
-my_address = "1CutsncbjcCtZKeRfvQ7bnYFVj28zeU6fo"
-my_store_path = "C://Farm/"
+my_address = "YOUR ADDRESS HERE"
+my_store_path = "YOUR ABSOLUTE PATH HERE"
 my_shard_size = 1024*1024*128  # 128 MB
-my_max_size = 1024*1024*1025  # 1 GB
+my_max_size = 1024*1024*1024  # 1 GB
 
 
 class Builder:
