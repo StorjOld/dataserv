@@ -174,3 +174,23 @@ class AppTest(unittest.TestCase):
         addr = 'notvalidaddress'
         rv = self.app.get('/api/contract/list/{0}'.format(addr))
         self.assertEqual(rv.status_code, 400)
+
+    def test_farmer_set_height(self):
+        addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        addr2 = 'notvalidaddress'
+
+        # not found
+        rv = self.app.get('/api/height/{0}/1'.format(addr1))
+        self.assertEqual(rv.status_code, 404)
+
+        # register farmer
+        self.app.get('/api/register/{0}'.format(addr1))
+
+        # correct
+        rv = self.app.get('/api/height/{0}/1'.format(addr1))
+        self.assertEqual(rv.status_code, 200)
+
+        # invalid btc address
+        rv = self.app.get('/api/height/{0}/1'.format(addr2))
+        self.assertEqual(rv.status_code, 400)
+
