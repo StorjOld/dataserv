@@ -200,3 +200,37 @@ Fail Example:
     RESPONSE:
         Status Code: 404
         Text: Farmer not found.
+
+
+Advertise Height
+****************
+
+Allows the user to let the node know how much space they have generated via the client side generation scheme.
+
+::
+
+    GET /api/height/<bitcoin address>/<height>/
+
+Success Example:
+
+::
+
+    GET /api/height/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/50/
+    RESPONSE:
+       Status Code: 200
+       Text: Height Accepted.
+
+Fail Examples:
+
+::
+
+    GET /api/height/notvalidaddress/50/
+    RESPONSE:
+        Status Code: 400
+        Text: Ping Failed: Invalid BTC Address.
+
+    GET /api/height/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/50/
+    RESPONSE:
+        Status Code: 404
+        Text: Ping Failed: Farmer not found.
+

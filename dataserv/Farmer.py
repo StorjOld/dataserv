@@ -19,6 +19,8 @@ class Farmer(db.Model):
     last_seen = db.Column(DateTime, default=datetime.utcnow)
     last_audit = db.Column(DateTime, default=datetime.utcnow)
 
+    height = db.Column(db.Integer, default=0)
+
     def __init__(self, btc_addr, last_seen=None, last_audit=None):
         """
         A farmer is a un-trusted client that provides some disk space
@@ -108,3 +110,12 @@ class Farmer(db.Model):
 
         con = Contract(self.btc_addr)
         return con.list_contracts()
+
+    def set_height(self, height):
+        """Set the farmers advertised height."""
+        self.validate()
+
+        self.height = height
+        db.session.commit()
+
+        return self.height

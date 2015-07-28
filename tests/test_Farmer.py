@@ -94,3 +94,11 @@ class FarmerTest(unittest.TestCase):
         ans = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
         self.assertEqual(sha256("storj"), ans)
         self.assertNotEqual(sha256("not storj"), ans)
+
+    def test_height(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        farmer = Farmer(addr)
+        farmer.register()
+
+        self.assertEqual(farmer.height, 0)
+        self.assertEqual(farmer.set_height(5), 5)

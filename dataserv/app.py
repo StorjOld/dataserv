@@ -130,6 +130,24 @@ def list_contracts(btc_addr):
         msg = "Farmer Not Found."
         return make_response(msg, 404)
 
+
+@app.route('/api/height/<btc_addr>/<int:height>', methods=["GET"])
+def set_height(btc_addr, height):
+    # create Farmer object to represent user
+    user = Farmer(btc_addr)
+
+    # attempt to set height
+    try:
+        user.set_height(height)
+        return make_response("Height Accepted.", 200)
+    except ValueError:
+        msg = "Invalid BTC Address."
+        return make_response(msg, 400)
+    except LookupError:
+        msg = "Farmer Not Found."
+        return make_response(msg, 404)
+
+
 if __name__ == '__main__':  # pragma: no cover
     # Create Database
     db.create_all()
