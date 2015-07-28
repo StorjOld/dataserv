@@ -84,9 +84,8 @@ def online():
     output = ""
     for farmer in online_farmers:
         last_seen = secs_to_mins((current_time - farmer.last_seen).seconds)
-        last_audit = secs_to_mins((current_time - farmer.last_audit).seconds)
-        text = "{0} |  Last Seen: {1} | Last Audit: {2}<br/>"
-        output += text.format(farmer.btc_addr, last_seen, last_audit)
+        text = "{0} |  Last Seen: {1} | Height: {2}<br/>"
+        output += text.format(farmer.btc_addr, last_seen, farmer.height)
 
     return output
 

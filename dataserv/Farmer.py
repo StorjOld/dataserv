@@ -17,11 +17,9 @@ class Farmer(db.Model):
     btc_addr = db.Column(db.String(35), unique=True)
 
     last_seen = db.Column(DateTime, default=datetime.utcnow)
-    last_audit = db.Column(DateTime, default=datetime.utcnow)
-
     height = db.Column(db.Integer, default=0)
 
-    def __init__(self, btc_addr, last_seen=None, last_audit=None):
+    def __init__(self, btc_addr, last_seen=None):
         """
         A farmer is a un-trusted client that provides some disk space
         in exchange for payment. We use this object to keep track of
@@ -30,7 +28,6 @@ class Farmer(db.Model):
         """
         self.btc_addr = btc_addr
         self.last_seen = last_seen
-        self.last_audit = last_audit
 
     def __repr__(self):
         return '<Farmer BTC Address: %r>' % self.btc_addr
@@ -68,24 +65,15 @@ class Farmer(db.Model):
         farmer = Farmer.query.filter_by(btc_addr=self.btc_addr).first()
         return farmer
 
-    def update_time(self, ping=False, audit=False):
-        """Update last_seen and last_audit for each farmer."""
-        farmer = self.lookup()
-
-        now = datetime.utcnow()
-        if ping:
-            farmer.last_seen = now
-        if audit:
-            farmer.last_audit = now
-        db.session.commit()
-
     def ping(self):
         """
         Keep-alive for the farmer. Validation can take a long time, so
         we just want to know if they are still there.
 
         """
-        self.update_time(True)
+        farmer = self.lookup()
+        farmer.last_seen = datetime.utcnow()
+        db.session.commit()
 
     # TODO: Actually do an audit.
     def audit(self):
@@ -94,7 +82,7 @@ class Farmer(db.Model):
         the farmer completes an audit we also update when we last saw them.
 
         """
-        self.update_time(True, True)
+        self.ping()
 
     def new_contract(self, seed=None):
         """Generate a new contract for the farmer."""
