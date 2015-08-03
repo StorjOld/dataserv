@@ -30,14 +30,14 @@ class AppTest(unittest.TestCase):
 
         # duplicate registration
         rv = self.app.get('/api/register/{0}'.format(addr))
-        self.assertEqual(b"Registration Failed: Address Already Is Registered.", rv.data)
+        self.assertEqual(b"Registration Failed: Address already is registered.", rv.data)
         self.assertEqual(rv.status_code, 409)
 
     def test_register_invalid(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc_this_is_not_an_address'
         rv = self.app.get('/api/register/{0}'.format(addr))
 
-        self.assertEqual(b"Registration Failed: Invalid BTC Address.", rv.data)
+        self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
     # ping call
@@ -53,7 +53,7 @@ class AppTest(unittest.TestCase):
         rv = self.app.get('/api/ping/{0}'.format(addr))
 
         # good ping
-        self.assertEqual(b"Ping Accepted.", rv.data)
+        self.assertEqual(b"Ping accepted.", rv.data)
         self.assertEqual(rv.status_code, 200)
 
     def test_ping_not_found(self):
@@ -64,7 +64,7 @@ class AppTest(unittest.TestCase):
         rv = self.app.get('/api/ping/{0}'.format(addr))
 
         # good ping
-        self.assertEqual(b"Ping Failed: Farmer Not Found.", rv.data)
+        self.assertEqual(b"Ping Failed: Farmer not found.", rv.data)
         self.assertEqual(rv.status_code, 404)
 
     def test_ping_invalid_address(self):
@@ -74,7 +74,7 @@ class AppTest(unittest.TestCase):
         rv = self.app.get('/api/ping/{0}'.format(addr))
 
         # good ping
-        self.assertEqual(b"Ping Failed: Invalid BTC Address.", rv.data)
+        self.assertEqual(b"Ping Failed: Invalid Bitcoin address.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
     # time helper

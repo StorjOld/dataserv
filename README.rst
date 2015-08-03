@@ -82,7 +82,7 @@ Fail Examples:
     GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
     RESPONSE:
         Status Code: 409
-        Text: Registration Failed: Address Already Is Registered.
+        Text: Registration failed: Address already is registered.
 
 Ping-Pong
 *********
@@ -101,7 +101,7 @@ Success Example:
     GET /api/ping/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
     RESPONSE:
        Status Code: 200
-       Text: Ping Accepted.
+       Text: Ping accepted.
 
 Fail Examples:
 
@@ -110,7 +110,7 @@ Fail Examples:
     GET /api/ping/notvalidaddress/
     RESPONSE:
         Status Code: 400
-        Text: Ping Failed: Invalid BTC Address.
+        Text: Ping failed: Invalid Bitcoin address.
 
     GET /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/
     RESPONSE:
@@ -129,7 +129,7 @@ is 15 minutes.
 
     GET /api/online/
 
-Success Examples:
+Success Example:
 
 ::
 
@@ -161,7 +161,7 @@ Success Example:
     GET /api/height/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/50/
     RESPONSE:
        Status Code: 200
-       Text: Height Accepted.
+       Text: Height accepted.
 
 Fail Examples:
 
@@ -170,7 +170,7 @@ Fail Examples:
     GET /api/height/notvalidaddress/50/
     RESPONSE:
         Status Code: 400
-        Text: Ping Failed: Invalid BTC Address.
+        Text: Ping Failed: Invalid Bitcoin address.
 
     GET /api/height/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/50/
     RESPONSE:

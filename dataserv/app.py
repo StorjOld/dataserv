@@ -39,10 +39,10 @@ def register(btc_addr):
         user.register()
         return make_response("User registered.", 200)
     except ValueError:
-        msg = "Invalid BTC Address."
+        msg = "Invalid Bitcoin address."
         return make_response(error_msg.format(msg), 400)
     except LookupError:
-        msg = "Address Already Is Registered."
+        msg = "Address already is registered."
         return make_response(error_msg.format(msg), 409)
 
 
@@ -57,12 +57,12 @@ def ping(btc_addr):
     # attempt to ping the farmer/farming address
     try:
         user.ping()
-        return make_response("Ping Accepted.", 200)
+        return make_response("Ping accepted.", 200)
     except ValueError:
-        msg = "Invalid BTC Address."
+        msg = "Invalid Bitcoin address."
         return make_response(error_msg.format(msg), 400)
     except LookupError:
-        msg = "Farmer Not Found."
+        msg = "Farmer not found."
         return make_response(error_msg.format(msg), 404)
 
 
@@ -98,12 +98,12 @@ def set_height(btc_addr, height):
     # attempt to set height
     try:
         user.set_height(height)
-        return make_response("Height Accepted.", 200)
+        return make_response("Height accepted.", 200)
     except ValueError:
-        msg = "Invalid BTC Address."
+        msg = "Invalid Bitcoin address."
         return make_response(msg, 400)
     except LookupError:
-        msg = "Farmer Not Found."
+        msg = "Farmer not found."
         return make_response(msg, 404)
 
 
