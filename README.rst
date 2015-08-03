@@ -144,63 +144,6 @@ Success Examples:
             1CgLoZT1ZuSHPBp3H4rLTXJvEUDV3kK7QK | Last Seen: 13 second(s) | Height: 245
             1QACy1Tx5JFzGDyPd8J3oU8SrjhkZkru4H | Last Seen: 14 second(s) | Height: 88
 
-List Contracts
-**************
-
-We want to know what contracts the node thinks the node the farmer should be storing.
-
-::
-
-    GET /api/contract/list/<btc_address>/
-
-Success Example:
-
-::
-
-    GET /api/contract/list/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
-    RESPONSE:
-        Status Code: 200
-        Text:
-            {
-              "contracts": [
-                {
-                  "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc",
-                  "byte_size": 10485760,
-                  "contract_type": 0,
-                  "file_hash": "d83c2384e8607e3f521eb00fa4866ceb6c8032983c31e8ab614d7bac5ff49475",
-                  "seed": "102255e2105f2e6b4fe0579b"
-                },
-                {
-                  "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc",
-                  "byte_size": 10485760,
-                  "contract_type": 0,
-                  "file_hash": "cc5f1a89e3a07e6f5c03b4066382ef1514ca20a81f597ff72480ec999cdca9b1",
-                  "seed": "49ea747563eba1e51d824e50"
-                },
-                {
-                  "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc",
-                  "byte_size": 10485760,
-                  "contract_type": 0,
-                  "file_hash": "d6d360e3d1aebee804556203d18a728cf25695ceaf66bc3efe7ad6e997502c41",
-                  "seed": "08c339176c805439ca8a12d9"
-                }
-              ]
-            }
-
-Fail Example:
-
-::
-
-    GET /api/contract/list/notvalidaddress/
-    RESPONSE:
-        Status Code: 400
-        Text: Invalid BTC Address.
-
-    GET /api/contract/list/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/
-    RESPONSE:
-        Status Code: 404
-        Text: Farmer not found.
-
 
 Advertise Height
 ****************
