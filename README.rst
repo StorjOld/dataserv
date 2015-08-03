@@ -61,7 +61,7 @@ can perform any other actions.
 
     GET /api/register/<bitcoin address>/
 
-*Success Example:*
+Success Example:
 
 ::
 
@@ -70,7 +70,7 @@ can perform any other actions.
         Status Code: 200
         Text: User registered.
 
-*Fail Examples:*
+Fail Examples:
 
 ::
 
@@ -94,7 +94,7 @@ has gone offline, and that we should not issue more challenges.
 
     GET /api/ping/<bitcoin address>/
 
-*Success Example:*
+Success Example:
 
 ::
 
@@ -103,7 +103,7 @@ has gone offline, and that we should not issue more challenges.
        Status Code: 200
        Text: Ping accepted.
 
-*Fail Examples:*
+Fail Examples:
 
 ::
 
@@ -129,7 +129,7 @@ is 15 minutes.
 
     GET /api/online/
 
-*Success Example:*
+Success Example:
 
 ::
 
@@ -154,7 +154,7 @@ Allows the user to let the node know how much space they have generated via the 
 
     GET /api/height/<bitcoin address>/<height>/
 
-*Success Example:*
+Success Example:
 
 ::
 
@@ -163,7 +163,7 @@ Allows the user to let the node know how much space they have generated via the 
        Status Code: 200
        Text: Height accepted.
 
-*Fail Examples:*
+Fail Examples:
 
 ::
 
