@@ -2,7 +2,6 @@ import hashlib
 from dataserv.run import db
 from datetime import datetime
 from sqlalchemy import DateTime
-from dataserv.Contract import Contract
 from dataserv.Validator import is_btc_address
 
 
@@ -83,21 +82,6 @@ class Farmer(db.Model):
 
         """
         self.ping()
-
-    def new_contract(self, seed=None):
-        """Generate a new contract for the farmer."""
-        self.validate()
-
-        con = Contract(self.btc_addr)
-        con.new_contract(seed)
-        return con.to_json()
-
-    def list_contracts(self):
-        """List all current contracts for the farmer."""
-        self.validate()
-
-        con = Contract(self.btc_addr)
-        return con.list_contracts()
 
     def set_height(self, height):
         """Set the farmers advertised height."""
