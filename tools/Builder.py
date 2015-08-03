@@ -1,13 +1,15 @@
 import os
 import hashlib
+import binascii
 import RandomIO
+import partialhash
 
 
 # config vars
-my_address = "YOUR ADDRESS HERE"
-my_store_path = "YOUR ABSOLUTE PATH HERE"
+my_address = "1CutsncbjcCtZKeRfvQ7bnYFVj28zeU6fo"
+my_store_path = "C:\\Farm\\"
 my_shard_size = 1024*1024*128  # 128 MB
-my_max_size = 1024*1024*1024  # 1 GB
+my_max_size = 1024*1024*1024  # 1024 MB
 
 
 class Builder:
@@ -33,9 +35,9 @@ class Builder:
         """Save a shard, and return its SHA-256 hash."""
         tmp_file = RandomIO.RandomIO(seed).read(self.shard_size)  # temporarily generate file
         file_hash = hashlib.sha256(tmp_file).hexdigest()  # get SHA-256 hash
-        RandomIO.RandomIO(seed).genfile(self.shard_size, store_path+file_hash)  # save the shard
+        RandomIO.RandomIO(seed).genfile(self.shard_size, store_path+seed)  # save the shard
         if cleanup:
-            os.remove(store_path+file_hash)
+            os.remove(store_path+seed)
         return file_hash
 
     def build(self, store_path, debug=False, cleanup=False):
@@ -47,7 +49,15 @@ class Builder:
             if debug:
                 print("Saving seed {0} with SHA-256 hash {1}.".format(seed, file_hash))
 
+    def challenge(self, seed, height):
+        for i in range(height):
+            seed_data = self.build_seed(i)
+            seed_path = my_store_path + seed_data
+            digest = partialhash.sample(seed_path, 1024, sample_count=3, seed=seed)
+            print(binascii.hexlify(digest))
+
 
 if __name__ == "__main__":  # pragma: no cover
     bucket = Builder(my_address, my_shard_size, my_max_size)
-    bucket.build(my_store_path, True)
+    #bucket.build(my_store_path, True)
+    bucket.challenge(b"test",10)
