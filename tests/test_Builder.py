@@ -11,7 +11,7 @@ class BuilderTest(unittest.TestCase):
         my_max_size = 1024*1024*256  # 256 MB
 
         bucket = Builder(my_address, my_shard_size, my_max_size)
-        bucket.build(my_store_path, False, True)
+        bucket.build(my_store_path, True, True)
 
     def test_generate(self):
         my_address = "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc"
