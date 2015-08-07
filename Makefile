@@ -26,7 +26,7 @@ devsetup: clean
 	@env/py3/bin/python setup.py develop
 
 
-test:
+test: devsetup
 	env/py2/bin/python setup.py test
 	env/py3/bin/python setup.py test
 	# import pudb; pu.db # set break point
