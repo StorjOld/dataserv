@@ -96,3 +96,7 @@ class FarmerTest(unittest.TestCase):
 
         self.assertEqual(farmer.height, 0)
         self.assertEqual(farmer.set_height(5), 5)
+        self.assertEqual(farmer.height, 5)
+
+        farmer2 = farmer.lookup()
+        self.assertEqual(farmer2.height, 5)
