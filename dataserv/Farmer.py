@@ -87,7 +87,8 @@ class Farmer(db.Model):
         """Set the farmers advertised height."""
         self.validate()
 
-        self.height = height
+        farmer = self.lookup()
+        farmer.height = height
         db.session.commit()
 
         return self.height

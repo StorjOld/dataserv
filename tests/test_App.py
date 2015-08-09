@@ -117,10 +117,14 @@ class AppTest(unittest.TestCase):
         self.app.get('/api/register/{0}'.format(addr1))
 
         # correct
-        rv = self.app.get('/api/height/{0}/1'.format(addr1))
+        rv = self.app.get('/api/height/{0}/5'.format(addr1))
         self.assertEqual(rv.status_code, 200)
+        rv = self.app.get('/api/online'.format(addr1))
+        self.assertTrue(b"Height: 5" in rv.data)
 
         # invalid btc address
         rv = self.app.get('/api/height/{0}/1'.format(addr2))
         self.assertEqual(rv.status_code, 400)
+
+
 
