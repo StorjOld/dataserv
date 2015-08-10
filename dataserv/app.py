@@ -104,6 +104,11 @@ def total():
     # return in TB the number
     app.config["BYTE_SIZE"] = 1024*1024*128
     result = total_shards * (app.config["BYTE_SIZE"] / (1024*1024*1024*1024))  # 1 TB
+
+    print(total_shards)
+    print(app.config["BYTE_SIZE"])
+    print(app.config["BYTE_SIZE"] / (1024*1024*1024*1024))
+
     return "{0} TB".format(round(result,2))
 
 
