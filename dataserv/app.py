@@ -1,9 +1,11 @@
+# Python 2 Fix
+from __future__ import division
+
 import sys
 import os.path
 import datetime
 from flask import make_response
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
 
 # Import modules
 from dataserv.run import app, db
@@ -103,11 +105,7 @@ def total():
 
     # return in TB the number
     app.config["BYTE_SIZE"] = 1024*1024*128
-    ratio = float(app.config["BYTE_SIZE"] / (1024*1024*1024*1024))  # bytes / 1 TB
-    result = float(total_shards * ratio)
-
-    print(ratio)
-    print(result)
+    result = total_shards * (app.config["BYTE_SIZE"] / (1024*1024*1024*1024))  # bytes / 1 TB
 
     return "{0} TB".format(round(result,2))
 
