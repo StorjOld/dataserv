@@ -147,10 +147,7 @@ Success Example:
 Total Bytes
 ***********
 
-This API call was build to be human readable rather than machine readable. We get a simple
-list of the all the farmers, their addresses, their advertised height. We only
-display farmers that have done a ping in the last `online_time` minutes, which by default
-is 15 minutes.
+Get the total number of terabytes currently being managed by the node.
 
 ::
 
@@ -160,16 +157,10 @@ Success Example:
 
 ::
 
-    GET /api/online
+    GET /api/total
     RESPONSE:
         Status Code: 200
-        Text:
-            1NeV1z5BMmFpCXgotwVeZjuN5k124W76MA | Last Seen: 14 second(s) | Height: 10
-            137x69jwmcyy4mYCBtQUVoxa21p9Fxyss5 | Last Seen: 7 second(s) | Height: 6234
-            14wLMb2A9APqrdXJhTQArYLyivmEAf7Y1r | Last Seen: 10 second(s) | Height: 431
-            18RZNu2nxTdeNyuDCwAMq8aBpgC3FFERPp | Last Seen: 3 second(s) | Height: 7634
-            1CgLoZT1ZuSHPBp3H4rLTXJvEUDV3kK7QK | Last Seen: 13 second(s) | Height: 245
-            1QACy1Tx5JFzGDyPd8J3oU8SrjhkZkru4H | Last Seen: 14 second(s) | Height: 88
+        Text: 35 TB
 
 Advertise Height
 ****************

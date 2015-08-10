@@ -19,6 +19,18 @@ def secs_to_mins(seconds):
     else:
         return "{0} hour(s)".format(int(seconds/3600))
 
+def online_farmers():
+    # maximum number of minutes since the last check in for
+    # the farmer to be considered an online farmer
+    online_time = app.config["ONLINE_TIME"]
+
+    # find the time object online_time minutes in the past
+    current_time = datetime.datetime.utcnow()
+    time_ago = current_time - datetime.timedelta(minutes=online_time)
+
+    # give us all farmers that have been around for the past online_time
+    return db.session.query(Farmer).filter(Farmer.last_seen > time_ago).all()
+
 
 # Routes
 @app.route('/')
@@ -68,26 +80,31 @@ def ping(btc_addr):
 
 @app.route('/api/online', methods=["GET"])
 def online():
-    # maximum number of minutes since the last check in for
-    # the farmer to be considered an online farmer
-    online_time = app.config["ONLINE_TIME"]
-
-    # find the time object online_time minutes in the past
-    current_time = datetime.datetime.utcnow()
-    time_ago = current_time - datetime.timedelta(minutes=online_time)
-
-    # give us all farmers that have been around for the past online_time
-    online_farmers = db.session.query(Farmer).filter(Farmer.last_seen > time_ago).all()
-
     # this could be formatted a bit better, but we just want to publicly display
     # that status of the farmers connected to the node
     output = ""
-    for farmer in online_farmers:
+    current_time = datetime.datetime.utcnow()
+
+    for farmer in online_farmers():
         last_seen = secs_to_mins((current_time - farmer.last_seen).seconds)
         text = "{0} |  Last Seen: {1} | Height: {2}<br/>"
         output += text.format(farmer.btc_addr, last_seen, farmer.height)
 
     return output
+
+
+@app.route('/api/total', methods=["GET"])
+def total():
+    total_shards = 0
+
+    # add up number of shards
+    for farmer in online_farmers():
+        total_shards += farmer.height
+
+    # return in TB the number
+    app.config["BYTE_SIZE"] = 1024*1024*128
+    result = total_shards * (app.config["BYTE_SIZE"] / (1024*1024*1024*1024))  # 1 TB
+    return "{0} TB".format(round(result,2))
 
 
 @app.route('/api/height/<btc_addr>/<int:height>', methods=["GET"])
