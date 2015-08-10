@@ -126,5 +126,31 @@ class AppTest(unittest.TestCase):
         rv = self.app.get('/api/height/{0}/1'.format(addr2))
         self.assertEqual(rv.status_code, 400)
 
+    def test_farmer_total_bytes(self):
+        addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        addr2 = '18c2qnUAfgF3UnJCjAz2rpWQph5xugEfkr'
+        addr3 = '1NqtfdHe3X6rqHRQjsGq5CT9LYYjTFJ1qD'
+        addr4 = '1JnaPB29Un3FBSf3e4Jzabwi1ekeKoh1Gr'
 
+        # register farmers
+        self.app.get('/api/register/{0}'.format(addr1))
+        self.app.get('/api/register/{0}'.format(addr2))
+        self.app.get('/api/register/{0}'.format(addr3))
+        self.app.get('/api/register/{0}'.format(addr4))
 
+        # set height
+        self.app.get('/api/height/{0}/{1}'.format(addr1, 0))
+        self.app.get('/api/height/{0}/{1}'.format(addr2, 2475))
+        self.app.get('/api/height/{0}/{1}'.format(addr3, 2525))
+        self.app.get('/api/height/{0}/{1}'.format(addr4, 5000))
+
+        # check online
+        rv = self.app.get('/api/online')
+        self.assertTrue(b"Height: 0" in rv.data)
+        self.assertTrue(b"Height: 2475" in rv.data)
+        self.assertTrue(b"Height: 2525" in rv.data)
+        self.assertTrue(b"Height: 5000" in rv.data)
+
+        # check total bytes
+        rv = self.app.get('/api/total')
+        self.assertEqual(b"1.22 TB", rv.data)

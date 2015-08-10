@@ -59,13 +59,13 @@ can perform any other actions.
 
 ::
 
-    GET /api/register/<bitcoin address>/
+    GET /api/register/<bitcoin address>
 
 Success Example:
 
 ::
 
-    GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
+    GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc
     RESPONSE:
         Status Code: 200
         Text: User registered.
@@ -74,12 +74,12 @@ Fail Examples:
 
 ::
 
-    GET /api/register/notvalidaddress/
+    GET /api/register/notvalidaddress
     RESPONSE:
         Status Code: 400
         Text: Registration Failed: Invalid BTC Address.
 
-    GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
+    GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc
     RESPONSE:
         Status Code: 409
         Text: Registration failed: Address already is registered.
@@ -92,13 +92,13 @@ has gone offline, and that we should not issue more challenges.
 
 ::
 
-    GET /api/ping/<bitcoin address>/
+    GET /api/ping/<bitcoin address>
 
 Success Example:
 
 ::
 
-    GET /api/ping/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/
+    GET /api/ping/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc
     RESPONSE:
        Status Code: 200
        Text: Ping accepted.
@@ -107,12 +107,12 @@ Fail Examples:
 
 ::
 
-    GET /api/ping/notvalidaddress/
+    GET /api/ping/notvalidaddress
     RESPONSE:
         Status Code: 400
         Text: Ping failed: Invalid Bitcoin address.
 
-    GET /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/
+    GET /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd
     RESPONSE:
         Status Code: 404
         Text: Ping Failed: Farmer not found.
@@ -127,13 +127,13 @@ is 15 minutes.
 
 ::
 
-    GET /api/online/
+    GET /api/online
 
 Success Example:
 
 ::
 
-    GET /api/online/
+    GET /api/online
     RESPONSE:
         Status Code: 200
         Text:
@@ -144,6 +144,23 @@ Success Example:
             1CgLoZT1ZuSHPBp3H4rLTXJvEUDV3kK7QK | Last Seen: 13 second(s) | Height: 245
             1QACy1Tx5JFzGDyPd8J3oU8SrjhkZkru4H | Last Seen: 14 second(s) | Height: 88
 
+Total Bytes
+***********
+
+Get the total number of terabytes currently being managed by the node.
+
+::
+
+    GET /api/total
+
+Success Example:
+
+::
+
+    GET /api/total
+    RESPONSE:
+        Status Code: 200
+        Text: 35 TB
 
 Advertise Height
 ****************
@@ -152,13 +169,13 @@ Allows the user to let the node know how much space they have generated via the 
 
 ::
 
-    GET /api/height/<bitcoin address>/<height>/
+    GET /api/height/<bitcoin address>/<height>
 
 Success Example:
 
 ::
 
-    GET /api/height/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/50/
+    GET /api/height/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/50
     RESPONSE:
        Status Code: 200
        Text: Height accepted.
@@ -167,12 +184,12 @@ Fail Examples:
 
 ::
 
-    GET /api/height/notvalidaddress/50/
+    GET /api/height/notvalidaddress/50
     RESPONSE:
         Status Code: 400
         Text: Ping Failed: Invalid Bitcoin address.
 
-    GET /api/height/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/50/
+    GET /api/height/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/50
     RESPONSE:
         Status Code: 404
         Text: Ping Failed: Farmer not found.
