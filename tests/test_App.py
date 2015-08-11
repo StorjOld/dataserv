@@ -5,7 +5,7 @@ from dataserv.app import secs_to_mins
 
 class AppTest(unittest.TestCase):
 
-    # setup and tear down
+    # setup
     def setUp(self):
         self.app = app.test_client()
         db.create_all()
@@ -33,10 +33,11 @@ class AppTest(unittest.TestCase):
         self.assertEqual(b"Registration Failed: Address already is registered.", rv.data)
         self.assertEqual(rv.status_code, 409)
 
-    def test_register_invalid(self):
+    def test_register_invalid_address(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc_this_is_not_an_address'
         rv = self.app.get('/api/register/{0}'.format(addr))
 
+        # invalid address
         self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
@@ -79,7 +80,6 @@ class AppTest(unittest.TestCase):
 
     # time helper
     def test_helper_time(self):
-
         time1 = 15
         time2 = 75
         time3 = 4000
@@ -102,6 +102,7 @@ class AppTest(unittest.TestCase):
 
         # get online data
         rv = self.app.get('/api/online')
+
         # see if that address is in the online status
         self.assertTrue(addr in str(rv.data))
 
