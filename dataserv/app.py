@@ -21,6 +21,7 @@ def secs_to_mins(seconds):
     else:
         return "{0} hour(s)".format(int(seconds/3600))
 
+
 def online_farmers():
     # maximum number of minutes since the last check in for
     # the farmer to be considered an online farmer
@@ -107,7 +108,7 @@ def total():
     app.config["BYTE_SIZE"] = 1024*1024*128
     result = total_shards * (app.config["BYTE_SIZE"] / (1024*1024*1024*1024))  # bytes / 1 TB
 
-    return "{0} TB".format(round(result,2))
+    return "{0} TB".format(round(result, 2))
 
 
 @app.route('/api/height/<btc_addr>/<int:height>', methods=["GET"])
