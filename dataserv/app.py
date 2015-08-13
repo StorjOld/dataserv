@@ -33,7 +33,7 @@ def online_farmers():
     time_ago = current_time - datetime.timedelta(minutes=online_time)
 
     # give us all farmers that have been around for the past online_time
-    return db.session.query(Farmer).filter(Farmer.last_seen > time_ago).all()
+    return db.session.query(Farmer).filter(Farmer.last_seen > time_ago).order_by(Farmer.height).all()
 
 
 # Routes
