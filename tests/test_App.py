@@ -154,6 +154,6 @@ class AppTest(unittest.TestCase):
 
         # check total bytes
         rv = self.app.get('/api/total')
-        json_data =  b'{\n  "total_TB": 1.22\n}'
+        json_data =  b'"total_TB": 1.22\n}'
 
-        self.assertEqual(json_data, rv.data)
+        self.assertTrue(json_data in  rv.data)
