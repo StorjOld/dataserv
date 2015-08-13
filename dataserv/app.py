@@ -4,7 +4,7 @@ from __future__ import division
 import sys
 import os.path
 import datetime
-from flask import make_response
+from flask import make_response, jsonify
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # Import modules
@@ -107,8 +107,9 @@ def total():
     # return in TB the number
     app.config["BYTE_SIZE"] = 1024*1024*128
     result = total_shards * (app.config["BYTE_SIZE"] / (1024*1024*1024*1024))  # bytes / 1 TB
+    json_data = {'total_TB': round(result, 2)}
 
-    return "{0} TB".format(round(result, 2))
+    return jsonify(json_data)
 
 
 @app.route('/api/height/<btc_addr>/<int:height>', methods=["GET"])
