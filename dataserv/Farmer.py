@@ -87,6 +87,7 @@ class Farmer(db.Model):
         """Set the farmers advertised height."""
         self.validate()
 
+        self.ping()  # also serves as a valid ping
         farmer = self.lookup()
         farmer.height = height
         db.session.commit()
