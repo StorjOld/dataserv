@@ -87,7 +87,6 @@ def online():
     # that status of the farmers connected to the node
     output = ""
     current_time = datetime.datetime.utcnow()
-    total_height = 0
     text = "{0} |  Last Seen: {1} | Height: {2}<br/>"
 
     for farmer in online_farmers():
