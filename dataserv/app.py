@@ -88,10 +88,10 @@ def online():
     # that status of the farmers connected to the node
     output = ""
     current_time = datetime.datetime.utcnow()
+    text = "{0} |  Last Seen: {1} | Height: {2}<br/>"
 
     for farmer in online_farmers():
         last_seen = secs_to_mins((current_time - farmer.last_seen).seconds)
-        text = "{0} |  Last Seen: {1} | Height: {2}<br/>"
         output += text.format(farmer.btc_addr, last_seen, farmer.height)
 
     return output
