@@ -89,14 +89,11 @@ def online():
     current_time = datetime.datetime.utcnow()
     total_height = 0
     text = "{0} |  Last Seen: {1} | Height: {2}<br/>"
-    total_text = "{0} Total Height<br/>"
 
     for farmer in online_farmers():
         last_seen = secs_to_mins((current_time - farmer.last_seen).seconds)
         output += text.format(farmer.btc_addr, last_seen, farmer.height)
-        total_height += farmer.height
-    
-    output += total_text.format(total_height)
+
     return output
 
 
