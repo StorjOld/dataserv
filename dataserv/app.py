@@ -9,6 +9,7 @@ from flask import make_response, jsonify
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # Import modules
+from sqlalchemy import desc
 from dataserv.run import app, db
 from dataserv.Farmer import Farmer
 
@@ -33,7 +34,7 @@ def online_farmers():
     time_ago = current_time - datetime.timedelta(minutes=online_time)
 
     # give us all farmers that have been around for the past online_time
-    return db.session.query(Farmer).filter(Farmer.last_seen > time_ago).order_by(Farmer.height).all()
+    return db.session.query(Farmer).filter(Farmer.last_seen > time_ago).order_by(desc(Farmer.height)).all()
 
 
 # Routes

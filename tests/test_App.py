@@ -1,6 +1,6 @@
 import unittest
 from dataserv.run import app, db
-from dataserv.app import secs_to_mins
+from dataserv.app import secs_to_mins, online_farmers
 
 
 class AppTest(unittest.TestCase):
@@ -157,3 +157,31 @@ class AppTest(unittest.TestCase):
         json_data =  b'"total_TB": 1.22\n}'
 
         self.assertTrue(json_data in  rv.data)
+
+    def test_farmer_order(self):
+        addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        addr2 = '18c2qnUAfgF3UnJCjAz2rpWQph5xugEfkr'
+        addr3 = '1NqtfdHe3X6rqHRQjsGq5CT9LYYjTFJ1qD'
+
+        # register farmers
+        self.app.get('/api/register/{0}'.format(addr1))
+        self.app.get('/api/register/{0}'.format(addr2))
+        self.app.get('/api/register/{0}'.format(addr3))
+
+        # set height
+        self.app.get('/api/height/{0}/{1}'.format(addr1, 0))
+        self.app.get('/api/height/{0}/{1}'.format(addr2, 2475))
+        self.app.get('/api/height/{0}/{1}'.format(addr3, 2525))
+
+        # get farmers
+        farmers = online_farmers()
+        self.assertEqual(farmers[0].btc_addr, addr3)
+        self.assertEqual(farmers[1].btc_addr, addr2)
+        self.assertEqual(farmers[2].btc_addr, addr1)
+
+        # set height
+        self.app.get('/api/height/{0}/{1}'.format(addr1, 5000))
+
+        # get farmers
+        farmers = online_farmers()
+        self.assertEqual(farmers[0].btc_addr, addr1)
