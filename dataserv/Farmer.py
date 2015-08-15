@@ -2,7 +2,7 @@ import hashlib
 from dataserv.run import db
 from datetime import datetime
 from sqlalchemy import DateTime
-from btctxstore import BtcTxStore
+from dataserv.Validator import is_btc_address
 
 
 def sha256(content):
@@ -25,7 +25,6 @@ class Farmer(db.Model):
         farmers connected to this node.
 
         """
-        self.blockchain = BtcTxStore()
         self.btc_addr = btc_addr
         self.last_seen = last_seen
 
@@ -34,7 +33,7 @@ class Farmer(db.Model):
 
     def is_btc_address(self):
         """Check if the address is a valid Bitcoin public key."""
-        return self.blockchain.validate_address(self.btc_addr)
+        return is_btc_address(self.btc_addr)
 
     def validate(self, register=False):
         """Make sure this farmer fits the rules for this node."""
