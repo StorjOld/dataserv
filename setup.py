@@ -33,8 +33,7 @@ setup(
         'Flask == 0.10.1',
         'Flask-SQLAlchemy == 2.0',
         'RandomIO == 0.2.1',
-        'partialhash == 1.1.0',
-        'btctxstore == 4.1.0',
+        'partialhash == 1.1.0'
     ],
     tests_require=[
         'coverage',
