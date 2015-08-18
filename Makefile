@@ -2,43 +2,61 @@
 # License: MIT (see LICENSE file)
 
 
+PYTHON_VERSION = 3
+WHEEL_DIR = /tmp/wheelhouse
+USE_WHEEL = --use-wheel --no-index --find-links=$(WHEEL_DIR)
+PIP = env/bin/pip
+PY = env/bin/python
+
+
 help:
 	@echo "Some usefull development shortcuts."
 	@echo "  clean      Remove all generated files."
 	@echo "  test       Run tests and analysis tools."
 	@echo "  devsetup   Setup development environment."
+	@echo "  wheels     Build cached wheels to speed up tests."
+	@echo "  dist       Build dist and move to downloads."
 	@echo "  publish    Build and upload package to pypi."
 
 
 clean:
-	@rm -rf env
-	@rm -rf build
-	@rm -rf dist
-	@rm -rf *.egg
-	@rm -rf *.egg-info
-	@find | grep -i ".*\.pyc$$" | xargs -r -L1 rm
+	rm -rf env
+	rm -rf build
+	rm -rf dist
+	rm -rf *.egg
+	rm -rf *.egg-info
+	find | grep -i ".*\.pyc$$" | xargs -r -L1 rm
 
 
-devsetup: clean
-	@virtualenv -p /usr/bin/python2 env/py2
-	@virtualenv -p /usr/bin/python3 env/py3
-	@env/py2/bin/python setup.py develop
-	@env/py3/bin/python setup.py develop
-	
-	@# install usefull dev tools
-	@env/py2/bin/pip install ipython
-	@env/py3/bin/pip install ipython
-	@env/py2/bin/pip install pudb
-	@env/py3/bin/pip install pudb
+virtualenvs: clean
+	virtualenv -p /usr/bin/python$(PYTHON_VERSION) env
+	$(PIP) install wheel
+
+
+wheels: virtualenvs
+	$(PIP) wheel --wheel-dir=$(WHEEL_DIR) -r requirements.txt
+	$(PIP) wheel --wheel-dir=$(WHEEL_DIR) -r test_requirements.txt
+	$(PIP) wheel --wheel-dir=$(WHEEL_DIR) -r develop_requirements.txt
+
+
+devsetup: virtualenvs
+	$(PIP) install $(USE_WHEEL) -r requirements.txt
+	$(PIP) install $(USE_WHEEL) -r test_requirements.txt
+	$(PIP) install $(USE_WHEEL) -r develop_requirements.txt
 
 
 test: devsetup
-	env/py2/bin/python setup.py test
-	env/py3/bin/python setup.py test
-	# import pudb; pu.db # set break point
+	$(PY) setup.py test
 
 
 publish: test
-	env/py3/bin/python setup.py register sdist upload
+	$(PY) setup.py register sdist upload
 
 
+dist: test
+	$(PIP) install bbfreeze
+	$(PY) setup.py bdist_esky
+	# TODO move to downloads
+
+
+# import pudb; pu.db # set break point

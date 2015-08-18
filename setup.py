@@ -6,10 +6,6 @@ import os
 from setuptools import setup, find_packages
 
 
-THISDIR = os.path.dirname(os.path.abspath(__file__))
-os.chdir(THISDIR)
-
-
 VERSION = open("version.txt").readline().strip()
 DOWNLOAD_BASEURL = "https://pypi.python.org/packages/source/a/dataserv/"
 DOWNLOAD_URL = DOWNLOAD_BASEURL + "dataserv-%s.tar.gz" % VERSION
@@ -29,16 +25,8 @@ setup(
     packages=find_packages(),
     download_url = DOWNLOAD_URL,
     test_suite="tests",
-    install_requires=[
-        'Flask == 0.10.1',
-        'Flask-SQLAlchemy == 2.0',
-        'RandomIO == 0.2.1',
-        'partialhash == 1.1.0'
-    ],
-    tests_require=[
-        'coverage',
-        'coveralls'
-    ],
+    install_requires=open("requirements.txt").readlines(),
+    tests_require=[],  # use `pip install -r test_requirements.txt`
     zip_safe=False,
     classifiers=[
         # "Development Status :: 1 - Planning",

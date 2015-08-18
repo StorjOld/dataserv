@@ -6,8 +6,8 @@ python:
 
 # install dependencies, e.g. pip install -r requirements.txt
 install:
-  - pip install Flask
-  - pip install coverage coveralls
+  - pip install -r requirements.txt
+  - pip install -r test_requirements.txt
 
 before_script:
   - touch dataserv.db

@@ -1,0 +1,4 @@
+Flask == 0.10.1
+Flask-SQLAlchemy == 2.0
+RandomIO == 0.2.1
+partialhash == 1.1.0
