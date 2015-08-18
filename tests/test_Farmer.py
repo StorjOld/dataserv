@@ -1,3 +1,4 @@
+import json
 import unittest
 from dataserv.app import db
 from dataserv.Farmer import sha256
@@ -91,3 +92,16 @@ class FarmerTest(unittest.TestCase):
         farmer.audit()
         ping_time = farmer.last_seen
         self.assertTrue(register_time < ping_time)
+
+    def test_to_json(self):
+        farmer = Farmer('191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc')
+        farmer.register()
+
+        farmer.ping()
+        farmer.set_height(50)
+
+        test_payload = u'{"height": 50, "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc", "last_seen": 0}'
+        test_json = json.loads(test_payload)
+        call_payload = json.loads(json.dumps(farmer.to_json()))
+        self.assertEqual(test_json, call_payload)
+

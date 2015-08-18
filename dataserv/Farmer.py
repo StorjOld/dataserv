@@ -93,3 +93,12 @@ class Farmer(db.Model):
         db.session.commit()
 
         return self.height
+
+    def to_json(self):
+        """Object to JSON payload."""
+        payload = {
+            "btc_addr": self.btc_addr,
+            "last_seen": (datetime.utcnow() - self.last_seen).seconds,
+            "height": self.height
+        }
+        return payload
