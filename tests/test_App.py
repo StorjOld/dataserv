@@ -121,7 +121,7 @@ class AppTest(unittest.TestCase):
         rv = self.app.get('/api/height/{0}/5'.format(addr1))
         self.assertEqual(rv.status_code, 200)
         rv = self.app.get('/api/online'.format(addr1))
-        self.assertTrue(b"Height: 5" in rv.data)
+        self.assertTrue(b"5" in rv.data)
 
         # invalid btc address
         rv = self.app.get('/api/height/{0}/1'.format(addr2))
@@ -147,10 +147,10 @@ class AppTest(unittest.TestCase):
 
         # check online
         rv = self.app.get('/api/online')
-        self.assertTrue(b"Height: 0" in rv.data)
-        self.assertTrue(b"Height: 2475" in rv.data)
-        self.assertTrue(b"Height: 2525" in rv.data)
-        self.assertTrue(b"Height: 5000" in rv.data)
+        self.assertTrue(b"0" in rv.data)
+        self.assertTrue(b"2475" in rv.data)
+        self.assertTrue(b"2525" in rv.data)
+        self.assertTrue(b"5000" in rv.data)
 
         # check total bytes
         rv = self.app.get('/api/total')

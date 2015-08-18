@@ -1,3 +1,4 @@
+import json
 import hashlib
 from dataserv.run import db
 from datetime import datetime
@@ -101,4 +102,4 @@ class Farmer(db.Model):
             "last_seen": (datetime.utcnow() - self.last_seen).seconds,
             "height": self.height
         }
-        return payload
+        return json.dumps(payload)
