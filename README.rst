@@ -123,7 +123,7 @@ Online Status
 This API call was build to be human readable rather than machine readable. We get a simple
 list of the all the farmers, their addresses, their advertised height. All of this is ordered by height.
 We only display farmers that have done a ping in the last `online_time` minutes, which by default
-is 15 minutes.
+is 15 minutes. Last seen is the amount of seconds since we have last seen an API call from the farmer.
 
 ::
 
@@ -137,12 +137,20 @@ Success Example:
     RESPONSE:
         Status Code: 200
         Text:
-            18RZNu2nxTdeNyuDCwAMq8aBpgC3FFERPp | Last Seen: 3 second(s) | Height: 7634
-            137x69jwmcyy4mYCBtQUVoxa21p9Fxyss5 | Last Seen: 7 second(s) | Height: 6234
-            14wLMb2A9APqrdXJhTQArYLyivmEAf7Y1r | Last Seen: 10 second(s) | Height: 431
-            1CgLoZT1ZuSHPBp3H4rLTXJvEUDV3kK7QK | Last Seen: 13 second(s) | Height: 245
-            1QACy1Tx5JFzGDyPd8J3oU8SrjhkZkru4H | Last Seen: 14 second(s) | Height: 88
-            1NeV1z5BMmFpCXgotwVeZjuN5k124W76MA | Last Seen: 14 second(s) | Height: 10
+            {
+              "farmers": [
+                {
+                  "btc_addr": "1JdEaubcd36ufmT64drdVsGu5SN65A3Z1L",
+                  "height": 0,
+                  "last_seen": 30
+                },
+                {
+                  "btc_addr": "1JdEaubcM36ufmT64drdVsGu5SN65A3Z1A",
+                  "height": 0,
+                  "last_seen": 2
+                }
+              ]
+            }
 
 Total Bytes
 ***********
