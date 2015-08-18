@@ -2,18 +2,17 @@
 # coding: utf-8
 
 
-import os
 from setuptools import setup, find_packages
 
 
-VERSION = open("version.txt").readline().strip()
+exec(open('dataserv/version.py').read())  # load __version__
 DOWNLOAD_BASEURL = "https://pypi.python.org/packages/source/a/dataserv/"
-DOWNLOAD_URL = DOWNLOAD_BASEURL + "dataserv-%s.tar.gz" % VERSION
+DOWNLOAD_URL = DOWNLOAD_BASEURL + "dataserv-%s.tar.gz" % __version__  # NOQA
 
 
 setup(
     name='dataserv',
-    version=VERSION,
+    version=__version__,  # NOQA
     description=('Federated server for getting, pushing,'
                  ' and auditing data on untrusted nodes.'),
     long_description=open("README.rst").read(),
