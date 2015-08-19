@@ -1,7 +1,7 @@
 import json
 import unittest
 from btctxstore import BtcTxStore
-from dataserv.app import db
+from dataserv.app import db, app
 from dataserv.Farmer import sha256
 from dataserv.Farmer import Farmer
 from email.utils import formatdate
@@ -13,6 +13,7 @@ from time import mktime
 class FarmerTest(unittest.TestCase):
 
     def setUp(self):
+        app.config["SKIP_AUTHENTICATION"] = True  # monkey patch
         db.create_all()
 
     def tearDown(self):
@@ -109,6 +110,17 @@ class FarmerTest(unittest.TestCase):
         test_json = json.loads(test_payload)
         call_payload = json.loads(farmer.to_json())
         self.assertEqual(test_json, call_payload)
+
+
+class FarmerAuthenticationTest(unittest.TestCase):
+
+    def setUp(self):
+        app.config["SKIP_AUTHENTICATION"] = False  # monkey patch
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
 
     def test_authentication_success(self):
         blockchain = BtcTxStore()

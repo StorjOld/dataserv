@@ -42,6 +42,8 @@ class Farmer(db.Model):
         return app.config["AUTHENTICATION_TIMEOUT"]
 
     def authenticate(self, header_authorization, header_date):
+        if app.config["SKIP_AUTHENTICATION"]:
+            return True
         if not header_authorization:
             raise ValueError("Header authorization required!")
         if not header_date:

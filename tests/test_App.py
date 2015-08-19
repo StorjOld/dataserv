@@ -7,6 +7,7 @@ class AppTest(unittest.TestCase):
 
     # setup
     def setUp(self):
+        app.config["SKIP_AUTHENTICATION"] = True  # monkey patch
         self.app = app.test_client()
         db.create_all()
 
