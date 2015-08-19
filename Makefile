@@ -28,12 +28,12 @@ clean:
 	find | grep -i ".*\.pyc$$" | xargs -r -L1 rm
 
 
-virtualenvs: clean
+virtualenv: clean
 	virtualenv -p /usr/bin/python$(PYTHON_VERSION) env
 	$(PIP) install wheel
 
 
-wheels: virtualenvs
+wheels: virtualenv
 	$(PIP) wheel --wheel-dir=$(WHEEL_DIR) -r requirements.txt
 	$(PIP) wheel --wheel-dir=$(WHEEL_DIR) -r test_requirements.txt
 	$(PIP) wheel --wheel-dir=$(WHEEL_DIR) -r develop_requirements.txt
@@ -44,7 +44,7 @@ wheel: test
 	mv dist/*.whl $(WHEEL_DIR)
 
 
-setup: virtualenvs
+setup: virtualenv
 	$(PIP) install $(USE_WHEEL) -r requirements.txt
 	$(PIP) install $(USE_WHEEL) -r test_requirements.txt
 	$(PIP) install $(USE_WHEEL) -r develop_requirements.txt

@@ -47,6 +47,15 @@ def index():
 
 @app.route('/api/register/<btc_addr>', methods=["GET"])
 def register(btc_addr):
+
+    # XXX
+    #from flask import request
+    #from email.utils import parsedate
+    #date = request.headers.get('Date')
+    #authorization = request.headers.get('Authorization')
+    #print("DATE", date, type(date))
+    #print("AUTHORIZATION", authorization, type(authorization))
+
     # create Farmer object to represent user
     user = Farmer(btc_addr)
 

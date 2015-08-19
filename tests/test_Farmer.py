@@ -1,10 +1,12 @@
 import json
 import unittest
-import binascii
 from btctxstore import BtcTxStore
 from dataserv.app import db
 from dataserv.Farmer import sha256
 from dataserv.Farmer import Farmer
+from email.utils import formatdate
+from datetime import datetime
+from time import mktime
 
 
 class FarmerTest(unittest.TestCase):
@@ -114,9 +116,9 @@ class FarmerTest(unittest.TestCase):
         farmer = Farmer(address)
 
         # first authentication
-        timestamp = "TODO timestamp"
-        message = farmer.get_server_address() + "-" + timestamp
-        data = binascii.hexlify(message.encode('utf-8'))
-        signature = blockchain.sign_data(wif, data)
-        self.assertTrue(farmer.authenticate(signature, timestamp))
+        header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
+                                 localtime=True, usegmt=True)
+        message = farmer.get_server_address() + " " + header_date
+        header_authorization = blockchain.sign_unicode(wif, message)
+        self.assertTrue(farmer.authenticate(header_authorization, header_date))
 

@@ -1,8 +1,10 @@
 import json
 import hashlib
 import binascii
+from email.utils import parsedate
 from dataserv.run import db, app
 from datetime import datetime
+from datetime import timedelta
 from sqlalchemy import DateTime
 from btctxstore import BtcTxStore
 from dataserv.Validator import is_btc_address
@@ -36,14 +38,28 @@ class Farmer(db.Model):
     def get_server_address(self):
         return app.config["ADDRESS"]
 
-    def authenticate(self, signature, timestamp):
-        # FIXME validate timestamp
+    def get_server_authentication_timeout(self):
+        return app.config["AUTHENTICATION_TIMEOUT"]
+
+    def authenticate(self, header_authorization, header_date):
+        if not header_authorization:
+            raise ValueError("Header authorization required!")
+        if not header_date:
+            raise ValueError("Header date required!")
+
+        # verify date
+        date = datetime(*parsedate(header_date)[:6])
+        timeout = self.get_server_authentication_timeout()
+        delta = datetime.now() - date
+        if delta > timedelta(seconds=timeout):
+            raise ValueError("Header date to old!")
 
         # verify signature
-        message = self.get_server_address() + "-" + timestamp
-        data = binascii.hexlify(message.encode("utf-8"))
-        if not BtcTxStore().verify_signature(self.btc_addr, signature, data):
-            raise ValueError("Invalid signature!")
+        message = self.get_server_address() + " " + header_date
+        if not BtcTxStore().verify_signature_unicode(self.btc_addr,
+                                                     header_authorization,
+                                                     message):
+            raise ValueError("Invalid header_authorization!")
         return True
 
 
