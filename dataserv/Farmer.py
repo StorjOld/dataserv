@@ -19,7 +19,6 @@ class Farmer(db.Model):
     btc_addr = db.Column(db.String(35), unique=True)
     last_seen = db.Column(DateTime, default=datetime.utcnow)
     height = db.Column(db.Integer, default=0)
-    authentication_nonce = db.Column(db.Integer, default=0)
 
     def __init__(self, btc_addr, last_seen=None):
         """
@@ -34,18 +33,19 @@ class Farmer(db.Model):
     def __repr__(self):
         return '<Farmer BTC Address: %r>' % self.btc_addr
 
-    def authenticate(self, btc_addr, signature):
-        farmer = self.lookup()
+    def get_server_address(self):
+        return app.config["ADDRESS"]
+
+    def authenticate(self, signature, timestamp):
+        # FIXME validate timestamp
 
         # verify signature
-        message = app.config["ADDRESS"] + "-" + farmer.authentication_nonce
-        data = binascii.hexlify(message)
-        if not BtcTxStore().verify_signature(address, signature, data):
+        message = self.get_server_address() + "-" + timestamp
+        data = binascii.hexlify(message.encode("utf-8"))
+        if not BtcTxStore().verify_signature(self.btc_addr, signature, data):
             raise ValueError("Invalid signature!")
+        return True
 
-        # increment authentication nonce
-        farmer.authentication_nonce = authentication_nonce + 1
-        db.session.commit()
 
     def is_btc_address(self):
         """Check if the address is a valid Bitcoin public key."""
@@ -115,7 +115,6 @@ class Farmer(db.Model):
         payload = {
             "btc_addr": self.btc_addr,
             "last_seen": (datetime.utcnow() - self.last_seen).seconds,
-            "height": self.height,
-            "authentication_nonce": self.authentication_nonce,
+            "height": self.height
         }
         return json.dumps(payload)

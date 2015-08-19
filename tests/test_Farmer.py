@@ -1,5 +1,7 @@
 import json
 import unittest
+import binascii
+from btctxstore import BtcTxStore
 from dataserv.app import db
 from dataserv.Farmer import sha256
 from dataserv.Farmer import Farmer
@@ -100,8 +102,21 @@ class FarmerTest(unittest.TestCase):
         farmer.ping()
         farmer.set_height(50)
 
-        test_payload = u'{"authentication_nonce": 0, "height": 50, "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc", "last_seen": 0}'
+        test_payload = u'{"height": 50, "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc", "last_seen": 0}'
         test_json = json.loads(test_payload)
         call_payload = json.loads(farmer.to_json())
         self.assertEqual(test_json, call_payload)
+
+    def test_authentication_success(self):
+        blockchain = BtcTxStore()
+        wif = blockchain.create_key()
+        address = blockchain.get_address(wif)
+        farmer = Farmer(address)
+
+        # first authentication
+        timestamp = "TODO timestamp"
+        message = farmer.get_server_address() + "-" + timestamp
+        data = binascii.hexlify(message.encode('utf-8'))
+        signature = blockchain.sign_data(wif, data)
+        self.assertTrue(farmer.authenticate(signature, timestamp))
 
