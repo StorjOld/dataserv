@@ -89,6 +89,21 @@ def ping(btc_addr):
 def online():
     # this could be formatted a bit better, but we just want to publicly display
     # that status of the farmers connected to the node
+    output = ""
+    current_time = datetime.datetime.utcnow()
+    text = "{0} |  Last Seen: {1} | Height: {2}<br/>"
+
+    for farmer in online_farmers():
+        last_seen = secs_to_mins((current_time - farmer.last_seen).seconds)
+        output += text.format(farmer.btc_addr, last_seen, farmer.height)
+
+    return output
+
+
+@app.route('/api/online/json', methods=["GET"])
+def online_json():
+    # this could be formatted a bit better, but we just want to publicly display
+    # that status of the farmers connected to the node
 
     payload = {
         "farmers": [json.loads(farmer.to_json()) for farmer in online_farmers()]
