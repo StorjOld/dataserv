@@ -51,7 +51,7 @@ class Farmer(db.Model):
         date = datetime(*parsedate(header_date)[:6])
         timeout = self.get_server_authentication_timeout()
         delta = datetime.now() - date
-        if delta > timedelta(seconds=timeout):
+        if delta >= timedelta(seconds=timeout):
             raise ValueError("Header date to old!")
 
         # verify signature

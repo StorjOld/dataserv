@@ -6,6 +6,7 @@ from dataserv.Farmer import sha256
 from dataserv.Farmer import Farmer
 from email.utils import formatdate
 from datetime import datetime
+from datetime import timedelta
 from time import mktime
 
 
@@ -115,10 +116,26 @@ class FarmerTest(unittest.TestCase):
         address = blockchain.get_address(wif)
         farmer = Farmer(address)
 
-        # first authentication
         header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
                                  localtime=True, usegmt=True)
         message = farmer.get_server_address() + " " + header_date
         header_authorization = blockchain.sign_unicode(wif, message)
         self.assertTrue(farmer.authenticate(header_authorization, header_date))
+
+    def test_authentication_timeout(self):
+        def callback():
+            blockchain = BtcTxStore()
+            wif = blockchain.create_key()
+            address = blockchain.get_address(wif)
+            farmer = Farmer(address)
+
+            timeout = farmer.get_server_authentication_timeout()
+
+            date = datetime.now() - timedelta(seconds=timeout)
+            header_date = formatdate(timeval=mktime(date.timetuple()),
+                                     localtime=True, usegmt=True)
+            message = farmer.get_server_address() + " " + header_date
+            header_authorization = blockchain.sign_unicode(wif, message)
+            farmer.authenticate(header_authorization, header_date)
+        self.assertRaises(ValueError, callback)
 
