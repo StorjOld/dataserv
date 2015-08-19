@@ -1,6 +1,11 @@
 import unittest
+from btctxstore import BtcTxStore
 from dataserv.run import app, db
 from dataserv.app import secs_to_mins, online_farmers
+from email.utils import formatdate
+from datetime import datetime
+from datetime import timedelta
+from time import mktime
 
 
 class AppTest(unittest.TestCase):
@@ -186,3 +191,33 @@ class AppTest(unittest.TestCase):
         # get farmers
         farmers = online_farmers()
         self.assertEqual(farmers[0].btc_addr, addr1)
+
+
+class AppAuthenticationHeadersTest(unittest.TestCase):
+
+    def setUp(self):
+        app.config["SKIP_AUTHENTICATION"] = False  # monkey patch
+        self.app = app.test_client()
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_success(self):
+        blockchain = BtcTxStore()
+        wif = blockchain.create_key()
+        address = blockchain.get_address(wif)
+
+        # create header date and authorization signature
+        header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
+                                 localtime=True, usegmt=True)
+        message = app.config["ADDRESS"] + " " + header_date
+        header_authorization = blockchain.sign_unicode(wif, message)
+
+        headers = {"Date": header_date, "Authorization": header_authorization }
+        url = '/api/register/{0}'.format(address)
+        rv = self.app.get(url, headers=headers)
+        self.assertEqual(b"User registered.", rv.data)
+        self.assertEqual(rv.status_code, 200)
+

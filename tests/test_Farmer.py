@@ -151,3 +151,5 @@ class FarmerAuthenticationTest(unittest.TestCase):
             farmer.authenticate(header_authorization, header_date)
         self.assertRaises(ValueError, callback)
 
+    # TODO test incorrect address
+    # TODO test incorrect signature
