@@ -93,6 +93,11 @@ def ping(btc_addr):
         return make_response(error_msg.format(msg), 404)
 
 
+@app.route('/api/address', methods=["GET"])
+def get_address():
+    return jsonify({ "address": app.config["ADDRESS"] })
+
+
 @app.route('/api/online', methods=["GET"])
 def online():
     # this could be formatted a bit better, but we just want to publicly display

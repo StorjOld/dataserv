@@ -1,4 +1,5 @@
 import unittest
+import json
 from btctxstore import BtcTxStore
 from dataserv.run import app, db
 from dataserv.app import secs_to_mins, online_farmers
@@ -191,6 +192,12 @@ class AppTest(unittest.TestCase):
         # get farmers
         farmers = online_farmers()
         self.assertEqual(farmers[0].btc_addr, addr1)
+
+    def test_get_address(self):
+        rv = self.app.get('/api/address')
+        self.assertEqual(rv.status_code, 200)
+        data = rv.data.decode("utf-8")
+        self.assertEqual(app.config["ADDRESS"], json.loads(data)["address"])
 
 
 class AppAuthenticationHeadersTest(unittest.TestCase):
