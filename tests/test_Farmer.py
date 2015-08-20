@@ -1,13 +1,19 @@
 import json
 import unittest
-from dataserv.app import db
+from btctxstore import BtcTxStore
+from dataserv.app import db, app
 from dataserv.Farmer import sha256
 from dataserv.Farmer import Farmer
+from email.utils import formatdate
+from datetime import datetime
+from datetime import timedelta
+from time import mktime
 
 
 class FarmerTest(unittest.TestCase):
 
     def setUp(self):
+        app.config["SKIP_AUTHENTICATION"] = True  # monkey patch
         db.create_all()
 
     def tearDown(self):
@@ -105,3 +111,45 @@ class FarmerTest(unittest.TestCase):
         call_payload = json.loads(farmer.to_json())
         self.assertEqual(test_json, call_payload)
 
+
+class FarmerAuthenticationTest(unittest.TestCase):
+
+    def setUp(self):
+        app.config["SKIP_AUTHENTICATION"] = False  # monkey patch
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_authentication_success(self):
+        blockchain = BtcTxStore()
+        wif = blockchain.create_key()
+        address = blockchain.get_address(wif)
+        farmer = Farmer(address)
+
+        header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
+                                 localtime=True, usegmt=True)
+        message = farmer.get_server_address() + " " + header_date
+        header_authorization = blockchain.sign_unicode(wif, message)
+        self.assertTrue(farmer.authenticate(header_authorization, header_date))
+
+    def test_authentication_timeout(self):
+        def callback():
+            blockchain = BtcTxStore()
+            wif = blockchain.create_key()
+            address = blockchain.get_address(wif)
+            farmer = Farmer(address)
+
+            timeout = farmer.get_server_authentication_timeout()
+
+            date = datetime.now() - timedelta(seconds=timeout)
+            header_date = formatdate(timeval=mktime(date.timetuple()),
+                                     localtime=True, usegmt=True)
+            message = farmer.get_server_address() + " " + header_date
+            header_authorization = blockchain.sign_unicode(wif, message)
+            farmer.authenticate(header_authorization, header_date)
+        self.assertRaises(ValueError, callback)
+
+    # TODO test incorrect address
+    # TODO test incorrect signature

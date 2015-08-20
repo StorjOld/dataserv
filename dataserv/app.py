@@ -7,7 +7,7 @@ import json
 import os.path
 import datetime
 from random import randint
-from flask import make_response, jsonify
+from flask import make_response, jsonify, request
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # Import modules
@@ -47,8 +47,14 @@ def index():
 
 @app.route('/api/register/<btc_addr>', methods=["GET"])
 def register(btc_addr):
+
+    date = request.headers.get('Date')
+    authorization = request.headers.get('Authorization')
+
     # create Farmer object to represent user
     user = Farmer(btc_addr)
+    user.authenticate(request.headers.get('Authorization'),
+                      request.headers.get('Date'))
 
     # error template
     error_msg = "Registration Failed: {0}"
@@ -69,6 +75,8 @@ def register(btc_addr):
 def ping(btc_addr):
     # create Farmer object to represent user
     user = Farmer(btc_addr)
+    user.authenticate(request.headers.get('Authorization'),
+                      request.headers.get('Date'))
 
     # error template
     error_msg = "Ping Failed: {0}"
@@ -83,6 +91,11 @@ def ping(btc_addr):
     except LookupError:
         msg = "Farmer not found."
         return make_response(error_msg.format(msg), 404)
+
+
+@app.route('/api/address', methods=["GET"])
+def get_address():
+    return jsonify({ "address": app.config["ADDRESS"] })
 
 
 @app.route('/api/online', methods=["GET"])
@@ -132,6 +145,8 @@ def total():
 def set_height(btc_addr, height):
     # create Farmer object to represent user
     user = Farmer(btc_addr)
+    user.authenticate(request.headers.get('Authorization'),
+                      request.headers.get('Date'))
 
     # attempt to set height
     try:

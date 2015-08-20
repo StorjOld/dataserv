@@ -1,8 +1,12 @@
 import json
 import hashlib
-from dataserv.run import db
+import binascii
+from email.utils import parsedate
+from dataserv.run import db, app
 from datetime import datetime
+from datetime import timedelta
 from sqlalchemy import DateTime
+from btctxstore import BtcTxStore
 from dataserv.Validator import is_btc_address
 
 
@@ -17,7 +21,6 @@ class Farmer(db.Model):
     btc_addr = db.Column(db.String(35), unique=True)
     last_seen = db.Column(DateTime, default=datetime.utcnow)
     height = db.Column(db.Integer, default=0)
-    last_message_hash = db.Column(db.String(64), unique=True)  # sha256sum
 
     def __init__(self, btc_addr, last_seen=None):
         """
@@ -31,6 +34,36 @@ class Farmer(db.Model):
 
     def __repr__(self):
         return '<Farmer BTC Address: %r>' % self.btc_addr
+
+    def get_server_address(self):
+        return app.config["ADDRESS"]
+
+    def get_server_authentication_timeout(self):
+        return app.config["AUTHENTICATION_TIMEOUT"]
+
+    def authenticate(self, header_authorization, header_date):
+        if app.config["SKIP_AUTHENTICATION"]:
+            return True
+        if not header_authorization:
+            raise ValueError("Header authorization required!")
+        if not header_date:
+            raise ValueError("Header date required!")
+
+        # verify date
+        date = datetime(*parsedate(header_date)[:6])
+        timeout = self.get_server_authentication_timeout()
+        delta = datetime.now() - date
+        if delta >= timedelta(seconds=timeout):
+            raise ValueError("Header date to old!")
+
+        # verify signature
+        message = self.get_server_address() + " " + header_date
+        if not BtcTxStore().verify_signature_unicode(self.btc_addr,
+                                                     header_authorization,
+                                                     message):
+            raise ValueError("Invalid header_authorization!")
+        return True
+
 
     def is_btc_address(self):
         """Check if the address is a valid Bitcoin public key."""

@@ -13,6 +13,7 @@ help:
 	@echo "Some usefull development shortcuts."
 	@echo "  clean      Remove all generated files."
 	@echo "  setup      Setup development environment."
+	@echo "  shell      Open ipython from the development environment."
 	@echo "  test       Run tests and analysis tools."
 	@echo "  wheel      Build package wheel and save in '$(WHEEL_DIR)'."
 	@echo "  wheels     Build dependencie wheels and save in '$(WHEEL_DIR)'."
@@ -28,12 +29,12 @@ clean:
 	find | grep -i ".*\.pyc$$" | xargs -r -L1 rm
 
 
-virtualenvs: clean
+virtualenv: clean
 	virtualenv -p /usr/bin/python$(PYTHON_VERSION) env
 	$(PIP) install wheel
 
 
-wheels: virtualenvs
+wheels: virtualenv
 	$(PIP) wheel --wheel-dir=$(WHEEL_DIR) -r requirements.txt
 	$(PIP) wheel --wheel-dir=$(WHEEL_DIR) -r test_requirements.txt
 	$(PIP) wheel --wheel-dir=$(WHEEL_DIR) -r develop_requirements.txt
@@ -44,10 +45,14 @@ wheel: test
 	mv dist/*.whl $(WHEEL_DIR)
 
 
-setup: virtualenvs
+setup: virtualenv
 	$(PIP) install $(USE_WHEEL) -r requirements.txt
 	$(PIP) install $(USE_WHEEL) -r test_requirements.txt
 	$(PIP) install $(USE_WHEEL) -r develop_requirements.txt
+
+
+shell: setup
+	env/bin/ipython
 
 
 test: setup
