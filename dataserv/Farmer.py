@@ -19,6 +19,7 @@ def sha256(content):
 class Farmer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     btc_addr = db.Column(db.String(35), unique=True)
+    payout_addr = db.Column(db.String(35), unique=True)
     last_seen = db.Column(DateTime, default=datetime.utcnow)
     height = db.Column(db.Integer, default=0)
 
@@ -29,6 +30,8 @@ class Farmer(db.Model):
         farmers connected to this node.
 
         """
+        if not is_btc_address(btc_addr):
+            raise ValueError("Invalid BTC Address.")
         self.btc_addr = btc_addr
         self.last_seen = last_seen
 
@@ -64,26 +67,21 @@ class Farmer(db.Model):
             raise ValueError("Invalid header_authorization!")
         return True
 
-
-    def is_btc_address(self):
-        """Check if the address is a valid Bitcoin public key."""
-        return is_btc_address(self.btc_addr)
-
-    def validate(self, register=False):
+    def validate(self, registering=False):
         """Make sure this farmer fits the rules for this node."""
         # check if this is a valid BTC address or not
-        if not self.is_btc_address():
+        if not is_btc_address(self.payout_addr):
             raise ValueError("Invalid BTC Address.")
-        elif self.exists() and register:
+        exists = self.exists()
+        if exists and registering:
             raise LookupError("Address Already Is Registered.")
-        elif not self.exists() and not register:
+        elif not exists and not registering:
             raise LookupError("Address Not Registered.")
 
-    def register(self):
+    def register(self, payout_addr=None):
         """Add the farmer to the database."""
-        self.validate(True)
-
-        # If everything works correctly then commit to database.
+        self.payout_addr = payout_addr if payout_addr else self.btc_addr
+        self.validate(registering=True)
         db.session.add(self)
         db.session.commit()
 
@@ -94,8 +92,9 @@ class Farmer(db.Model):
 
     def lookup(self):
         """Return the Farmer object for the bitcoin address passed."""
-        self.validate()
         farmer = Farmer.query.filter_by(btc_addr=self.btc_addr).first()
+        if not farmer:
+            raise LookupError("Address Not Registered.")
         return farmer
 
     def ping(self):
@@ -119,13 +118,10 @@ class Farmer(db.Model):
 
     def set_height(self, height):
         """Set the farmers advertised height."""
-        self.validate()
-
         self.ping()  # also serves as a valid ping
         farmer = self.lookup()
         farmer.height = height
         db.session.commit()
-
         return self.height
 
     def to_json(self):

@@ -35,26 +35,22 @@ class FarmerTest(unittest.TestCase):
         addr2 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc9999ghjfghj99'
         addr3 = 'not valid address'
 
-        # create Farmer objects
+        # test success
         farmer1 = Farmer(addr1)
-        farmer2 = Farmer(addr2)
-        farmer3 = Farmer(addr3)
-
-        # test registration of first farmer
         self.assertFalse(farmer1.exists())
         farmer1.register()
         self.assertTrue(farmer1.exists())
 
-        # test duplicate
+        # test duplicate error
         self.assertRaises(LookupError, farmer1.register)
 
-        # these should not be inserted
-        self.assertRaises(ValueError, farmer2.register)
-        self.assertRaises(ValueError, farmer3.register)
+        def callback_a():
+            Farmer(addr2)
+        self.assertRaises(ValueError, callback_a)
 
-        # double check they are not in the db
-        self.assertFalse(farmer2.exists())
-        self.assertFalse(farmer3.exists())
+        def callback_b():
+            Farmer(addr3)
+        self.assertRaises(ValueError, callback_b)
 
     def test_ping(self):
         farmer = Farmer('191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc')

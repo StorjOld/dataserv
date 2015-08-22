@@ -47,21 +47,17 @@ def index():
 
 @app.route('/api/register/<btc_addr>', methods=["GET"])
 def register(btc_addr):
+    return register_with_payout(btc_addr, btc_addr)
 
-    date = request.headers.get('Date')
-    authorization = request.headers.get('Authorization')
 
-    # create Farmer object to represent user
-    user = Farmer(btc_addr)
-    user.authenticate(request.headers.get('Authorization'),
-                      request.headers.get('Date'))
-
-    # error template
+@app.route('/api/register/<btc_addr>/<payout_addr>', methods=["GET"])
+def register_with_payout(btc_addr, payout_addr):
     error_msg = "Registration Failed: {0}"
-
-    # attempt to register the farmer/farming address
     try:
-        user.register()
+        user = Farmer(btc_addr)
+        user.authenticate(request.headers.get('Authorization'),
+                          request.headers.get('Date'))
+        user.register(payout_addr)
         return make_response("User registered.", 200)
     except ValueError:
         msg = "Invalid Bitcoin address."
@@ -73,16 +69,11 @@ def register(btc_addr):
 
 @app.route('/api/ping/<btc_addr>', methods=["GET"])
 def ping(btc_addr):
-    # create Farmer object to represent user
-    user = Farmer(btc_addr)
-    user.authenticate(request.headers.get('Authorization'),
-                      request.headers.get('Date'))
-
-    # error template
     error_msg = "Ping Failed: {0}"
-
-    # attempt to ping the farmer/farming address
     try:
+        user = Farmer(btc_addr)
+        user.authenticate(request.headers.get('Authorization'),
+                          request.headers.get('Date'))
         user.ping()
         return make_response("Ping accepted.", 200)
     except ValueError:
@@ -143,13 +134,11 @@ def total():
 
 @app.route('/api/height/<btc_addr>/<int:height>', methods=["GET"])
 def set_height(btc_addr, height):
-    # create Farmer object to represent user
-    user = Farmer(btc_addr)
-    user.authenticate(request.headers.get('Authorization'),
-                      request.headers.get('Date'))
-
-    # attempt to set height
     try:
+        user = Farmer(btc_addr)
+        user.authenticate(request.headers.get('Authorization'),
+                          request.headers.get('Date'))
+
         user.set_height(height)
         return make_response("Height accepted.", 200)
     except ValueError:
