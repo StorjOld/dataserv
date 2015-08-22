@@ -128,6 +128,7 @@ class Farmer(db.Model):
         """Object to JSON payload."""
         payload = {
             "btc_addr": self.btc_addr,
+            "payout_addr": self.payout_addr,
             "last_seen": (datetime.utcnow() - self.last_seen).seconds,
             "height": self.height
         }

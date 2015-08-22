@@ -32,7 +32,8 @@ class AppTest(unittest.TestCase):
         rv = self.app.get('/api/register/{0}'.format(addr))
 
         # good registration
-        self.assertEqual(b"User registered.", rv.data)
+        data = json.loads(rv.data.decode("utf-8"))
+        self.assertEqual(addr, data["btc_addr"])
         self.assertEqual(rv.status_code, 200)
 
         # duplicate registration
@@ -54,7 +55,8 @@ class AppTest(unittest.TestCase):
         rv = self.app.get('/api/register/{0}'.format(addr))
 
         # good registration
-        self.assertEqual(b"User registered.", rv.data)
+        data = json.loads(rv.data.decode("utf-8"))
+        self.assertEqual(addr, data["btc_addr"])
         self.assertEqual(rv.status_code, 200)
 
         # now test ping
@@ -101,7 +103,8 @@ class AppTest(unittest.TestCase):
         rv = self.app.get('/api/register/{0}'.format(addr))
 
         # good registration
-        self.assertEqual(b"User registered.", rv.data)
+        data = json.loads(rv.data.decode("utf-8"))
+        self.assertEqual(addr, data["btc_addr"])
         self.assertEqual(rv.status_code, 200)
 
         # now test ping
@@ -196,8 +199,30 @@ class AppTest(unittest.TestCase):
     def test_get_address(self):
         rv = self.app.get('/api/address')
         self.assertEqual(rv.status_code, 200)
-        data = rv.data.decode("utf-8")
-        self.assertEqual(app.config["ADDRESS"], json.loads(data)["address"])
+        data = json.loads(rv.data.decode("utf-8"))
+        self.assertEqual(app.config["ADDRESS"], data["address"])
+
+
+class RegisterWithPayoutAddressTest(unittest.TestCase):
+
+    def setUp(self):
+        app.config["SKIP_AUTHENTICATION"] = True  # monkey patch
+        self.app = app.test_client()
+        db.create_all()
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+
+    def test_register(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        payout_addr = '191GVvAaTRxLmz3rW3nU5jBV1rF186VxQc'
+        rv = self.app.get('/api/register/{0}/{1}'.format(addr, payout_addr))
+
+        data = json.loads(rv.data.decode("utf-8"))
+        self.assertEqual(addr, data["btc_addr"])
+        self.assertEqual(payout_addr, data["payout_addr"])
+        self.assertEqual(rv.status_code, 200)
 
 
 class AppAuthenticationHeadersTest(unittest.TestCase):
@@ -225,6 +250,7 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
         headers = {"Date": header_date, "Authorization": header_authorization }
         url = '/api/register/{0}'.format(address)
         rv = self.app.get(url, headers=headers)
-        self.assertEqual(b"User registered.", rv.data)
+        data = json.loads(rv.data.decode("utf-8"))
+        self.assertEqual(address, data["btc_addr"])
         self.assertEqual(rv.status_code, 200)
 

@@ -102,8 +102,12 @@ class FarmerTest(unittest.TestCase):
         farmer.ping()
         farmer.set_height(50)
 
-        test_payload = u'{"height": 50, "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc", "last_seen": 0}'
-        test_json = json.loads(test_payload)
+        test_json = {
+            "height": 50,
+            "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc",
+            'payout_addr': '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc',
+            "last_seen": 0
+        }
         call_payload = json.loads(farmer.to_json())
         self.assertEqual(test_json, call_payload)
 
