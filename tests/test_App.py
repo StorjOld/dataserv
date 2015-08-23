@@ -201,6 +201,19 @@ class AppTest(unittest.TestCase):
         data = json.loads(rv.data.decode("utf-8"))
         self.assertEqual(app.config["ADDRESS"], data["address"])
 
+    def test_height_limit(self):
+        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
+        self.app.get('/api/register/{0}'.format(addr))
+
+        # set height 50
+        self.app.get('/api/height/{0}/{1}'.format(addr, 50))
+        rv = self.app.get('/api/online')
+        self.assertTrue(b"50" in rv.data)
+
+        # set a crazy height
+        rv = self.app.get('/api/height/{0}/{1}'.format(addr, 250000))
+        self.assertEqual(rv.status_code, 413)
+
 
 class RegisterWithPayoutAddressTest(unittest.TestCase):
 
