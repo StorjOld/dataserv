@@ -1,12 +1,11 @@
-import unittest
 import json
-from btctxstore import BtcTxStore
-from dataserv.run import app, db
-from dataserv.app import secs_to_mins, online_farmers
-from email.utils import formatdate
-from datetime import datetime
-from datetime import timedelta
+import unittest
 from time import mktime
+from datetime import datetime
+from dataserv.run import app, db
+from btctxstore import BtcTxStore
+from email.utils import formatdate
+from dataserv.app import secs_to_mins, online_farmers
 
 
 class AppTest(unittest.TestCase):
@@ -164,9 +163,9 @@ class AppTest(unittest.TestCase):
 
         # check total bytes
         rv = self.app.get('/api/total')
-        json_data =  b'"total_TB": 1.22\n}'
+        json_data = b'"total_TB": 1.22\n}'
 
-        self.assertTrue(json_data in  rv.data)
+        self.assertTrue(json_data in rv.data)
 
     def test_farmer_order(self):
         addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
@@ -247,7 +246,7 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
         message = app.config["ADDRESS"] + " " + header_date
         header_authorization = blockchain.sign_unicode(wif, message)
 
-        headers = {"Date": header_date, "Authorization": header_authorization }
+        headers = {"Date": header_date, "Authorization": header_authorization}
         url = '/api/register/{0}'.format(address)
         rv = self.app.get(url, headers=headers)
         data = json.loads(rv.data.decode("utf-8"))

@@ -86,7 +86,7 @@ def ping(btc_addr):
 
 @app.route('/api/address', methods=["GET"])
 def get_address():
-    return jsonify({ "address": app.config["ADDRESS"] })
+    return jsonify({"address": app.config["ADDRESS"]})
 
 
 @app.route('/api/online', methods=["GET"])
@@ -127,7 +127,7 @@ def total():
     # return in TB the number
     app.config["BYTE_SIZE"] = 1024*1024*128
     result = total_shards * (app.config["BYTE_SIZE"] / (1024*1024*1024*1024))  # bytes / 1 TB
-    json_data = { 'id': randint(0,9999999) ,'total_TB': round(result, 2) }
+    json_data = {'id': randint(0, 9999999), 'total_TB': round(result, 2)}
 
     return jsonify(json_data)
 

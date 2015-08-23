@@ -1,6 +1,5 @@
 import json
 import hashlib
-import binascii
 from email.utils import parsedate
 from dataserv.run import db, app
 from datetime import datetime
@@ -38,10 +37,12 @@ class Farmer(db.Model):
     def __repr__(self):
         return '<Farmer BTC Address: %r>' % self.btc_addr
 
-    def get_server_address(self):
+    @staticmethod
+    def get_server_address():
         return app.config["ADDRESS"]
 
-    def get_server_authentication_timeout(self):
+    @staticmethod
+    def get_server_authentication_timeout():
         return app.config["AUTHENTICATION_TIMEOUT"]
 
     def authenticate(self, header_authorization, header_date):
