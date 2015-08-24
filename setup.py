@@ -2,8 +2,7 @@
 # coding: utf-8
 
 
-from setuptools import setup, find_packages
-
+from setuptools import setup, find_packages, __version__
 
 exec(open('dataserv/version.py').read())  # load __version__
 DOWNLOAD_BASEURL = "https://pypi.python.org/packages/source/a/dataserv/"
