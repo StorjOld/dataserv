@@ -9,6 +9,14 @@ from btctxstore import BtcTxStore
 from dataserv.Validator import is_btc_address
 
 
+class AuthError(Exception):
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
+
+
 def sha256(content):
     """Finds the sha256 hash of the content."""
     content = content.encode('utf-8')
@@ -49,23 +57,23 @@ class Farmer(db.Model):
         if app.config["SKIP_AUTHENTICATION"]:
             return True
         if not header_authorization:
-            raise PermissionError("Header authorization required!")
+            raise AuthError("Header authorization required!")
         if not header_date:
-            raise PermissionError("Header date required!")
+            raise AuthError("Header date required!")
 
         # verify date
         date = datetime(*parsedate(header_date)[:6])
         timeout = self.get_server_authentication_timeout()
         delta = datetime.now() - date
         if delta >= timedelta(seconds=timeout):
-            raise PermissionError("Header date to old!")
+            raise AuthError("Header date to old!")
 
         # verify signature
         message = self.get_server_address() + " " + header_date
         if not BtcTxStore().verify_signature_unicode(self.btc_addr,
                                                      header_authorization,
                                                      message):
-            raise PermissionError("Invalid header_authorization!")
+            raise AuthError("Invalid header_authorization!")
         return True
 
     def validate(self, registering=False):

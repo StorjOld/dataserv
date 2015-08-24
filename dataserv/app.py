@@ -13,8 +13,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 # Import modules
 from sqlalchemy import desc
 from dataserv.run import app, db
-from dataserv.Farmer import Farmer
-
+from dataserv.Farmer import Farmer, AuthError
 
 # Helper functions
 def secs_to_mins(seconds):
@@ -59,11 +58,14 @@ def register_with_payout(btc_addr, payout_addr):
                           request.headers.get('Date'))
         user.register(payout_addr)
         return make_response(user.to_json(), 200)
-    except ValueError as e:
+    except ValueError:
         msg = "Invalid Bitcoin address."
         return make_response(error_msg.format(msg), 400)
     except LookupError:
         msg = "Address already is registered."
+        return make_response(error_msg.format(msg), 409)
+    except AuthError:
+        msg = "Invalid authentication headers."
         return make_response(error_msg.format(msg), 409)
 
 

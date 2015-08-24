@@ -3,7 +3,7 @@ import unittest
 from btctxstore import BtcTxStore
 from dataserv.app import db, app
 from dataserv.Farmer import sha256
-from dataserv.Farmer import Farmer
+from dataserv.Farmer import Farmer, AuthError
 from email.utils import formatdate
 from datetime import datetime
 from datetime import timedelta
@@ -149,7 +149,7 @@ class FarmerAuthenticationTest(unittest.TestCase):
             message = farmer.get_server_address() + " " + header_date
             header_authorization = blockchain.sign_unicode(wif, message)
             farmer.authenticate(header_authorization, header_date)
-        self.assertRaises(PermissionError, callback)
+        self.assertRaises(AuthError, callback)
 
     # TODO test incorrect address
     # TODO test incorrect signature
