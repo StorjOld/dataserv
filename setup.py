@@ -16,7 +16,7 @@ setup(
     description=('Federated server for getting, pushing,'
                  ' and auditing data on untrusted nodes.'),
     long_description=open("README.rst").read(),
-    keywords=(""),
+    keywords="",
     url='http://storj.io',
     author='Shawn Wilkinson',
     author_email='shawn+dataserv@storj.io',
