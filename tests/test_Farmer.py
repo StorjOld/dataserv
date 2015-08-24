@@ -149,7 +149,7 @@ class FarmerAuthenticationTest(unittest.TestCase):
             message = farmer.get_server_address() + " " + header_date
             header_authorization = blockchain.sign_unicode(wif, message)
             farmer.authenticate(header_authorization, header_date)
-        self.assertRaises(ValueError, callback)
+        self.assertRaises(PermissionError, callback)
 
     # TODO test incorrect address
     # TODO test incorrect signature

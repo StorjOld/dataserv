@@ -49,29 +49,30 @@ class Farmer(db.Model):
         if app.config["SKIP_AUTHENTICATION"]:
             return True
         if not header_authorization:
-            raise ValueError("Header authorization required!")
+            raise PermissionError("Header authorization required!")
         if not header_date:
-            raise ValueError("Header date required!")
+            raise PermissionError("Header date required!")
 
         # verify date
         date = datetime(*parsedate(header_date)[:6])
         timeout = self.get_server_authentication_timeout()
         delta = datetime.now() - date
         if delta >= timedelta(seconds=timeout):
-            raise ValueError("Header date to old!")
+            raise PermissionError("Header date to old!")
 
         # verify signature
         message = self.get_server_address() + " " + header_date
         if not BtcTxStore().verify_signature_unicode(self.btc_addr,
                                                      header_authorization,
                                                      message):
-            raise ValueError("Invalid header_authorization!")
+            raise PermissionError("Invalid header_authorization!")
         return True
 
     def validate(self, registering=False):
         """Make sure this farmer fits the rules for this node."""
         # check if this is a valid BTC address or not
         if not is_btc_address(self.payout_addr):
+            print("hello")
             raise ValueError("Invalid BTC Address.")
         exists = self.exists()
         if exists and registering:

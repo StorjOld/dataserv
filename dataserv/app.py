@@ -59,7 +59,7 @@ def register_with_payout(btc_addr, payout_addr):
                           request.headers.get('Date'))
         user.register(payout_addr)
         return make_response(user.to_json(), 200)
-    except ValueError:
+    except ValueError as e:
         msg = "Invalid Bitcoin address."
         return make_response(error_msg.format(msg), 400)
     except LookupError:

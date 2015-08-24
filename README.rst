@@ -59,16 +59,22 @@ can perform any other actions.
 
 ::
 
-    GET /api/register/<bitcoin address>/<payout address>
+    GET /api/register/<bitcoin address>/<(optional)payout address>
 
 Success Example:
 
 ::
 
-    GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc
+    GET /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm
     RESPONSE:
         Status Code: 200
         Text: User registered.
+
+    GET /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm/1BZR9GHs9a1bBfh6cwnDtvq6GEvNwVWxFa
+    RESPONSE:
+        Status Code: 200
+        Text: User registered.
+
 
 Fail Examples:
 
@@ -79,7 +85,7 @@ Fail Examples:
         Status Code: 400
         Text: Registration Failed: Invalid BTC Address.
 
-    GET /api/register/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc
+    GET /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm
     RESPONSE:
         Status Code: 409
         Text: Registration failed: Address already is registered.
