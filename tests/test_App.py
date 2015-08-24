@@ -7,12 +7,17 @@ from btctxstore import BtcTxStore
 from email.utils import formatdate
 from dataserv.app import secs_to_mins, online_farmers
 
+# load address from fixtures file
+fixtures = json.load(open("tests/fixtures.json"))
+addresses = fixtures["addresses"]
+
 
 class AppTest(unittest.TestCase):
 
     # setup
     def setUp(self):
         app.config["SKIP_AUTHENTICATION"] = True  # monkey patch
+
         self.app = app.test_client()
         db.create_all()
 
@@ -20,29 +25,63 @@ class AppTest(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
-    # simple index test
+    # making sure that at least the web server works
     def test_hello_world(self):
         rv = self.app.get('/')
         self.assertEqual(b"Hello World.", rv.data)
 
-    # register call
-    def test_register(self):
-        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
-        rv = self.app.get('/api/register/{0}'.format(addr))
+    # register calls
+    def test_register_no_payout(self):
+        rv = self.app.get('/api/register/{0}'.format(addresses["alpha"]))
 
         # good registration
-        data = json.loads(rv.data.decode("utf-8"))
-        self.assertEqual(addr, data["btc_addr"])
+        return_data = json.loads(rv.data.decode("utf-8"))
+        expected_data = {
+            "height": 0,
+            "btc_addr": addresses["alpha"],
+            'payout_addr': addresses["alpha"],
+            "last_seen": 0
+        }
         self.assertEqual(rv.status_code, 200)
+        self.assertEqual(return_data, expected_data)
 
         # duplicate registration
-        rv = self.app.get('/api/register/{0}'.format(addr))
+        rv = self.app.get('/api/register/{0}'.format(addresses["alpha"]))
         self.assertEqual(b"Registration Failed: Address already is registered.", rv.data)
         self.assertEqual(rv.status_code, 409)
 
+    def test_register_w_payout(self):
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["beta"], addresses["gamma"]))
+        # good registration
+        return_data = json.loads(rv.data.decode("utf-8"))
+        expected_data = {
+            "height": 0,
+            "btc_addr": addresses["beta"],
+            'payout_addr': addresses["gamma"],
+            "last_seen": 0
+        }
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(return_data, expected_data)
+
+        # duplicate registration
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["beta"], addresses["gamma"]))
+        self.assertEqual(b"Registration Failed: Address already is registered.", rv.data)
+        self.assertEqual(rv.status_code, 409)
+
+        # duplicate payout address is ok
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["delta"], addresses["gamma"]))
+        return_data = json.loads(rv.data.decode("utf-8"))
+        expected_data = {
+            "height": 0,
+            "btc_addr": addresses["delta"],
+            'payout_addr': addresses["gamma"],
+            "last_seen": 0
+        }
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(return_data, expected_data)
+
     def test_register_invalid_address(self):
-        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc_this_is_not_an_address'
-        rv = self.app.get('/api/register/{0}'.format(addr))
+        rv = self.app.get('/api/register/{0}'.format(addresses["omega"]))
 
         # invalid address
         self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)

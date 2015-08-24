@@ -59,7 +59,7 @@ can perform any other actions.
 
 ::
 
-    GET /api/register/<bitcoin address>
+    GET /api/register/<bitcoin address>/<payout address>
 
 Success Example:
 
