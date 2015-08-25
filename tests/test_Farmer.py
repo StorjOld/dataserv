@@ -192,7 +192,6 @@ class FarmerAuthenticationTest(unittest.TestCase):
 
             header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
                                      localtime=True, usegmt=True)
-            message = farmer.get_server_address() + " " + header_date
             header_authorization = blockchain.sign_unicode(wif, "lalala-wrong")
             farmer.authenticate(header_authorization, header_date)
         self.assertRaises(AuthError, callback)
