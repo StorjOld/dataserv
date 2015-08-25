@@ -145,13 +145,13 @@ class OnlineTest(TemplateTest):
         # see if that address is in the online status
         self.assertTrue(addresses["alpha"] in str(rv.data))
 
-    def test_farmer_json(self):
+    def test_farmer_json(self):  # test could be better
         rv = self.app.get('/api/register/{0}'.format(addresses["beta"]))
         self.assertEqual(rv.status_code, 200)
 
         # get online json data
         rv = self.app.get('/api/online/json')
-
+        self.assertTrue(addresses["beta"] in str(rv.data))
 
     def test_farmer_order(self):
         addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
