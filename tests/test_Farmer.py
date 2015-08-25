@@ -1,13 +1,18 @@
 import json
 import unittest
-from btctxstore import BtcTxStore
-from dataserv.app import db, app
-from dataserv.Farmer import sha256
-from dataserv.Farmer import Farmer, AuthError
-from email.utils import formatdate
+from time import mktime
 from datetime import datetime
 from datetime import timedelta
-from time import mktime
+from dataserv.app import db, app
+from btctxstore import BtcTxStore
+from email.utils import formatdate
+from dataserv.Farmer import sha256
+from dataserv.Farmer import Farmer, AuthError
+
+
+# load address from fixtures file
+fixtures = json.load(open("tests/fixtures.json"))
+addresses = fixtures["addresses"]
 
 
 class FarmerTest(unittest.TestCase):
@@ -31,12 +36,8 @@ class FarmerTest(unittest.TestCase):
         self.assertNotEqual(sha256("not storj"), ans)
 
     def test_register(self):
-        addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
-        addr2 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc9999ghjfghj99'
-        addr3 = 'not valid address'
-
         # test success
-        farmer1 = Farmer(addr1)
+        farmer1 = Farmer(addresses["alpha"])
         self.assertFalse(farmer1.exists())
         farmer1.register()
         self.assertTrue(farmer1.exists())
@@ -45,15 +46,12 @@ class FarmerTest(unittest.TestCase):
         self.assertRaises(LookupError, farmer1.register)
 
         def callback_a():
-            Farmer(addr2)
+            Farmer(addresses["omega"])
         self.assertRaises(ValueError, callback_a)
 
-        def callback_b():
-            Farmer(addr3)
-        self.assertRaises(ValueError, callback_b)
 
     def test_ping(self):
-        farmer = Farmer('191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc')
+        farmer = Farmer(addresses["beta"])
 
         # test ping before registration
         self.assertRaises(LookupError, farmer.ping)
@@ -68,7 +66,7 @@ class FarmerTest(unittest.TestCase):
         self.assertTrue(register_time < ping_time)
 
     def test_height(self):
-        farmer = Farmer('191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc')
+        farmer = Farmer(addresses["gamma"])
         farmer.register()
 
         # set height and check function output
@@ -81,7 +79,7 @@ class FarmerTest(unittest.TestCase):
         self.assertEqual(farmer2.height, 5)
 
     def test_audit(self):
-        farmer = Farmer('191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc')
+        farmer = Farmer(addresses["delta"])
 
         # test audit before registration
         self.assertRaises(LookupError, farmer.audit)
@@ -96,7 +94,7 @@ class FarmerTest(unittest.TestCase):
         self.assertTrue(register_time < ping_time)
 
     def test_to_json(self):
-        farmer = Farmer('191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc')
+        farmer = Farmer(addresses["epsilon"])
         farmer.register()
 
         farmer.ping()
@@ -104,8 +102,8 @@ class FarmerTest(unittest.TestCase):
 
         test_json = {
             "height": 50,
-            "btc_addr": "191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc",
-            'payout_addr': '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc',
+            "btc_addr": addresses["epsilon"],
+            'payout_addr': addresses["epsilon"],
             "last_seen": 0
         }
         call_payload = json.loads(farmer.to_json())
