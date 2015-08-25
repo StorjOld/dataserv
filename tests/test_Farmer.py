@@ -137,6 +137,20 @@ class FarmerAuthenticationTest(unittest.TestCase):
         header_authorization = blockchain.sign_unicode(wif, message)
         self.assertTrue(farmer.authenticate(header_authorization, header_date))
 
+    def test_authentication_no_date(self):
+        def callback():
+            blockchain = BtcTxStore()
+            wif = blockchain.create_key()
+            address = blockchain.get_address(wif)
+            farmer = Farmer(address)
+
+            header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
+                                     localtime=True, usegmt=True)
+            message = farmer.get_server_address() + " " + header_date
+            header_authorization = blockchain.sign_unicode(wif, message)
+            farmer.authenticate(header_authorization, None)
+        self.assertRaises(AuthError, callback)
+
     def test_authentication_timeout(self):
         def callback():
             blockchain = BtcTxStore()
@@ -155,4 +169,17 @@ class FarmerAuthenticationTest(unittest.TestCase):
         self.assertRaises(AuthError, callback)
 
     # TODO test incorrect address
-    # TODO test incorrect signature
+
+    def test_authentication_bad_sig(self):
+        def callback():
+            blockchain = BtcTxStore()
+            wif = blockchain.create_key()
+            address = blockchain.get_address(wif)
+            farmer = Farmer(address)
+
+            header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
+                                     localtime=True, usegmt=True)
+            message = farmer.get_server_address() + " " + header_date
+            header_authorization = blockchain.sign_unicode(wif, "lalala-wrong")
+            farmer.authenticate(header_authorization, header_date)
+        self.assertRaises(AuthError, callback)
