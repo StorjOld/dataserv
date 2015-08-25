@@ -1,3 +1,4 @@
+import time
 import json
 import unittest
 from time import mktime
@@ -63,6 +64,18 @@ class FarmerTest(unittest.TestCase):
         farmer.ping()  # update last seen
         ping_time = farmer.last_seen
         self.assertTrue(register_time < ping_time)
+
+    def test_ping_time_limit(self):
+        farmer = Farmer(addresses["beta"])
+        farmer.register()
+
+        farmer.ping()
+        time.sleep(2)
+        farmer.ping()
+
+        # should still be around 2
+        delta_seconds = int((farmer.last_seen - datetime.utcnow()).seconds)
+        self.assertNotEqual(delta_seconds, 0)
 
     def test_height(self):
         farmer = Farmer(addresses["gamma"])

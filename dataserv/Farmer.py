@@ -111,8 +111,12 @@ class Farmer(db.Model):
 
         """
         farmer = self.lookup()
-        farmer.last_seen = datetime.utcnow()
-        db.session.commit()
+        time_limit = (datetime.utcnow() - farmer.last_seen).seconds <= app.config["MAX_PING"]
+
+        if time_limit:
+            farmer.last_seen = datetime.utcnow()
+            db.session.commit()
+        # else just ignore
 
     # TODO: Actually do an audit.
     def audit(self):

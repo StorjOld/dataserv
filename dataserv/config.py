@@ -1,3 +1,4 @@
+MAX_PING = 15  # seconds
 ONLINE_TIME = 15  # minutes
 SQLALCHEMY_DATABASE_URI = "sqlite:///dataserv.db"
 
