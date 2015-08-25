@@ -80,7 +80,6 @@ class Farmer(db.Model):
         """Make sure this farmer fits the rules for this node."""
         # check if this is a valid BTC address or not
         if not is_btc_address(self.payout_addr):
-            print("hello")
             raise ValueError("Invalid BTC Address.")
         exists = self.exists()
         if exists and registering:

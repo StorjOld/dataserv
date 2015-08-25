@@ -15,6 +15,7 @@ from sqlalchemy import desc
 from dataserv.run import app, db
 from dataserv.Farmer import Farmer, AuthError
 
+
 # Helper functions
 def secs_to_mins(seconds):
     if seconds < 60:

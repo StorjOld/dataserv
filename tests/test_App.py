@@ -81,9 +81,18 @@ class AppTest(unittest.TestCase):
         self.assertEqual(return_data, expected_data)
 
     def test_register_invalid_address(self):
+        # bad address only
         rv = self.app.get('/api/register/{0}'.format(addresses["omega"]))
+        self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)
+        self.assertEqual(rv.status_code, 400)
 
-        # invalid address
+        # good address, bad address
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["epsilon"], addresses["omega"]))
+        self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)
+        self.assertEqual(rv.status_code, 400)
+
+        # bad address, good address
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["omega"], addresses["zeta"]))
         self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
