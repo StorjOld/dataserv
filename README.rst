@@ -190,6 +190,18 @@ Success Example:
               ]
             }
 
+Address
+*******
+Display the unique address used for authentication for the node.
+
+::
+
+    GET /api/online
+    RESPONSE:
+        {
+          "address": "16ZcxFDdkVJR1P8GMNmWFyhS4EKrRMsWNG"
+        }
+
 Total Bytes
 ***********
 
