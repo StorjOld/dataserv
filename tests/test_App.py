@@ -27,59 +27,57 @@ class TemplateTest(unittest.TestCase):
 class RegisterTest(TemplateTest):
 
     def test_register(self):
-        addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
-        payout_addr = '191GVvAaTRxLmz3rW3nU5jBV1rF186VxQc'
-        rv = self.app.get('/api/register/{0}/{1}'.format(addr, payout_addr))
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["alpha"], addresses["beta"]))
 
         data = json.loads(rv.data.decode("utf-8"))
-        self.assertEqual(addr, data["btc_addr"])
-        self.assertEqual(payout_addr, data["payout_addr"])
+        self.assertEqual(addresses["alpha"], data["btc_addr"])
+        self.assertEqual(addresses["beta"], data["payout_addr"])
         self.assertEqual(rv.status_code, 200)
 
     def test_register_no_payout(self):
-        rv = self.app.get('/api/register/{0}'.format(addresses["alpha"]))
+        rv = self.app.get('/api/register/{0}'.format(addresses["gamma"]))
 
         # good registration
         return_data = json.loads(rv.data.decode("utf-8"))
         expected_data = {
             "height": 0,
-            "btc_addr": addresses["alpha"],
-            'payout_addr': addresses["alpha"],
+            "btc_addr": addresses["gamma"],
+            'payout_addr': addresses["gamma"],
             "last_seen": 0
         }
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(return_data, expected_data)
 
         # duplicate registration
-        rv = self.app.get('/api/register/{0}'.format(addresses["alpha"]))
+        rv = self.app.get('/api/register/{0}'.format(addresses["gamma"]))
         self.assertEqual(b"Registration Failed: Address already is registered.", rv.data)
         self.assertEqual(rv.status_code, 409)
 
     def test_register_w_payout(self):
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["beta"], addresses["gamma"]))
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["delta"], addresses["epsilon"]))
         # good registration
         return_data = json.loads(rv.data.decode("utf-8"))
         expected_data = {
             "height": 0,
-            "btc_addr": addresses["beta"],
-            'payout_addr': addresses["gamma"],
+            "btc_addr": addresses["delta"],
+            'payout_addr': addresses["epsilon"],
             "last_seen": 0
         }
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(return_data, expected_data)
 
         # duplicate registration
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["beta"], addresses["gamma"]))
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["delta"], addresses["epsilon"]))
         self.assertEqual(b"Registration Failed: Address already is registered.", rv.data)
         self.assertEqual(rv.status_code, 409)
 
         # duplicate payout address is ok
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["delta"], addresses["gamma"]))
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["zeta"], addresses["epsilon"]))
         return_data = json.loads(rv.data.decode("utf-8"))
         expected_data = {
             "height": 0,
-            "btc_addr": addresses["delta"],
-            'payout_addr': addresses["gamma"],
+            "btc_addr": addresses["zeta"],
+            'payout_addr': addresses["epsilon"],
             "last_seen": 0
         }
         self.assertEqual(rv.status_code, 200)
@@ -92,12 +90,12 @@ class RegisterTest(TemplateTest):
         self.assertEqual(rv.status_code, 400)
 
         # good address, bad address
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["epsilon"], addresses["omega"]))
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["eta"], addresses["omega"]))
         self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
         # bad address, good address
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["omega"], addresses["zeta"]))
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["omega"], addresses["theta"]))
         self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
@@ -105,11 +103,11 @@ class RegisterTest(TemplateTest):
 class PingTest(TemplateTest):
 
     def test_ping_good(self):
-        rv = self.app.get('/api/register/{0}'.format(addresses["theta"]))
+        rv = self.app.get('/api/register/{0}'.format(addresses["alpha"]))
         self.assertEqual(rv.status_code, 200)
 
         # now test ping
-        rv = self.app.get('/api/ping/{0}'.format(addresses["theta"]))
+        rv = self.app.get('/api/ping/{0}'.format(addresses["alpha"]))
 
         # good ping
         self.assertEqual(b"Ping accepted.", rv.data)
@@ -117,7 +115,7 @@ class PingTest(TemplateTest):
 
     def test_ping_not_found(self):
         # now test ping with no registration
-        rv = self.app.get('/api/ping/{0}'.format(addresses["iota"]))
+        rv = self.app.get('/api/ping/{0}'.format(addresses["beta"]))
 
         # bad ping
         self.assertEqual(b"Ping Failed: Farmer not found.", rv.data)
@@ -135,17 +133,25 @@ class PingTest(TemplateTest):
 class OnlineTest(TemplateTest):
 
     def test_online(self):
-        rv = self.app.get('/api/register/{0}'.format(addresses["lambda"]))
+        rv = self.app.get('/api/register/{0}'.format(addresses["alpha"]))
         self.assertEqual(rv.status_code, 200)
 
         # now test ping
-        self.app.get('/api/ping/{0}'.format(addresses["lambda"]))
+        self.app.get('/api/ping/{0}'.format(addresses["alpha"]))
 
         # get online data
         rv = self.app.get('/api/online')
 
         # see if that address is in the online status
-        self.assertTrue(addresses["lambda"] in str(rv.data))
+        self.assertTrue(addresses["alpha"] in str(rv.data))
+
+    def test_farmer_json(self):
+        rv = self.app.get('/api/register/{0}'.format(addresses["beta"]))
+        self.assertEqual(rv.status_code, 200)
+
+        # get online json data
+        rv = self.app.get('/api/online/json')
+
 
     def test_farmer_order(self):
         addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
@@ -180,16 +186,16 @@ class HeightTest(TemplateTest):
 
     def test_farmer_set_height(self):
         # not found
-        rv = self.app.get('/api/height/{0}/1'.format(addresses["mu"]))
+        rv = self.app.get('/api/height/{0}/1'.format(addresses["beta"]))
         self.assertEqual(rv.status_code, 404)
 
         # register farmer
-        self.app.get('/api/register/{0}'.format(addresses["mu"]))
+        self.app.get('/api/register/{0}'.format(addresses["beta"]))
 
         # correct
-        rv = self.app.get('/api/height/{0}/5'.format(addresses["mu"]))
+        rv = self.app.get('/api/height/{0}/5'.format(addresses["beta"]))
         self.assertEqual(rv.status_code, 200)
-        rv = self.app.get('/api/online'.format(addresses["mu"]))
+        rv = self.app.get('/api/online'.format(addresses["beta"]))
         self.assertTrue(b"5" in rv.data)
 
         # invalid btc address
@@ -197,15 +203,15 @@ class HeightTest(TemplateTest):
         self.assertEqual(rv.status_code, 400)
 
     def test_height_limit(self):
-        self.app.get('/api/register/{0}'.format(addresses["pi"]))
+        self.app.get('/api/register/{0}'.format(addresses["gamma"]))
 
         # set height 50
-        self.app.get('/api/height/{0}/{1}'.format(addresses["pi"], 50))
+        self.app.get('/api/height/{0}/{1}'.format(addresses["gamma"], 50))
         rv = self.app.get('/api/online')
         self.assertTrue(b"50" in rv.data)
 
         # set a crazy height
-        rv = self.app.get('/api/height/{0}/{1}'.format(addresses["pi"], 250000))
+        rv = self.app.get('/api/height/{0}/{1}'.format(addresses["gamma"], 250000))
         self.assertEqual(rv.status_code, 413)
 
 
