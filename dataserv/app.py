@@ -67,7 +67,7 @@ def register_with_payout(btc_addr, payout_addr):
         return make_response(error_msg.format(msg), 409)
     except AuthError:
         msg = "Invalid authentication headers."
-        return make_response(error_msg.format(msg), 409)
+        return make_response(error_msg.format(msg), 401)
 
 
 @app.route('/api/ping/<btc_addr>', methods=["GET"])

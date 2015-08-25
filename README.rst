@@ -68,12 +68,12 @@ Success Example:
     GET /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm
     RESPONSE:
         Status Code: 200
-        Text: User registered.
+        Text: {"last_seen": 0, "btc_addr": "12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm, "height": 0, "payout_addr": "12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm"}
 
     GET /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm/1BZR9GHs9a1bBfh6cwnDtvq6GEvNwVWxFa
     RESPONSE:
         Status Code: 200
-        Text: User registered.
+        Text: {"last_seen": 0, "btc_addr": "12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm", "height": 0, "payout_addr": "1BZR9GHs9a1bBfh6cwnDtvq6GEvNwVWxFa"}
 
 
 Fail Examples:
@@ -89,6 +89,11 @@ Fail Examples:
     RESPONSE:
         Status Code: 409
         Text: Registration failed: Address already is registered.
+
+    GET /api/register/1BZR9GHs9a1bBfh6cwnDtvq6GEvNwVWxFa
+    RESPONSE:
+        Status Code: 401
+        Text: Registration failed: Invalid authentication headers.
 
 Ping-Pong
 *********

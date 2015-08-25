@@ -96,6 +96,11 @@ class AppTest(unittest.TestCase):
         self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
+    def test_register_headers(self):
+        app.config["SKIP_AUTHENTICATION"] = False  # turn on auth
+        rv = self.app.get('/api/register/{0}'.format(addresses["alpha"]))
+        self.assertEqual(rv.status_code, 401)
+
     # ping call
     def test_ping_good(self):
         addr = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
