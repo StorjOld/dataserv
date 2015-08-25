@@ -49,7 +49,6 @@ class FarmerTest(unittest.TestCase):
             Farmer(addresses["omega"])
         self.assertRaises(ValueError, callback_a)
 
-
     def test_ping(self):
         farmer = Farmer(addresses["beta"])
 
@@ -108,6 +107,12 @@ class FarmerTest(unittest.TestCase):
         }
         call_payload = json.loads(farmer.to_json())
         self.assertEqual(test_json, call_payload)
+
+    def test_auth_error(self):
+        try:
+            raise AuthError("Test Error")
+        except AuthError as e:
+            self.assertEqual(str(e), "'Test Error'")
 
 
 class FarmerAuthenticationTest(unittest.TestCase):

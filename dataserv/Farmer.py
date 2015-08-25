@@ -84,8 +84,6 @@ class Farmer(db.Model):
         exists = self.exists()
         if exists and registering:
             raise LookupError("Address Already Is Registered.")
-        elif not exists and not registering:
-            raise LookupError("Address Not Registered.")
 
     def register(self, payout_addr=None):
         """Add the farmer to the database."""
