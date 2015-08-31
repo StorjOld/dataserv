@@ -6,7 +6,9 @@ from datetime import datetime
 from datetime import timedelta
 from sqlalchemy import DateTime
 from btctxstore import BtcTxStore
-from dataserv.Validator import is_btc_address
+
+
+is_btc_address = BtcTxStore().validate_address
 
 
 class AuthError(Exception):
