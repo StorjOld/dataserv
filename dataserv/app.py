@@ -85,6 +85,9 @@ def ping(btc_addr):
     except LookupError:
         msg = "Farmer not found."
         return make_response(error_msg.format(msg), 404)
+    except AuthError:
+        msg = "Invalid authentication headers."
+        return make_response(error_msg.format(msg), 401)
 
 
 @app.route('/api/address', methods=["GET"])
@@ -155,6 +158,9 @@ def set_height(btc_addr, height):
     except LookupError:
         msg = "Farmer not found."
         return make_response(msg, 404)
+    except AuthError:
+        msg = "Invalid authentication headers."
+        return make_response(error_msg.format(msg), 401)
 
 
 if __name__ == '__main__':  # pragma: no cover
