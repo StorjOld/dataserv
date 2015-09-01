@@ -140,6 +140,7 @@ def total():
 
 @app.route('/api/height/<btc_addr>/<int:height>', methods=["GET"])
 def set_height(btc_addr, height):
+    error_msg = "Set height failed: {0}"
     try:
         user = Farmer(btc_addr)
         user.authenticate(request.headers.get('Authorization'),
