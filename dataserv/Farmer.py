@@ -113,7 +113,7 @@ class Farmer(db.Model):
 
         """
         farmer = self.lookup()
-        time_limit = (datetime.utcnow() - farmer.last_seen).seconds <= app.config["MAX_PING"]
+        time_limit = (datetime.utcnow() - farmer.last_seen).seconds >= app.config["MAX_PING"]
 
         if time_limit:
             farmer.last_seen = datetime.utcnow()
