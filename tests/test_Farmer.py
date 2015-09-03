@@ -61,6 +61,7 @@ class FarmerTest(unittest.TestCase):
 
         # get register time, and make sure the ping work
         register_time = farmer.last_seen
+        time.sleep(app.config["MAX_PING"] + 1) # ping faster than max_ping would be ignored
         farmer.ping()  # update last seen
         ping_time = farmer.last_seen
         self.assertTrue(register_time < ping_time)
@@ -69,13 +70,13 @@ class FarmerTest(unittest.TestCase):
         farmer = Farmer(addresses["beta"])
         farmer.register()
 
-        farmer.ping()
+        register_time = farmer.last_seen
         time.sleep(2)
         farmer.ping()
 
-        # should still be around 2
-        delta_seconds = int((farmer.last_seen - datetime.utcnow()).seconds)
-        self.assertNotEqual(delta_seconds, 0)
+        # should still be around 0
+        delta_seconds = int((farmer.last_seen - register_time).seconds)
+        self.assertEqual(delta_seconds, 0)
 
     def test_height(self):
         farmer = Farmer(addresses["gamma"])
@@ -101,6 +102,7 @@ class FarmerTest(unittest.TestCase):
 
         # get register time, and make sure the ping work
         register_time = farmer.last_seen
+        time.sleep(app.config["MAX_PING"] + 1) # ping faster than max_ping would be ignored
         farmer.audit()
         ping_time = farmer.last_seen
         self.assertTrue(register_time < ping_time)
