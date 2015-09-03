@@ -10,10 +10,12 @@ from random import randint
 from flask import make_response, jsonify, request
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-# Import modules
 from sqlalchemy import desc
 from dataserv.run import app, db
 from dataserv.Farmer import Farmer, AuthError
+
+from dataserv.config import logging
+logger = logging.getLogger(__name__)
 
 
 # Helper functions
@@ -64,12 +66,15 @@ def register_with_payout(btc_addr, payout_addr):
         return make_response(user.to_json(), 200)
     except ValueError:
         msg = "Invalid Bitcoin address."
+        logger.warning(msg)
         return make_response(error_msg.format(msg), 400)
     except LookupError:
         msg = "Address already is registered."
+        logger.warning(msg)
         return make_response(error_msg.format(msg), 409)
     except AuthError:
         msg = "Invalid authentication headers."
+        logger.warning(msg)
         return make_response(error_msg.format(msg), 401)
 
 
@@ -84,12 +89,15 @@ def ping(btc_addr):
         return make_response("Ping accepted.", 200)
     except ValueError:
         msg = "Invalid Bitcoin address."
+        logger.warning(msg)
         return make_response(error_msg.format(msg), 400)
     except LookupError:
         msg = "Farmer not found."
+        logger.warning(msg)
         return make_response(error_msg.format(msg), 404)
     except AuthError:
         msg = "Invalid authentication headers."
+        logger.warning(msg)
         return make_response(error_msg.format(msg), 401)
 
 
@@ -151,18 +159,24 @@ def set_height(btc_addr, height):
             user.set_height(height)
             return make_response("Height accepted.", 200)
         else:
-            raise OverflowError("Height limit exceeded.")
+            msg = "Height limit exceeded."
+            logger.warning(msg)
+            raise OverflowError(msg)
     except OverflowError:
         msg = "Height limit exceeded."
+        logger.warning(msg)
         return make_response(msg, 413)
     except ValueError:
         msg = "Invalid Bitcoin address."
+        logger.warning(msg)
         return make_response(msg, 400)
     except LookupError:
         msg = "Farmer not found."
+        logger.warning(msg)
         return make_response(msg, 404)
     except AuthError:
         msg = "Invalid authentication headers."
+        logger.warning(msg)
         return make_response(error_msg.format(msg), 401)
 
 

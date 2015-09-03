@@ -1,5 +1,6 @@
 import json
 import hashlib
+import logging
 from email.utils import parsedate
 from dataserv.run import db, app
 from datetime import datetime
@@ -8,6 +9,8 @@ from sqlalchemy import DateTime
 from btctxstore import BtcTxStore
 
 
+from dataserv.config import logging
+logger = logging.getLogger(__name__)
 is_btc_address = BtcTxStore().validate_address
 
 
@@ -40,7 +43,9 @@ class Farmer(db.Model):
 
         """
         if not is_btc_address(btc_addr):
-            raise ValueError("Invalid BTC Address.")
+            msg = "Invalid BTC Address: {0}".format(btc_addr)
+            logger.warning(msg)
+            raise ValueError(msg)
         self.btc_addr = btc_addr
         self.last_seen = last_seen
 
@@ -59,33 +64,44 @@ class Farmer(db.Model):
         if app.config["SKIP_AUTHENTICATION"]:
             return True
         if not header_authorization:
-            raise AuthError("Header authorization required!")
+            msg = "Header authorization required!"
+            logger.warning(msg)
+            raise AuthError(msg)
         if not header_date:
-            raise AuthError("Header date required!")
+            msg = "Header date required!"
+            logger.warning(msg)
+            raise AuthError(msg)
 
         # verify date
         date = datetime(*parsedate(header_date)[:6])
         timeout = self.get_server_authentication_timeout()
-        delta = datetime.now() - date
-        if delta >= timedelta(seconds=timeout):
-            raise AuthError("Header date to old!")
+        delta = (datetime.now() - date).seconds
+        if delta >= timeout:
+            msg = "Header date to old! {0} >= {1}".format(delta, timeout)
+            logger.warning(msg)
+            raise AuthError(msg)
 
         # verify signature
         message = self.get_server_address() + " " + header_date
         if not BtcTxStore().verify_signature_unicode(self.btc_addr,
                                                      header_authorization,
                                                      message):
-            raise AuthError("Invalid header_authorization!")
+            msg = "Invalid header_authorization!"
+            logger.warning(msg)
+            raise AuthError(msg)
         return True
 
     def validate(self, registering=False):
         """Make sure this farmer fits the rules for this node."""
-        # check if this is a valid BTC address or not
         if not is_btc_address(self.payout_addr):
-            raise ValueError("Invalid BTC Address.")
+            msg = "Invalid BTC Address: {0}".format(self.payout_addr)
+            logger.warning(msg)
+            raise ValueError(msg)
         exists = self.exists()
         if exists and registering:
-            raise LookupError("Address Already Is Registered.")
+            msg = "Address already registered: {0}".format(self.payout_addr)
+            logger.warning(msg)
+            raise LookupError(msg)
 
     def register(self, payout_addr=None):
         """Add the farmer to the database."""
@@ -103,7 +119,9 @@ class Farmer(db.Model):
         """Return the Farmer object for the bitcoin address passed."""
         farmer = Farmer.query.filter_by(btc_addr=self.btc_addr).first()
         if not farmer:
-            raise LookupError("Address Not Registered.")
+            msg = "Address not registered: {0}".format(self.btc_addr)
+            logger.warning(msg)
+            raise LookupError(msg)
         return farmer
 
     def ping(self):
