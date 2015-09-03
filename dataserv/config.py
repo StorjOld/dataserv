@@ -12,4 +12,5 @@ ADDRESS = "16ZcxFDdkVJR1P8GMNmWFyhS4EKrRMsWNG"  # unique per server address
 AUTHENTICATION_TIMEOUT = 15  # seconds
 SKIP_AUTHENTICATION = False  # only for testing
 
-logging.basicConfig(filename='dataserv.log', level=logging.DEBUG)
+_log_format = "%(asctime)s %(levelname)s %(name)s %(lineno)d: %(message)s"
+logging.basicConfig(format=_log_format, filename='dataserv.log', level=logging.DEBUG)
