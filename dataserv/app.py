@@ -36,7 +36,10 @@ def online_farmers():
     time_ago = current_time - datetime.timedelta(minutes=online_time)
 
     # give us all farmers that have been around for the past online_time
-    return db.session.query(Farmer).filter(Farmer.last_seen > time_ago).order_by(desc(Farmer.height)).all()
+    q = db.session.query(Farmer)
+    q = q.filter(Farmer.last_seen > time_ago)
+    q = q.order_by(desc(Farmer.height))
+    return q.all()
 
 
 # Routes
@@ -97,8 +100,8 @@ def get_address():
 
 @app.route('/api/online', methods=["GET"])
 def online():
-    # this could be formatted a bit better, but we just want to publicly display
-    # that status of the farmers connected to the node
+    # this could be formatted a bit better, but we just want to publicly
+    # display that status of the farmers connected to the node
     output = ""
     current_time = datetime.datetime.utcnow()
     text = "{0} |  Last Seen: {1} | Height: {2}<br/>"
@@ -112,13 +115,11 @@ def online():
 
 @app.route('/api/online/json', methods=["GET"])
 def online_json():
-    # this could be formatted a bit better, but we just want to publicly display
-    # that status of the farmers connected to the node
-
     payload = {
-        "farmers": [json.loads(farmer.to_json()) for farmer in online_farmers()]
+        "farmers": [
+            json.loads(farmer.to_json()) for farmer in online_farmers()
+        ]
     }
-
     return jsonify(payload)
 
 
@@ -132,7 +133,8 @@ def total():
 
     # return in TB the number
     app.config["BYTE_SIZE"] = 1024*1024*128
-    result = total_shards * (app.config["BYTE_SIZE"] / (1024*1024*1024*1024))  # bytes / 1 TB
+    byte_size = app.config["BYTE_SIZE"]
+    result = (total_shards * (byte_size / (1024 ** 4)))  # bytes / 1 TB
     json_data = {'id': randint(0, 9999999), 'total_TB': round(result, 2)}
 
     return jsonify(json_data)
