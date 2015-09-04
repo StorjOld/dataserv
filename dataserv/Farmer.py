@@ -74,7 +74,7 @@ class Farmer(db.Model):
             raise AuthError(msg)
 
         # verify date
-        date = datetime(mktime_tz(parsedate_tz(header_date)))
+        date = datetime.fromtimestamp(mktime_tz(parsedate_tz(header_date)))
         timeout = self.get_server_authentication_timeout()
         delta = (datetime.now() - date).seconds
         if delta >= timeout:
