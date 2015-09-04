@@ -1,7 +1,8 @@
 import json
 import hashlib
 import logging
-from email.utils import parsedate
+from email.utils import parsedate_tz
+from email.utils import mktime_tz
 from dataserv.run import db, app
 from datetime import datetime
 from datetime import timedelta
@@ -73,7 +74,7 @@ class Farmer(db.Model):
             raise AuthError(msg)
 
         # verify date
-        date = datetime(*parsedate(header_date)[:6])
+        date = datetime.fromtimestamp(mktime_tz(parsedate_tz(header_date)))
         timeout = self.get_server_authentication_timeout()
         delta = (datetime.now() - date).seconds
         if delta >= timeout:
