@@ -74,12 +74,13 @@ class Farmer(db.Model):
             raise AuthError(msg)
 
         # verify date
-        date = datetime.fromtimestamp(mktime_tz(parsedate_tz(header_date)))
+        serverdate = datetime.now()
+        clientdate = datetime.fromtimestamp(mktime_tz(parsedate_tz(header_date)))
         timeout = self.get_server_authentication_timeout()
-        if datetime.now() >= date:
-            delta = datetime.now() - date
+        if serverdate >= clientdate:
+            delta = serverdate - clientdate
         else:
-            delta = date - datetime.now()
+            delta = clientdate - serverdate
         if delta.seconds >= timeout or delta.days > 0:
             msg = "Header date to old! {0} >= {1}".format(delta, timeout)
             logger.warning(msg)
