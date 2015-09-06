@@ -158,7 +158,7 @@ class FarmerAuthenticationTest(unittest.TestCase):
         address = blockchain.get_address(wif)
         farmer = Farmer(address)
 
-        timeout = farmer.get_server_authentication_timeout() - 1
+        timeout = farmer.get_server_authentication_timeout() - 2
 
         date = datetime.now() - timedelta(seconds=timeout)
         header_date = formatdate(timeval=mktime(date.timetuple()),
@@ -173,7 +173,7 @@ class FarmerAuthenticationTest(unittest.TestCase):
         address = blockchain.get_address(wif)
         farmer = Farmer(address)
 
-        timeout = farmer.get_server_authentication_timeout() - 1
+        timeout = farmer.get_server_authentication_timeout() - 2
 
         date = datetime.now() + timedelta(seconds=timeout)
         header_date = formatdate(timeval=mktime(date.timetuple()),
