@@ -77,10 +77,7 @@ class Farmer(db.Model):
         serverdate = datetime.now()
         clientdate = datetime.fromtimestamp(mktime_tz(parsedate_tz(header_date)))
         timeout = self.get_server_authentication_timeout()
-        if serverdate >= clientdate:
-            delta = serverdate - clientdate
-        else:
-            delta = clientdate - serverdate
+        delta = abs(serverdate - clientdate)
         if delta.seconds >= timeout or delta.days > 0:
             msg = "Header date to old! {0} >= {1}".format(delta, timeout)
             logger.warning(msg)
