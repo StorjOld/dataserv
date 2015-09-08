@@ -134,7 +134,9 @@ def online_json():
             json.loads(farmer.to_json()) for farmer in online_farmers()
         ]
     }
-    return jsonify(payload)
+    resp = jsonify(payload)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 @app.route('/api/total', methods=["GET"])
@@ -152,7 +154,9 @@ def total():
     result = (total_shards * (byte_size / (1024 ** 4)))  # bytes / 1 TB
     json_data = {'id': randint(0, 9999999), 'total_TB': round(result, 2)}
 
-    return jsonify(json_data)
+    resp = jsonify(json_data)
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
 
 
 @app.route('/api/height/<btc_addr>/<int:height>', methods=["GET"])
