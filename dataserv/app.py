@@ -52,11 +52,13 @@ def index():
 
 @app.route('/api/register/<btc_addr>', methods=["GET"])
 def register(btc_addr):
+    logger.info("CALLED /api/register/{0}".format(btc_addr))
     return register_with_payout(btc_addr, btc_addr)
 
 
 @app.route('/api/register/<btc_addr>/<payout_addr>', methods=["GET"])
 def register_with_payout(btc_addr, payout_addr):
+    logger.info("CALLED /api/register/{0}/{1}".format(btc_addr, payout_addr))
     error_msg = "Registration Failed: {0}"
     try:
         user = Farmer(btc_addr)
@@ -80,6 +82,7 @@ def register_with_payout(btc_addr, payout_addr):
 
 @app.route('/api/ping/<btc_addr>', methods=["GET"])
 def ping(btc_addr):
+    logger.info("CALLED /api/ping/{0}".format(btc_addr))
     error_msg = "Ping Failed: {0}"
     try:
         user = Farmer(btc_addr)
@@ -103,11 +106,13 @@ def ping(btc_addr):
 
 @app.route('/api/address', methods=["GET"])
 def get_address():
+    logger.info("CALLED /api/address")
     return jsonify({"address": app.config["ADDRESS"]})
 
 
 @app.route('/api/online', methods=["GET"])
 def online():
+    logger.info("CALLED /api/online")
     # this could be formatted a bit better, but we just want to publicly
     # display that status of the farmers connected to the node
     output = ""
@@ -123,6 +128,7 @@ def online():
 
 @app.route('/api/online/json', methods=["GET"])
 def online_json():
+    logger.info("CALLED /api/online/json")
     payload = {
         "farmers": [
             json.loads(farmer.to_json()) for farmer in online_farmers()
@@ -133,6 +139,7 @@ def online_json():
 
 @app.route('/api/total', methods=["GET"])
 def total():
+    logger.info("CALLED /api/total")
     total_shards = 0
 
     # add up number of shards
@@ -150,6 +157,7 @@ def total():
 
 @app.route('/api/height/<btc_addr>/<int:height>', methods=["GET"])
 def set_height(btc_addr, height):
+    logger.info("CALLED /api/height/{0}/{1}".format(btc_addr, height))
     error_msg = "Set height failed: {0}"
     try:
         user = Farmer(btc_addr)
