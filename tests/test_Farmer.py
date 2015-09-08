@@ -152,6 +152,36 @@ class FarmerAuthenticationTest(unittest.TestCase):
         header_authorization = blockchain.sign_unicode(wif, message)
         self.assertTrue(farmer.authenticate(header_authorization, header_date))
 
+    def test_authentication_timeout_success(self):
+        blockchain = BtcTxStore()
+        wif = blockchain.create_key()
+        address = blockchain.get_address(wif)
+        farmer = Farmer(address)
+
+        timeout = farmer.get_server_authentication_timeout() - 5
+
+        date = datetime.now() - timedelta(seconds=timeout)
+        header_date = formatdate(timeval=mktime(date.timetuple()),
+                                 localtime=True, usegmt=True)
+        message = farmer.get_server_address() + " " + header_date
+        header_authorization = blockchain.sign_unicode(wif, message)
+        self.assertTrue(farmer.authenticate(header_authorization, header_date))
+
+    def test_authentication_timeout_future_success(self):
+        blockchain = BtcTxStore()
+        wif = blockchain.create_key()
+        address = blockchain.get_address(wif)
+        farmer = Farmer(address)
+
+        timeout = farmer.get_server_authentication_timeout() - 5
+
+        date = datetime.now() + timedelta(seconds=timeout)
+        header_date = formatdate(timeval=mktime(date.timetuple()),
+                                 localtime=True, usegmt=True)
+        message = farmer.get_server_address() + " " + header_date
+        header_authorization = blockchain.sign_unicode(wif, message)
+        self.assertTrue(farmer.authenticate(header_authorization, header_date))
+
     def test_authentication_no_date(self):
         def callback():
             blockchain = BtcTxStore()
@@ -176,6 +206,21 @@ class FarmerAuthenticationTest(unittest.TestCase):
             timeout = farmer.get_server_authentication_timeout()
 
             date = datetime.now() - timedelta(seconds=timeout)
+            header_date = formatdate(timeval=mktime(date.timetuple()),
+                                     localtime=True, usegmt=True)
+            message = farmer.get_server_address() + " " + header_date
+            header_authorization = blockchain.sign_unicode(wif, message)
+            farmer.authenticate(header_authorization, header_date)
+        self.assertRaises(AuthError, callback)
+
+    def test_authentication_day_timeout(self):
+        def callback():
+            blockchain = BtcTxStore()
+            wif = blockchain.create_key()
+            address = blockchain.get_address(wif)
+            farmer = Farmer(address)
+
+            date = datetime.now() - timedelta(days=1)
             header_date = formatdate(timeval=mktime(date.timetuple()),
                                      localtime=True, usegmt=True)
             message = farmer.get_server_address() + " " + header_date
