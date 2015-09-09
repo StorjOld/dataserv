@@ -1,6 +1,6 @@
 import json
 import hashlib
-import logging
+
 from email.utils import parsedate_tz
 from email.utils import mktime_tz
 from dataserv.run import db, app
@@ -75,7 +75,8 @@ class Farmer(db.Model):
 
         # verify date
         serverdate = datetime.now()
-        clientdate = datetime.fromtimestamp(mktime_tz(parsedate_tz(header_date)))
+        clientdate = datetime.fromtimestamp(mktime_tz(
+            parsedate_tz(header_date)))
         timeout = timedelta(seconds=self.get_server_authentication_timeout())
         delta = abs(serverdate - clientdate)
         if delta >= timeout:
@@ -91,7 +92,7 @@ class Farmer(db.Model):
                                                      header_authorization,
                                                      message):
             msg = "Invalid header_authorization for auth addr {0}!".format(
-            self.btc_addr)
+                self.btc_addr)
             logger.warning(msg)
             raise AuthError(msg)
         return True

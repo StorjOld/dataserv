@@ -27,7 +27,8 @@ class TemplateTest(unittest.TestCase):
 class RegisterTest(TemplateTest):
 
     def test_register(self):
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["alpha"], addresses["beta"]))
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["alpha"],
+                                                         addresses["beta"]))
 
         data = json.loads(rv.data.decode("utf-8"))
         self.assertEqual(addresses["alpha"], data["btc_addr"])
@@ -50,11 +51,13 @@ class RegisterTest(TemplateTest):
 
         # duplicate registration
         rv = self.app.get('/api/register/{0}'.format(addresses["gamma"]))
-        self.assertEqual(b"Registration Failed: Address already is registered.", rv.data)
+        self.assertEqual(b"Registration Failed: Address already is registered."
+                         , rv.data)
         self.assertEqual(rv.status_code, 409)
 
     def test_register_w_payout(self):
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["delta"], addresses["epsilon"]))
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["delta"],
+                                                         addresses["epsilon"]))
         # good registration
         return_data = json.loads(rv.data.decode("utf-8"))
         expected_data = {
@@ -67,12 +70,15 @@ class RegisterTest(TemplateTest):
         self.assertEqual(return_data, expected_data)
 
         # duplicate registration
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["delta"], addresses["epsilon"]))
-        self.assertEqual(b"Registration Failed: Address already is registered.", rv.data)
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["delta"],
+                                                         addresses["epsilon"]))
+        self.assertEqual(b"Registration Failed: Address already is registered."
+                         , rv.data)
         self.assertEqual(rv.status_code, 409)
 
         # duplicate payout address is ok
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["zeta"], addresses["epsilon"]))
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["zeta"],
+                                                         addresses["epsilon"]))
         return_data = json.loads(rv.data.decode("utf-8"))
         expected_data = {
             "height": 0,
@@ -86,17 +92,22 @@ class RegisterTest(TemplateTest):
     def test_register_invalid_address(self):
         # bad address only
         rv = self.app.get('/api/register/{0}'.format(addresses["omega"]))
-        self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)
+        self.assertEqual(b"Registration Failed: Invalid Bitcoin address.",
+                         rv.data)
         self.assertEqual(rv.status_code, 400)
 
         # good address, bad address
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["eta"], addresses["omega"]))
-        self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["eta"],
+                                                         addresses["omega"]))
+        self.assertEqual(b"Registration Failed: Invalid Bitcoin address.",
+                         rv.data)
         self.assertEqual(rv.status_code, 400)
 
         # bad address, good address
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["omega"], addresses["theta"]))
-        self.assertEqual(b"Registration Failed: Invalid Bitcoin address.", rv.data)
+        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["omega"],
+                                                         addresses["theta"]))
+        self.assertEqual(b"Registration Failed: Invalid Bitcoin address.",
+                         rv.data)
         self.assertEqual(rv.status_code, 400)
 
 
@@ -211,7 +222,8 @@ class HeightTest(TemplateTest):
         self.assertTrue(b"50" in rv.data)
 
         # set a crazy height
-        rv = self.app.get('/api/height/{0}/{1}'.format(addresses["gamma"], 250000))
+        rv = self.app.get('/api/height/{0}/{1}'.format(addresses["gamma"],
+                                                       250000))
         self.assertEqual(rv.status_code, 413)
 
 

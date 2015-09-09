@@ -21,7 +21,7 @@ setup(
     author_email='shawn+dataserv@storj.io',
     license='MIT',
     packages=find_packages(),
-    download_url = DOWNLOAD_URL,
+    download_url=DOWNLOAD_URL,
     test_suite="tests",
     install_requires=open("requirements.txt").readlines(),
     tests_require=[],  # use `pip install -r test_requirements.txt`

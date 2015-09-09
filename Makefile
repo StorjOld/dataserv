@@ -10,13 +10,13 @@ PY = env/bin/python
 
 
 help:
-	@echo "Some usefull development shortcuts."
+	@echo "Some useful development shortcuts."
 	@echo "  clean      Remove all generated files."
 	@echo "  setup      Setup development environment."
 	@echo "  shell      Open ipython from the development environment."
 	@echo "  test       Run tests and analysis tools."
 	@echo "  wheel      Build package wheel and save in '$(WHEEL_DIR)'."
-	@echo "  wheels     Build dependencie wheels and save in '$(WHEEL_DIR)'."
+	@echo "  wheels     Build dependency wheels and save in '$(WHEEL_DIR)'."
 	@echo "  publish    Build and upload package to pypi.python.org"
 
 

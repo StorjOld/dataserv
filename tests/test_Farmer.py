@@ -32,9 +32,9 @@ class FarmerTest(unittest.TestCase):
         self.assertEqual(repr(farmer), ans)
 
     def test_sha256(self):
-        ans = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
-        self.assertEqual(sha256("storj"), ans)
-        self.assertNotEqual(sha256("not storj"), ans)
+        an = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
+        self.assertEqual(sha256("storj"), an)
+        self.assertNotEqual(sha256("not storj"), an)
 
     def test_register(self):
         # test success
@@ -61,7 +61,8 @@ class FarmerTest(unittest.TestCase):
 
         # get register time, and make sure the ping work
         register_time = farmer.last_seen
-        time.sleep(app.config["MAX_PING"] + 1) # ping faster than max_ping would be ignored
+        # ping faster than max_ping would be ignored
+        time.sleep(app.config["MAX_PING"] + 1)
         farmer.ping()  # update last seen
         ping_time = farmer.last_seen
         self.assertTrue(register_time < ping_time)
@@ -102,7 +103,8 @@ class FarmerTest(unittest.TestCase):
 
         # get register time, and make sure the ping work
         register_time = farmer.last_seen
-        time.sleep(app.config["MAX_PING"] + 1) # ping faster than max_ping would be ignored
+        # ping faster than max_ping would be ignored
+        time.sleep(app.config["MAX_PING"] + 1)
         farmer.audit()
         ping_time = farmer.last_seen
         self.assertTrue(register_time < ping_time)
@@ -189,8 +191,8 @@ class FarmerAuthenticationTest(unittest.TestCase):
             address = blockchain.get_address(wif)
             farmer = Farmer(address)
 
-            header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
-                                     localtime=True, usegmt=True)
+            header_date = formatdate(timeval=mktime(datetime.now().timetuple())
+                                     , localtime=True, usegmt=True)
             message = farmer.get_server_address() + " " + header_date
             header_authorization = blockchain.sign_unicode(wif, message)
             farmer.authenticate(header_authorization, None)
@@ -237,8 +239,8 @@ class FarmerAuthenticationTest(unittest.TestCase):
             address = blockchain.get_address(wif)
             farmer = Farmer(address)
 
-            header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
-                                     localtime=True, usegmt=True)
+            header_date = formatdate(timeval=mktime(datetime.now().timetuple())
+                                     , localtime=True, usegmt=True)
             header_authorization = blockchain.sign_unicode(wif, "lalala-wrong")
             farmer.authenticate(header_authorization, header_date)
         self.assertRaises(AuthError, callback)

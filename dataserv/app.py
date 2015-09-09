@@ -1,20 +1,19 @@
 # Python 2 Fix
 from __future__ import division
 
-
 import sys
 import json
 import os.path
 import datetime
 from random import randint
 from flask import make_response, jsonify, request
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from sqlalchemy import desc
 from dataserv.run import app, db
+from dataserv.config import logging
 from dataserv.Farmer import Farmer, AuthError
 
-from dataserv.config import logging
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 logger = logging.getLogger(__name__)
 
 
@@ -23,9 +22,9 @@ def secs_to_mins(seconds):
     if seconds < 60:
         return "{0} second(s)".format(int(seconds))
     elif seconds < 3600:
-        return "{0} minute(s)".format(int(seconds/60))
+        return "{0} minute(s)".format(int(seconds / 60))
     else:
-        return "{0} hour(s)".format(int(seconds/3600))
+        return "{0} hour(s)".format(int(seconds / 3600))
 
 
 def online_farmers():
@@ -132,7 +131,7 @@ def online_json():
     payload = {
         "farmers": [
             json.loads(farmer.to_json()) for farmer in online_farmers()
-        ]
+            ]
     }
     resp = jsonify(payload)
     resp.headers['Access-Control-Allow-Origin'] = '*'
@@ -149,7 +148,7 @@ def total():
         total_shards += farmer.height
 
     # return in TB the number
-    app.config["BYTE_SIZE"] = 1024*1024*128
+    app.config["BYTE_SIZE"] = 1024 * 1024 * 128
     byte_size = app.config["BYTE_SIZE"]
     result = (total_shards * (byte_size / (1024 ** 4)))  # bytes / 1 TB
     json_data = {'id': randint(0, 9999999), 'total_TB': round(result, 2)}
