@@ -260,6 +260,12 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
         rv = self.app.get('/api/register/{0}'.format(addresses["eta"]))
         self.assertEqual(rv.status_code, 401)
 
+        rv = self.app.get('/api/ping/{0}'.format(addresses["eta"]))
+        self.assertEqual(rv.status_code, 401)
+
+        rv = self.app.get('/api/height/{0}/10'.format(addresses["eta"]))
+        self.assertEqual(rv.status_code, 401)
+
 
 class MiscAppTest(TemplateTest):
 
