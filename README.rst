@@ -131,8 +131,8 @@ Fail Examples:
 Online Status - Readable
 ************************
 
-This API call was build to be human readable rather than machine readable. We get a simple
-list of the all the farmers, their addresses, their advertised height. All of this is ordered by height.
+This API call was built to be human readable rather than machine readable. We get a simple
+list of the all the farmers, their addresses, and their advertised heights. All of this is ordered by height.
 We only display farmers that have done a ping in the last `online_time` minutes, which by default
 is 15 minutes.
 
@@ -158,8 +158,8 @@ Success Example:
 Online Status - JSON
 ********************
 
-This API call was build to be human readable rather than machine readable. We get a simple
-list of the all the farmers, their addresses, their advertised height. All of this is ordered by height.
+This API call was built to be human readable rather than machine readable. We get a simple
+list of the all the farmers, their addresses, and their advertised heights. All of this is ordered by height.
 We only display farmers that have done a ping in the last `online_time` minutes, which by default
 is 15 minutes. Last seen is the amount of seconds since we have last seen an API call from the farmer.
 
