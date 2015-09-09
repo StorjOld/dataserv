@@ -305,6 +305,7 @@ class MiscAppTest(TemplateTest):
 
         # check online
         rv = self.app.get('/api/online')
+
         self.assertTrue(b"0" in rv.data)
         self.assertTrue(b"2475" in rv.data)
         self.assertTrue(b"2525" in rv.data)
@@ -313,7 +314,6 @@ class MiscAppTest(TemplateTest):
         # check total bytes
         rv = self.app.get('/api/total')
         json_data = b'"total_TB": 1.22\n}'
-
         self.assertTrue(json_data in rv.data)
 
     def test_get_address(self):
