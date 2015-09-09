@@ -8,7 +8,8 @@ import datetime
 from flask import make_response, jsonify, request
 
 from sqlalchemy import desc
-from dataserv.run import app, db
+from dataserv.run import app, db, cache
+
 from dataserv.config import logging
 from dataserv.Farmer import Farmer, AuthError
 
@@ -40,6 +41,10 @@ def online_farmers():
     q = q.filter(Farmer.last_seen > time_ago)
     q = q.order_by(desc(Farmer.height))
     return q.all()
+
+
+def disable_caching():
+    return app.config["DISABLE_CACHING"]
 
 
 # Routes
@@ -109,6 +114,7 @@ def get_address():
 
 
 @app.route('/api/online', methods=["GET"])
+@cache.cached(timeout=app.config["CACHING_TIME"], unless=disable_caching)
 def online():
     """Display a readable list of online farmers."""
     logger.info("CALLED /api/online")
@@ -124,6 +130,7 @@ def online():
 
 
 @app.route('/api/online/json', methods=["GET"])
+@cache.cached(timeout=app.config["CACHING_TIME"], unless=disable_caching)
 def online_json():
     """Display a machine readable list of online farmers."""
     logger.info("CALLED /api/online/json")
@@ -138,6 +145,7 @@ def online_json():
 
 
 @app.route('/api/total', methods=["GET"])
+@cache.cached(timeout=app.config["CACHING_TIME"], unless=disable_caching)
 def total():
     logger.info("CALLED /api/total")
 

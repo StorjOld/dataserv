@@ -20,6 +20,8 @@ class FarmerTest(unittest.TestCase):
 
     def setUp(self):
         app.config["SKIP_AUTHENTICATION"] = True  # monkey patch
+        app.config["DISABLE_CACHING"] = True
+
         db.create_all()
 
     def tearDown(self):

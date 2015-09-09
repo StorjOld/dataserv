@@ -15,6 +15,7 @@ addresses = fixtures["addresses"]
 class TemplateTest(unittest.TestCase):
     def setUp(self):
         app.config["SKIP_AUTHENTICATION"] = True  # monkey patch
+        app.config["DISABLE_CACHING"] = True
 
         self.app = app.test_client()
         db.create_all()
@@ -305,7 +306,6 @@ class MiscAppTest(TemplateTest):
 
         # check online
         rv = self.app.get('/api/online')
-
         self.assertTrue(b"0" in rv.data)
         self.assertTrue(b"2475" in rv.data)
         self.assertTrue(b"2525" in rv.data)
