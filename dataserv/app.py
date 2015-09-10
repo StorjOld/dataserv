@@ -10,7 +10,7 @@ from flask import make_response, jsonify, request
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from sqlalchemy import desc
-from dataserv.run import app, db, cache
+from dataserv.run import app, db, cache, manager
 from dataserv.Farmer import Farmer, AuthError
 from dataserv.config import logging
 
@@ -202,11 +202,11 @@ def set_height(btc_addr, height):
 
 if __name__ == '__main__':  # pragma: no cover
     # Create Database
-    db.create_all()
+    #db.create_all()
 
     # Run the Flask app
-    app.run(
-        host="0.0.0.0",
-        port=int("5000"),
-        debug=True
+    manager.run(
+    #    host="0.0.0.0",
+    #    port=int("5000"),
+    #    debug=True
     )
