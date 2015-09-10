@@ -1,19 +1,20 @@
 # Python 2 Fix
 from __future__ import division
 
+
 import sys
 import json
 import os.path
 import datetime
 from random import randint
 from flask import make_response, jsonify, request
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from sqlalchemy import desc
 from dataserv.run import app, db
-from dataserv.config import logging
 from dataserv.Farmer import Farmer, AuthError
 
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from dataserv.config import logging
 logger = logging.getLogger(__name__)
 
 
@@ -131,7 +132,7 @@ def online_json():
     payload = {
         "farmers": [
             json.loads(farmer.to_json()) for farmer in online_farmers()
-            ]
+        ]
     }
     resp = jsonify(payload)
     resp.headers['Access-Control-Allow-Origin'] = '*'
