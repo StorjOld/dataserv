@@ -15,11 +15,5 @@ cache.init_app(app)
 
 migrate = Migrate(app, db)
 
-# didn't fix: configparser.NoSectionError: No section: 'alembic'
-#migrate = Migrate()
-#migrate.init_app(app, db, directory=os.path.join(
-#    os.path.realpath(os.path.dirname(__file__)), "migrations"
-#))
-
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)

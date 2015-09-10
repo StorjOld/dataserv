@@ -201,12 +201,11 @@ def set_height(btc_addr, height):
 
 
 if __name__ == '__main__':  # pragma: no cover
-    # Create Database
-    #db.create_all()
-
     # Run the Flask app
-    manager.run(
+    #db.create_all()
+    #app.run(
     #    host="0.0.0.0",
     #    port=int("5000"),
     #    debug=True
-    )
+    #)
+    manager.run()
