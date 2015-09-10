@@ -4,3 +4,4 @@ RandomIO == 0.2.1
 partialhash == 1.1.0
 btctxstore == 4.5.0
 Flask-Cache == 0.13.1
+Flask-Migrate == 1.5.1
