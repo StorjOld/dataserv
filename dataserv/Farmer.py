@@ -1,6 +1,6 @@
 import json
 import hashlib
-
+import storjcore
 from email.utils import parsedate_tz
 from email.utils import mktime_tz
 from dataserv.run import db, app
@@ -13,14 +13,6 @@ from btctxstore import BtcTxStore
 from dataserv.config import logging
 logger = logging.getLogger(__name__)
 is_btc_address = BtcTxStore().validate_address
-
-
-class AuthError(Exception):
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
 
 
 def sha256(content):
@@ -61,41 +53,21 @@ class Farmer(db.Model):
     def get_server_authentication_timeout():
         return app.config["AUTHENTICATION_TIMEOUT"]
 
-    def authenticate(self, header_authorization, header_date):
+    def authenticate(self, headers):
         if app.config["SKIP_AUTHENTICATION"]:
             return True
-        if not header_authorization:
-            msg = "Header authorization required!"
-            logger.warning(msg)
-            raise AuthError(msg)
-        if not header_date:
-            msg = "Header date required!"
-            logger.warning(msg)
-            raise AuthError(msg)
 
-        # verify date
-        serverdate = datetime.now()
-        clientdate = datetime.fromtimestamp(mktime_tz(
-            parsedate_tz(header_date)))
-        timeout = timedelta(seconds=self.get_server_authentication_timeout())
-        delta = abs(serverdate - clientdate)
-        if delta >= timeout:
-            msg = "Invalid header date! {0} >= {1} for auth addr {2}!".format(
-                    delta, timeout, self.btc_addr
-            )
-            logger.warning(msg)
-            raise AuthError(msg)
+        if not headers.get("Authorization"):
+            raise storjcore.auth.AuthError("Authorization header required!")
+        if not headers.get("Date"):
+            raise storjcore.auth.AuthError("Date header required!")
 
-        # verify signature
-        message = self.get_server_address() + " " + header_date
-        if not BtcTxStore().verify_signature_unicode(self.btc_addr,
-                                                     header_authorization,
-                                                     message):
-            msg = "Invalid header_authorization for auth addr {0}!".format(
-                self.btc_addr)
-            logger.warning(msg)
-            raise AuthError(msg)
-        return True
+        btctxstore = BtcTxStore()
+        timeout = self.get_server_authentication_timeout()
+        recipient_address = self.get_server_address()
+        sender_address = self.btc_addr
+        return storjcore.auth.verify_headers(btctxstore, headers, timeout,
+                                             sender_address, recipient_address)
 
     def validate(self, registering=False):
         """Make sure this farmer fits the rules for this node."""

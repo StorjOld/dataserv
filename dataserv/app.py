@@ -6,12 +6,13 @@ import sys
 import json
 import os.path
 import datetime
+import storjcore
 from flask import make_response, jsonify, request
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from sqlalchemy import desc
 from dataserv.run import app, db, cache, manager
-from dataserv.Farmer import Farmer, AuthError
+from dataserv.Farmer import Farmer
 from dataserv.config import logging
 
 
@@ -66,8 +67,7 @@ def register_with_payout(btc_addr, payout_addr):
     error_msg = "Registration Failed: {0}"
     try:
         user = Farmer(btc_addr)
-        user.authenticate(request.headers.get('Authorization'),
-                          request.headers.get('Date'))
+        user.authenticate(dict(request.headers))
         user.register(payout_addr)
         return make_response(user.to_json(), 200)
     except ValueError:
@@ -78,7 +78,7 @@ def register_with_payout(btc_addr, payout_addr):
         msg = "Address already is registered."
         logger.warning(msg)
         return make_response(error_msg.format(msg), 409)
-    except AuthError:
+    except storjcore.auth.AuthError:
         msg = "Invalid authentication headers."
         logger.warning(msg)
         return make_response(error_msg.format(msg), 401)
@@ -90,8 +90,7 @@ def ping(btc_addr):
     error_msg = "Ping Failed: {0}"
     try:
         user = Farmer(btc_addr)
-        user.authenticate(request.headers.get('Authorization'),
-                          request.headers.get('Date'))
+        user.authenticate(dict(request.headers))
         user.ping()
         return make_response("Ping accepted.", 200)
     except ValueError:
@@ -102,7 +101,7 @@ def ping(btc_addr):
         msg = "Farmer not found."
         logger.warning(msg)
         return make_response(error_msg.format(msg), 404)
-    except AuthError:
+    except storjcore.auth.AuthError:
         msg = "Invalid authentication headers."
         logger.warning(msg)
         return make_response(error_msg.format(msg), 401)
@@ -173,8 +172,7 @@ def set_height(btc_addr, height):
     error_msg = "Set height failed: {0}"
     try:
         user = Farmer(btc_addr)
-        user.authenticate(request.headers.get('Authorization'),
-                          request.headers.get('Date'))
+        user.authenticate(dict(request.headers))
         if height < app.config["HEIGHT_LIMIT"]:
             user.set_height(height)
             return make_response("Height accepted.", 200)
@@ -194,7 +192,7 @@ def set_height(btc_addr, height):
         msg = "Farmer not found."
         logger.warning(msg)
         return make_response(msg, 404)
-    except AuthError:
+    except storjcore.auth.AuthError:
         msg = "Invalid authentication headers."
         logger.warning(msg)
         return make_response(error_msg.format(msg), 401)
