@@ -156,9 +156,9 @@ class Farmer(db.Model):
 
     def set_height(self, height):
         """Set the farmers advertised height."""
-        self.ping()  # also serves as a valid ping
         farmer = self.lookup()
         farmer.height = height
+        farmer.last_seen = datetime.utcnow()
         db.session.commit()
         return self.height
 
