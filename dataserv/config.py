@@ -1,8 +1,17 @@
+import os
 import logging
+
 
 MAX_PING = 15  # seconds
 ONLINE_TIME = 5  # minutes
-SQLALCHEMY_DATABASE_URI = "sqlite:///dataserv.db"
+
+
+# db setup example `export DATABASE_URL="postgresql://localhost/dataserv"`
+if os.environ.get("DATASERV_DATABASE_URI"):
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATASERV_DATABASE_URI")
+else:  # default to sqlite
+    SQLALCHEMY_DATABASE_URI = "sqlite:///dataserv.db"
+
 
 DATA_DIR = 'data/'
 BYTE_SIZE = 1024*1024*128  # 128 MB FIXME rename, very confusing name
