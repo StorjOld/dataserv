@@ -6,7 +6,7 @@ MAX_PING = 15  # seconds
 ONLINE_TIME = 5  # minutes
 
 
-# db setup example `export DATABASE_URL="postgresql://localhost/dataserv"`
+# db setup example `export DATABASE_URL="postgresql:///dataserv"`
 if os.environ.get("DATASERV_DATABASE_URI"):
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATASERV_DATABASE_URI")
 else:  # default to sqlite
