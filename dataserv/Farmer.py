@@ -90,8 +90,7 @@ class Farmer(db.Model):
 
     def exists(self):
         """Check to see if this address is already listed."""
-        query = db.session.query(Farmer.btc_addr)
-        return query.filter(Farmer.btc_addr == self.btc_addr).count() > 0
+        return Farmer.query.filter(Farmer.btc_addr == self.btc_addr).count() > 0
 
     def lookup(self):
         """Return the Farmer object for the bitcoin address passed."""
