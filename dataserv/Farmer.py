@@ -108,12 +108,13 @@ class Farmer(db.Model):
         we just want to know if they are still there.
 
         """
+        pingtime = datetime.utcnow()
         farmer = self.lookup()
-        delta = datetime.utcnow() - farmer.last_seen
+        delta = pingtime - farmer.last_seen
         time_limit = delta.seconds >= app.config["MAX_PING"]
 
         if time_limit:
-            farmer.last_seen = datetime.utcnow()
+            farmer.last_seen = pingtime
             db.session.commit()
         # else just ignore
 
