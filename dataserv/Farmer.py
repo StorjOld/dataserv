@@ -22,7 +22,7 @@ class Farmer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     btc_addr = db.Column(db.String(35), unique=True)
     payout_addr = db.Column(db.String(35))
-    last_seen = db.Column(DateTime, default=datetime.utcnow)
+    last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
     height = db.Column(db.Integer, default=0)
 
     def __init__(self, btc_addr, last_seen=None):
