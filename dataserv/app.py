@@ -157,8 +157,8 @@ def total():
     total_size = (total_shards * (app.config["BYTE_SIZE"] / (1024 ** 4)))
 
     # Increment by 1 every TOTAL_UPDATE minutes
-    epoch_mins = (datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).\
-                     total_seconds()/60
+    epoch = datetime.datetime(1970, 1, 1)
+    epoch_mins = (datetime.datetime.utcnow() - epoch).total_seconds()/60
     id_val = epoch_mins / app.config["TOTAL_UPDATE"]
 
     json_data = {'id': int(id_val), 'total_TB': round(total_size, 2)}
