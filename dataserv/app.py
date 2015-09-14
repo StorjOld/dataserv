@@ -41,7 +41,7 @@ def online_farmers():
     # give us all farmers that have been around for the past online_time
     q = db.session.query(Farmer)
     q = q.filter(Farmer.last_seen > time_ago)
-    q = q.order_by(desc(Farmer.height))
+    q = q.order_by(desc(Farmer.height),Farmer.id)
     return q.all()
 
 
