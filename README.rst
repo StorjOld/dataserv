@@ -35,17 +35,28 @@ How to install and run on a clean install of Ubuntu 14.04 (LTS):
 
 ::
 
-    sh
+    # install dependencies
     apt-get update
     apt-get upgrade
-    apt-get install postgresql postgresql-contrib authbind
-    apt-get install python-virtualenv screen git python3 libpq-dev python3-dev -y
+    apt-get install -y postgresql postgresql-contrib authbind
+    apt-get install -y python-virtualenv screen git python3 libpq-dev python3-dev -y
+
+    # clone project
     git clone https://github.com/Storj/dataserv
     cd dataserv
-    python setup.py install
+
+    # setup virtualenv and install required python packages
+    virtualenv -p /usr/bin/python3 env
+    source env/bin/activate
+    pip install -r requirements.txt
+
+    # init db and start server
     cd dataserv
-    touch dataserv.db
-    python app.py
+    python app.py db upgrade
+    python app.py runserver
+    curl http://127.0.0.1:5000/api/online/json
+
+
 
 ###
 API

@@ -108,6 +108,7 @@ def ping(btc_addr):
 
 
 @app.route('/api/address', methods=["GET"])
+@cache.cached(timeout=app.config["CACHING_TIME"], unless=disable_caching)
 def get_address():
     logger.info("CALLED /api/address")
     return jsonify({"address": app.config["ADDRESS"]})
@@ -198,12 +199,5 @@ def set_height(btc_addr, height):
         return make_response(error_msg.format(msg), 401)
 
 
-if __name__ == '__main__':  # pragma: no cover
-    # Run the Flask app
-    #db.create_all()
-    #app.run(
-    #    host="0.0.0.0",
-    #    port=int("5000"),
-    #    debug=True
-    #)
+if __name__ == '__main__':
     manager.run()
