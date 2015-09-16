@@ -7,7 +7,7 @@ from btctxstore import BtcTxStore
 from email.utils import formatdate
 from dataserv.app import secs_to_mins, online_farmers
 
-# load address from fixtures file
+# FIXME generate addresses with btctxstore
 fixtures = json.load(open("tests/fixtures.json"))
 addresses = fixtures["addresses"]
 
@@ -140,6 +140,7 @@ class PingTest(TemplateTest):
         # bad ping
         self.assertEqual(b"Ping Failed: Invalid Bitcoin address.", rv.data)
         self.assertEqual(rv.status_code, 400)
+
 
 
 class OnlineTest(TemplateTest):

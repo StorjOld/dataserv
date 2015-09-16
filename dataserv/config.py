@@ -2,7 +2,7 @@ import os
 import logging
 
 
-MAX_PING = 15  # seconds
+MAX_PING = 60  # seconds
 ONLINE_TIME = 5  # minutes
 
 
