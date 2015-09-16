@@ -314,8 +314,8 @@ class MiscAppTest(TemplateTest):
 
         # check total bytes
         rv = self.app.get('/api/total')
-        json_data = b'"total_TB": 1.22\n}'
-        self.assertTrue(json_data in rv.data)
+        self.assertTrue(b'"total_TB": 1.22' in rv.data)
+        self.assertTrue(b'"total_farmers": 4' in rv.data)
 
     def test_get_address(self):
         rv = self.app.get('/api/address')

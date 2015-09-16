@@ -1,12 +1,9 @@
 import json
 import hashlib
 import storjcore
-from email.utils import parsedate_tz
-from email.utils import mktime_tz
-from dataserv.run import db, app
 from datetime import datetime
-from datetime import timedelta
 from sqlalchemy import DateTime
+from dataserv.run import db, app
 from btctxstore import BtcTxStore
 
 
@@ -25,7 +22,7 @@ class Farmer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     btc_addr = db.Column(db.String(35), unique=True)
     payout_addr = db.Column(db.String(35))
-    last_seen = db.Column(DateTime, default=datetime.utcnow)
+    last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
     height = db.Column(db.Integer, default=0)
 
     def __init__(self, btc_addr, last_seen=None):
@@ -90,8 +87,8 @@ class Farmer(db.Model):
 
     def exists(self):
         """Check to see if this address is already listed."""
-        query = db.session.query(Farmer.btc_addr)
-        return query.filter(Farmer.btc_addr == self.btc_addr).count() > 0
+        return Farmer.query.filter(Farmer.btc_addr ==
+                                   self.btc_addr).count() > 0
 
     def lookup(self):
         """Return the Farmer object for the bitcoin address passed."""

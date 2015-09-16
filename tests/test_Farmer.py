@@ -213,7 +213,8 @@ class FarmerAuthenticationTest(unittest.TestCase):
                                      localtime=True, usegmt=True)
             message = farmer.get_server_address() + " " + header_date
             header_authorization = blockchain.sign_unicode(wif, message)
-            headers = {"Date": header_date, "Authorization": header_authorization}
+            headers = {"Date": header_date,
+                       "Authorization": header_authorization}
             farmer.authenticate(headers)
         self.assertRaises(storjcore.auth.AuthError, callback)
 
@@ -229,7 +230,8 @@ class FarmerAuthenticationTest(unittest.TestCase):
                                      localtime=True, usegmt=True)
             message = farmer.get_server_address() + " " + header_date
             header_authorization = blockchain.sign_unicode(wif, message)
-            headers = {"Date": header_date, "Authorization": header_authorization}
+            headers = {"Date": header_date,
+                       "Authorization": header_authorization}
             farmer.authenticate(headers)
         self.assertRaises(storjcore.auth.AuthError, callback)
 
@@ -245,6 +247,7 @@ class FarmerAuthenticationTest(unittest.TestCase):
             header_date = formatdate(timeval=mktime(datetime.now().timetuple())
                                      , localtime=True, usegmt=True)
             header_authorization = blockchain.sign_unicode(wif, "lalala-wrong")
-            headers = {"Date": header_date, "Authorization": header_authorization}
+            headers = {"Date": header_date,
+                       "Authorization": header_authorization}
             farmer.authenticate(headers)
         self.assertRaises(storjcore.auth.AuthError, callback)
