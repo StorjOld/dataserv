@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 exec(open('dataserv/version.py').read())  # load __version__
 DOWNLOAD_BASEURL = "https://pypi.python.org/packages/source/a/dataserv/"
-DOWNLOAD_URL = DOWNLOAD_BASEURL + "dataserv-%s.tar.gz" % __version__  # NOQA
+DOWNLOAD_URL = DOWNLOAD_BASEURL + "dataserv-%s-py2.py3-none-any.whl" % __version__  # NOQA
 
 
 setup(
