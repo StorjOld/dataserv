@@ -8,7 +8,7 @@ ONLINE_TIME = 5  # minutes
 
 # MAX_PING is the most a client may ping
 if os.environ.get("DATASERV_MAX_PING"):
-    MAX_PING = os.environ.get("DATASERV_MAX_PING")
+    MAX_PING = int(os.environ.get("DATASERV_MAX_PING"))
 else:
     MAX_PING = 60  # default seconds
 
