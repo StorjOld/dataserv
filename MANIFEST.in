@@ -1,3 +1,5 @@
 include requirements.txt                                                        
 include test_requirements.txt                                                   
 include develop_requirements.txt  
+include dataserv/migrations/alembic.ini
+include dataserv/migrations/script.py.mako
