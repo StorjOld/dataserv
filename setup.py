@@ -23,10 +23,8 @@ setup(
     packages=find_packages(),
     include_package_data = True,
     package_data = {
-        "dataserv": [
-            "migrations/*.*",
-            "migrations/versions/*.*",
-        ],
+        "dataserv.migrations": [ "*.*" ],
+        "dataserv.migrations.versions": [ "*.*" ],
     },
     download_url=DOWNLOAD_URL,
     test_suite="tests",
