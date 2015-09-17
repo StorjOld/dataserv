@@ -21,6 +21,13 @@ setup(
     author_email='shawn+dataserv@storj.io',
     license='MIT',
     packages=find_packages(),
+    include_package_data = True,
+    package_data = {
+        "dataserv": [
+            "migrations/*.*",
+            "migrations/versions/*.*",
+        ],
+    },
     download_url=DOWNLOAD_URL,
     test_suite="tests",
     install_requires=open("requirements.txt").readlines(),
