@@ -5,8 +5,8 @@
 from setuptools import setup, find_packages
 
 exec(open('dataserv/version.py').read())  # load __version__
-DOWNLOAD_BASEURL = "https://pypi.python.org/packages/source/a/dataserv/"
-DOWNLOAD_URL = DOWNLOAD_BASEURL + "dataserv-%s.tar.gz" % __version__  # NOQA
+DOWNLOAD_BASEURL = "https://pypi.python.org/packages/3.4/d/dataserv/"
+DOWNLOAD_URL = DOWNLOAD_BASEURL + "dataserv-%s-py2.py3-none-any.whl" % __version__  # NOQA
 
 
 setup(
@@ -21,6 +21,11 @@ setup(
     author_email='shawn+dataserv@storj.io',
     license='MIT',
     packages=find_packages(),
+    include_package_data = True,
+    package_data = {
+        "dataserv.migrations": [ "*.*" ],
+        "dataserv.migrations.versions": [ "*.*" ],
+    },
     download_url=DOWNLOAD_URL,
     test_suite="tests",
     install_requires=open("requirements.txt").readlines(),

@@ -39,7 +39,7 @@ How to install and run on a clean install of Ubuntu 14.04 (LTS):
     apt-get update
     apt-get upgrade
     apt-get install -y postgresql postgresql-contrib authbind
-    apt-get install -y python-virtualenv screen git python3 libpq-dev python3-dev -y
+    apt-get install -y python-virtualenv screen git python3 libpq-dev python3-dev
 
     # clone project
     git clone https://github.com/Storj/dataserv

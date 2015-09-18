@@ -2,11 +2,19 @@ import os
 import logging
 
 
-MAX_PING = 15  # seconds
+
 ONLINE_TIME = 5  # minutes
 
 
-# db setup example `export DATASERV_DATABASE_URI="postgresql:///dataserv"`
+# MAX_PING is the most a client may ping
+if os.environ.get("DATASERV_MAX_PING"):
+    MAX_PING = int(os.environ.get("DATASERV_MAX_PING"))
+else:
+    MAX_PING = 60  # default seconds
+
+
+# db setup
+# example `export DATASERV_DATABASE_URI="postgresql:///dataserv"`
 if os.environ.get("DATASERV_DATABASE_URI"):
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATASERV_DATABASE_URI")
 else:  # default to sqlite

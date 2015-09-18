@@ -41,7 +41,7 @@ def online_farmers():
     # give us all farmers that have been around for the past online_time
     q = db.session.query(Farmer)
     q = q.filter(Farmer.last_seen > time_ago)
-    q = q.order_by(desc(Farmer.height))
+    q = q.order_by(desc(Farmer.height),Farmer.id)
     return q.all()
 
 
@@ -151,17 +151,22 @@ def total():
     logger.info("CALLED /api/total")
 
     # Add up number of shards
-    total_shards = sum([farmer.height for farmer in online_farmers()])
+    all_farmers = online_farmers()
+    total_shards = sum([farmer.height for farmer in all_farmers])
+    total_farmers = len(all_farmers)
 
     # BYTE_SIZE / 1 TB
     total_size = (total_shards * (app.config["BYTE_SIZE"] / (1024 ** 4)))
 
     # Increment by 1 every TOTAL_UPDATE minutes
-    epoch_mins = (datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).\
-                     total_seconds()/60
+    epoch = datetime.datetime(1970, 1, 1)
+    epoch_mins = (datetime.datetime.utcnow() - epoch).total_seconds()/60
     id_val = epoch_mins / app.config["TOTAL_UPDATE"]
 
-    json_data = {'id': int(id_val), 'total_TB': round(total_size, 2)}
+    json_data = {'id': int(id_val),
+                 'total_TB': round(total_size, 2),
+                 'total_farmers': total_farmers}
+
     resp = jsonify(json_data)
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
