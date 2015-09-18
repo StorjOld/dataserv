@@ -99,7 +99,7 @@ class Farmer(db.Model):
             raise LookupError(msg)
         return farmer
 
-    def ping(self):
+    def ping(self, before_commit_callback=None):
         """
         Keep-alive for the farmer. Validation can take a long time, so
         we just want to know if they are still there.
@@ -112,6 +112,8 @@ class Farmer(db.Model):
 
         if time_limit:
             farmer.last_seen = pingtime
+            if before_commit_callback:
+                before_commit_callback()
             db.session.commit()
         # else just ignore
 
