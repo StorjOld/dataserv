@@ -29,7 +29,7 @@ setup(
     download_url=DOWNLOAD_URL,
     test_suite="tests",
     install_requires=open("requirements.txt").readlines(),
-    tests_require=[],  # use `pip install -r test_requirements.txt`
+    tests_require=open("test_requirements.txt").readlines(),
     zip_safe=False,
     classifiers=[
         # "Development Status :: 1 - Planning",
