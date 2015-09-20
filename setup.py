@@ -5,8 +5,11 @@
 from setuptools import setup, find_packages
 
 exec(open('dataserv/version.py').read())  # load __version__
-DOWNLOAD_BASEURL = "https://pypi.python.org/packages/3.4/d/dataserv/"
-DOWNLOAD_URL = DOWNLOAD_BASEURL + "dataserv-%s-py2.py3-none-any.whl" % __version__  # NOQA
+DOWNLOAD_URL = "%(baseurl)s/%(name)s/%(name)s-%(version)s-py2.py3-none-any.whl" % {
+    'baseurl': "https://pypi.python.org/packages/3.4/d",
+    'name': 'dataserv',
+    'version': __version__  # NOQA
+}
 
 
 setup(
