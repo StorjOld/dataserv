@@ -90,8 +90,9 @@ def ping(btc_addr):
     error_msg = "Ping Failed: {0}"
     try:
         user = Farmer(btc_addr)
-        user.authenticate(dict(request.headers))
-        user.ping()
+        def before_commit():  # lazy authentication
+            user.authenticate(dict(request.headers))
+        user.ping(before_commit_callback=before_commit)
         return make_response("Ping accepted.", 200)
     except ValueError:
         msg = "Invalid Bitcoin address."

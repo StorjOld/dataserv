@@ -1,5 +1,6 @@
 import json
 import unittest
+import time
 from time import mktime
 from datetime import datetime
 from dataserv.run import app, db
@@ -241,16 +242,15 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
         db.drop_all()
 
     def test_success(self):
+
+        # create header date and authorization signature
         blockchain = BtcTxStore()
         wif = blockchain.create_key()
         address = blockchain.get_address(wif)
-
-        # create header date and authorization signature
         header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
                                  localtime=True, usegmt=True)
         message = app.config["ADDRESS"] + " " + header_date
         header_authorization = blockchain.sign_unicode(wif, message)
-
         headers = {"Date": header_date, "Authorization": header_authorization}
         url = '/api/register/{0}'.format(address)
         rv = self.app.get(url, headers=headers)
@@ -259,12 +259,29 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
         self.assertEqual(rv.status_code, 200)
 
     def test_fail(self):
+        # register without auth headres fails
         rv = self.app.get('/api/register/{0}'.format(addresses["eta"]))
         self.assertEqual(rv.status_code, 401)
 
-        rv = self.app.get('/api/ping/{0}'.format(addresses["eta"]))
+        # register first because ping is lazy
+        blockchain = BtcTxStore()
+        wif = blockchain.create_key()
+        address = blockchain.get_address(wif)
+        header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
+                                 localtime=True, usegmt=True)
+        message = app.config["ADDRESS"] + " " + header_date
+        header_authorization = blockchain.sign_unicode(wif, message)
+        headers = {"Date": header_date, "Authorization": header_authorization}
+        url = '/api/register/{0}'.format(address)
+        rv = self.app.get(url, headers=headers)
+        self.assertEqual(rv.status_code, 200)
+
+        # ping without auth headres fails
+        time.sleep(app.config["MAX_PING"])
+        rv = self.app.get('/api/ping/{0}'.format(address))
         self.assertEqual(rv.status_code, 401)
 
+        # set height without auth headres fails
         rv = self.app.get('/api/height/{0}/10'.format(addresses["eta"]))
         self.assertEqual(rv.status_code, 401)
 
