@@ -192,12 +192,14 @@ Success Example:
                 {
                   "btc_addr": "1JdEaubcd36ufmT64drdVsGu5SN65A3Z1L",
                   "height": 0,
-                  "last_seen": 30
+                  "last_seen": 30,
+                  "uptime": 100
                 },
                 {
                   "btc_addr": "1JdEaubcM36ufmT64drdVsGu5SN65A3Z1A",
                   "height": 0,
-                  "last_seen": 2
+                  "last_seen": 2,
+                  "uptime": 93
                 }
               ]
             }
