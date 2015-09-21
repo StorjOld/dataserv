@@ -20,10 +20,14 @@ def sha256(content):
 
 class Farmer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+
     btc_addr = db.Column(db.String(35), unique=True)
     payout_addr = db.Column(db.String(35))
-    last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
     height = db.Column(db.Integer, default=0)
+
+    last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
+    reg_time = db.Column(DateTime, default=datetime.utcnow)
+    uptime = db.Column(db.Integer, default=0)
 
     def __init__(self, btc_addr, last_seen=None):
         """
@@ -105,17 +109,24 @@ class Farmer(db.Model):
         we just want to know if they are still there.
 
         """
-        pingtime = datetime.utcnow()
-        farmer = self.lookup()
-        delta = pingtime - farmer.last_seen
-        time_limit = delta.seconds >= app.config["MAX_PING"]
+        ping_time = datetime.utcnow()
 
-        if time_limit:
-            farmer.last_seen = pingtime
+        # make sure the farmer is valid
+        farmer = self.lookup()
+        # find time delta since we last pinged
+        delta = ping_time - farmer.last_seen
+
+        # if we are above the time limit, update last seen
+        if delta.seconds >= app.config["MAX_PING"]:
+            farmer.last_seen = ping_time
+            # if the farmer has been online in the last ONLINE_TIME seconds
+            # then we can update their uptime statistic
+            if delta.seconds <= (app.config["ONLINE_TIME"] * 60):
+                farmer.uptime += delta.seconds
+            # call to the authentication module
             if before_commit_callback:
                 before_commit_callback()
             db.session.commit()
-        # else just ignore
 
     # TODO: Actually do an audit.
     def audit(self):
