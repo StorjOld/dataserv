@@ -157,12 +157,14 @@ class Farmer(db.Model):
         # in case registration happened a short bit ago
         if delta_reg == 0:
             delta_reg = 1
-        uptime = round(farmer.uptime / delta_reg, 3)
+        farmer_uptime = farmer.uptime + (app.config["ONLINE_TIME"] * 60)
+        uptime = round(farmer_uptime / delta_reg, 3)
         # clip if we completed the audit recently (which sends us over 100%)
+        uptime *= 100  # covert from decimal to percentage
         if uptime > 100:
             uptime = 100
 
-        return uptime
+        return round(uptime, 3)
 
     def to_json(self):
         """Object to JSON payload."""
