@@ -123,7 +123,8 @@ class FarmerTest(unittest.TestCase):
             "height": 50,
             "btc_addr": addresses["epsilon"],
             'payout_addr': addresses["epsilon"],
-            "last_seen": 0
+            "last_seen": 0,
+            "uptime": 0
         }
         call_payload = json.loads(farmer.to_json())
         self.assertEqual(test_json, call_payload)

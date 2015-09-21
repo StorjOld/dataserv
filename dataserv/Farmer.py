@@ -150,10 +150,14 @@ class Farmer(db.Model):
         farmer = self.lookup()
         # time delta from registration
         delta_reg = datetime.utcnow() - farmer.reg_time
-        # convert to seconds and remove current time period
-        delta_reg = delta_reg.seconds - (app.config["ONLINE_TIME"] * 60)
 
-        uptime = round(farmer.uptime / delta_reg.seconds, 3)
+        # convert to seconds
+        delta_reg = delta_reg.seconds
+
+        # in case registration happened a short bit ago
+        if delta_reg == 0:
+            delta_reg = 1
+        uptime = round(farmer.uptime / delta_reg, 3)
         # clip if we completed the audit recently (which sends us over 100%)
         if uptime > 100:
             uptime = 100
