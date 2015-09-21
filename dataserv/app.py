@@ -41,7 +41,7 @@ def online_farmers():
     # give us all farmers that have been around for the past online_time
     q = db.session.query(Farmer)
     q = q.filter(Farmer.last_seen > time_ago)
-    q = q.order_by(desc(Farmer.height),Farmer.id)
+    q = q.order_by(desc(Farmer.height), Farmer.id)
     return q.all()
 
 
@@ -90,8 +90,10 @@ def ping(btc_addr):
     error_msg = "Ping Failed: {0}"
     try:
         user = Farmer(btc_addr)
+
         def before_commit():  # lazy authentication
             user.authenticate(dict(request.headers))
+
         user.ping(before_commit_callback=before_commit)
         return make_response("Ping accepted.", 200)
     except ValueError:

@@ -143,7 +143,6 @@ class PingTest(TemplateTest):
         self.assertEqual(rv.status_code, 400)
 
 
-
 class OnlineTest(TemplateTest):
 
     def test_online(self):
