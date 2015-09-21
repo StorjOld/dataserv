@@ -46,7 +46,8 @@ class RegisterTest(TemplateTest):
             "height": 0,
             "btc_addr": addresses["gamma"],
             'payout_addr': addresses["gamma"],
-            "last_seen": 0
+            "last_seen": 0,
+            "uptime": 100
         }
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(return_data, expected_data)
@@ -66,7 +67,8 @@ class RegisterTest(TemplateTest):
             "height": 0,
             "btc_addr": addresses["delta"],
             'payout_addr': addresses["epsilon"],
-            "last_seen": 0
+            "last_seen": 0,
+            "uptime": 100
         }
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(return_data, expected_data)
@@ -86,7 +88,8 @@ class RegisterTest(TemplateTest):
             "height": 0,
             "btc_addr": addresses["zeta"],
             'payout_addr': addresses["epsilon"],
-            "last_seen": 0
+            "last_seen": 0,
+            "uptime": 100
         }
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(return_data, expected_data)
