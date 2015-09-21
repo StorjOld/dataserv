@@ -145,12 +145,28 @@ class Farmer(db.Model):
         db.session.commit()
         return self.height
 
+    def calculate_uptime(self):
+        """Calculate uptime from registration date."""
+        farmer = self.lookup()
+        # time delta from registration
+        delta_reg = datetime.utcnow() - farmer.reg_time
+        # convert to seconds and remove current time period
+        delta_reg = delta_reg.seconds - (app.config["ONLINE_TIME"] * 60)
+
+        uptime = round(farmer.uptime / delta_reg.seconds, 3)
+        # clip if we completed the audit recently (which sends us over 100%)
+        if uptime > 100:
+            uptime = 100
+
+        return uptime
+
     def to_json(self):
         """Object to JSON payload."""
         payload = {
             "btc_addr": self.btc_addr,
             "payout_addr": self.payout_addr,
             "last_seen": (datetime.utcnow() - self.last_seen).seconds,
-            "height": self.height
+            "height": self.height,
+            "uptime": self.calculate_uptime()
         }
         return json.dumps(payload)
