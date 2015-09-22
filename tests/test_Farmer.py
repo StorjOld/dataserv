@@ -12,16 +12,14 @@ from dataserv.Farmer import sha256
 from dataserv.Farmer import Farmer
 
 
-# load address from fixtures file
-fixtures = json.load(open("tests/fixtures.json"))
-addresses = fixtures["addresses"]
-
-
 class FarmerTest(unittest.TestCase):
 
     def setUp(self):
         app.config["SKIP_AUTHENTICATION"] = True  # monkey patch
         app.config["DISABLE_CACHING"] = True
+
+        self.btctxstore = BtcTxStore()
+        self.bad_addr = 'notvalidaddress'
 
         db.create_all()
 
@@ -41,7 +39,8 @@ class FarmerTest(unittest.TestCase):
 
     def test_register(self):
         # test success
-        farmer1 = Farmer(addresses["alpha"])
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        farmer1 = Farmer(btc_addr)
         self.assertFalse(farmer1.exists())
         farmer1.register()
         self.assertTrue(farmer1.exists())
@@ -50,11 +49,12 @@ class FarmerTest(unittest.TestCase):
         self.assertRaises(LookupError, farmer1.register)
 
         def callback_a():
-            Farmer(addresses["omega"])
+            Farmer(self.bad_addr)
         self.assertRaises(ValueError, callback_a)
 
     def test_ping(self):
-        farmer = Farmer(addresses["beta"])
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        farmer = Farmer(btc_addr)
 
         # test ping before registration
         self.assertRaises(LookupError, farmer.ping)
@@ -71,7 +71,8 @@ class FarmerTest(unittest.TestCase):
         self.assertTrue(register_time < ping_time)
 
     def test_ping_time_limit(self):
-        farmer = Farmer(addresses["beta"])
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        farmer = Farmer(btc_addr)
         farmer.register()
 
         register_time = farmer.last_seen
@@ -83,7 +84,8 @@ class FarmerTest(unittest.TestCase):
         self.assertEqual(delta_seconds, 0)
 
     def test_height(self):
-        farmer = Farmer(addresses["gamma"])
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        farmer = Farmer(btc_addr)
         farmer.register()
 
         # set height and check function output
@@ -96,7 +98,8 @@ class FarmerTest(unittest.TestCase):
         self.assertEqual(farmer2.height, 5)
 
     def test_audit(self):
-        farmer = Farmer(addresses["delta"])
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        farmer = Farmer(btc_addr)
 
         # test audit before registration
         self.assertRaises(LookupError, farmer.audit)
@@ -113,7 +116,8 @@ class FarmerTest(unittest.TestCase):
         self.assertTrue(register_time < ping_time)
 
     def test_to_json(self):
-        farmer = Farmer(addresses["epsilon"])
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        farmer = Farmer(btc_addr)
         farmer.register()
 
         farmer.ping()
@@ -121,8 +125,8 @@ class FarmerTest(unittest.TestCase):
 
         test_json = {
             "height": 50,
-            "btc_addr": addresses["epsilon"],
-            'payout_addr': addresses["epsilon"],
+            "btc_addr": btc_addr,
+            'payout_addr': btc_addr,
             "last_seen": 0,
             "uptime": 100
         }
