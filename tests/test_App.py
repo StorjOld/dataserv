@@ -8,15 +8,14 @@ from btctxstore import BtcTxStore
 from email.utils import formatdate
 from dataserv.app import secs_to_mins, online_farmers
 
-# FIXME generate addresses with btctxstore
-fixtures = json.load(open("tests/fixtures.json"))
-addresses = fixtures["addresses"]
-
 
 class TemplateTest(unittest.TestCase):
     def setUp(self):
         app.config["SKIP_AUTHENTICATION"] = True  # monkey patch
         app.config["DISABLE_CACHING"] = True
+
+        self.btctxstore = BtcTxStore()
+        self.bad_addr = 'notvalidaddress'
 
         self.app = app.test_client()
         db.create_all()
@@ -29,23 +28,26 @@ class TemplateTest(unittest.TestCase):
 class RegisterTest(TemplateTest):
 
     def test_register(self):
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["alpha"],
-                                                         addresses["beta"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        payout_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/register/{0}/{1}'.format(btc_addr,
+                                                         payout_addr))
 
         data = json.loads(rv.data.decode("utf-8"))
-        self.assertEqual(addresses["alpha"], data["btc_addr"])
-        self.assertEqual(addresses["beta"], data["payout_addr"])
+        self.assertEqual(btc_addr, data["btc_addr"])
+        self.assertEqual(payout_addr, data["payout_addr"])
         self.assertEqual(rv.status_code, 200)
 
     def test_register_no_payout(self):
-        rv = self.app.get('/api/register/{0}'.format(addresses["gamma"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/register/{0}'.format(btc_addr))
 
         # good registration
         return_data = json.loads(rv.data.decode("utf-8"))
         expected_data = {
             "height": 0,
-            "btc_addr": addresses["gamma"],
-            'payout_addr': addresses["gamma"],
+            "btc_addr": btc_addr,
+            'payout_addr': btc_addr,
             "last_seen": 0,
             "uptime": 100
         }
@@ -53,20 +55,22 @@ class RegisterTest(TemplateTest):
         self.assertEqual(return_data, expected_data)
 
         # duplicate registration
-        rv = self.app.get('/api/register/{0}'.format(addresses["gamma"]))
+        rv = self.app.get('/api/register/{0}'.format(btc_addr))
         self.assertEqual(b"Registration Failed: Address already is registered."
                          , rv.data)
         self.assertEqual(rv.status_code, 409)
 
     def test_register_w_payout(self):
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["delta"],
-                                                         addresses["epsilon"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        payout_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/register/{0}/{1}'.format(btc_addr,
+                                                         payout_addr))
         # good registration
         return_data = json.loads(rv.data.decode("utf-8"))
         expected_data = {
             "height": 0,
-            "btc_addr": addresses["delta"],
-            'payout_addr': addresses["epsilon"],
+            "btc_addr": btc_addr,
+            'payout_addr': payout_addr,
             "last_seen": 0,
             "uptime": 100
         }
@@ -74,20 +78,22 @@ class RegisterTest(TemplateTest):
         self.assertEqual(return_data, expected_data)
 
         # duplicate registration
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["delta"],
-                                                         addresses["epsilon"]))
+        rv = self.app.get('/api/register/{0}/{1}'.format(btc_addr,
+                                                         payout_addr))
         self.assertEqual(b"Registration Failed: Address already is registered."
                          , rv.data)
         self.assertEqual(rv.status_code, 409)
 
+        new_btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+
         # duplicate payout address is ok
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["zeta"],
-                                                         addresses["epsilon"]))
+        rv = self.app.get('/api/register/{0}/{1}'.format(new_btc_addr,
+                                                         payout_addr))
         return_data = json.loads(rv.data.decode("utf-8"))
         expected_data = {
             "height": 0,
-            "btc_addr": addresses["zeta"],
-            'payout_addr': addresses["epsilon"],
+            "btc_addr": new_btc_addr,
+            'payout_addr': payout_addr,
             "last_seen": 0,
             "uptime": 100
         }
@@ -96,21 +102,23 @@ class RegisterTest(TemplateTest):
 
     def test_register_invalid_address(self):
         # bad address only
-        rv = self.app.get('/api/register/{0}'.format(addresses["omega"]))
+        rv = self.app.get('/api/register/{0}'.format(self.bad_addr))
         self.assertEqual(b"Registration Failed: Invalid Bitcoin address.",
                          rv.data)
         self.assertEqual(rv.status_code, 400)
 
         # good address, bad address
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["eta"],
-                                                         addresses["omega"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/register/{0}/{1}'.format(btc_addr,
+                                                         self.bad_addr))
         self.assertEqual(b"Registration Failed: Invalid Bitcoin address.",
                          rv.data)
         self.assertEqual(rv.status_code, 400)
 
         # bad address, good address
-        rv = self.app.get('/api/register/{0}/{1}'.format(addresses["omega"],
-                                                         addresses["theta"]))
+        payout_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/register/{0}/{1}'.format(self.bad_addr,
+                                                         payout_addr))
         self.assertEqual(b"Registration Failed: Invalid Bitcoin address.",
                          rv.data)
         self.assertEqual(rv.status_code, 400)
@@ -119,11 +127,12 @@ class RegisterTest(TemplateTest):
 class PingTest(TemplateTest):
 
     def test_ping_good(self):
-        rv = self.app.get('/api/register/{0}'.format(addresses["alpha"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/register/{0}'.format(btc_addr))
         self.assertEqual(rv.status_code, 200)
 
         # now test ping
-        rv = self.app.get('/api/ping/{0}'.format(addresses["alpha"]))
+        rv = self.app.get('/api/ping/{0}'.format(btc_addr))
 
         # good ping
         self.assertEqual(b"Ping accepted.", rv.data)
@@ -131,7 +140,8 @@ class PingTest(TemplateTest):
 
     def test_ping_not_found(self):
         # now test ping with no registration
-        rv = self.app.get('/api/ping/{0}'.format(addresses["beta"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/ping/{0}'.format(btc_addr))
 
         # bad ping
         self.assertEqual(b"Ping Failed: Farmer not found.", rv.data)
@@ -139,40 +149,43 @@ class PingTest(TemplateTest):
 
     def test_ping_invalid_address(self):
         # now test ping with no registration and invalid address
-        rv = self.app.get('/api/ping/{0}'.format(addresses["omega"]))
+        rv = self.app.get('/api/ping/{0}'.format(self.bad_addr))
 
         # bad ping
         self.assertEqual(b"Ping Failed: Invalid Bitcoin address.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
 
+
 class OnlineTest(TemplateTest):
 
     def test_online(self):
-        rv = self.app.get('/api/register/{0}'.format(addresses["alpha"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/register/{0}'.format(btc_addr))
         self.assertEqual(rv.status_code, 200)
 
         # now test ping
-        self.app.get('/api/ping/{0}'.format(addresses["alpha"]))
+        self.app.get('/api/ping/{0}'.format(btc_addr))
 
         # get online data
         rv = self.app.get('/api/online')
 
         # see if that address is in the online status
-        self.assertTrue(addresses["alpha"] in str(rv.data))
+        self.assertTrue(btc_addr in str(rv.data))
 
     def test_farmer_json(self):  # test could be better
-        rv = self.app.get('/api/register/{0}'.format(addresses["beta"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/register/{0}'.format(btc_addr))
         self.assertEqual(rv.status_code, 200)
 
         # get online json data
         rv = self.app.get('/api/online/json')
-        self.assertTrue(addresses["beta"] in str(rv.data))
+        self.assertTrue(btc_addr in str(rv.data))
 
     def test_farmer_order(self):
-        addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
-        addr2 = '18c2qnUAfgF3UnJCjAz2rpWQph5xugEfkr'
-        addr3 = '1NqtfdHe3X6rqHRQjsGq5CT9LYYjTFJ1qD'
+        addr1 = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        addr2 = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        addr3 = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
 
         # register farmers
         self.app.get('/api/register/{0}'.format(addr1))
@@ -202,34 +215,41 @@ class HeightTest(TemplateTest):
 
     def test_farmer_set_height(self):
         # not found
-        rv = self.app.get('/api/height/{0}/1'.format(addresses["beta"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/height/{0}/1'.format(btc_addr))
         self.assertEqual(rv.status_code, 404)
 
         # register farmer
-        self.app.get('/api/register/{0}'.format(addresses["beta"]))
+        self.app.get('/api/register/{0}'.format(btc_addr))
 
         # correct
-        rv = self.app.get('/api/height/{0}/5'.format(addresses["beta"]))
+        rv = self.app.get('/api/height/{0}/5'.format(btc_addr))
         self.assertEqual(rv.status_code, 200)
-        rv = self.app.get('/api/online'.format(addresses["beta"]))
+        rv = self.app.get('/api/online'.format(btc_addr))
         self.assertTrue(b"5" in rv.data)
 
         # invalid btc address
-        rv = self.app.get('/api/height/{0}/1'.format(addresses["omega"]))
+        rv = self.app.get('/api/height/{0}/1'.format(self.bad_addr))
         self.assertEqual(rv.status_code, 400)
 
     def test_height_limit(self):
-        self.app.get('/api/register/{0}'.format(addresses["gamma"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        self.app.get('/api/register/{0}'.format(btc_addr))
 
         # set height 50
-        self.app.get('/api/height/{0}/{1}'.format(addresses["gamma"], 50))
+        self.app.get('/api/height/{0}/{1}'.format(btc_addr, 50))
         rv = self.app.get('/api/online')
         self.assertTrue(b"50" in rv.data)
 
         # set a crazy height
-        rv = self.app.get('/api/height/{0}/{1}'.format(addresses["gamma"],
-                                                       250000))
+        rv = self.app.get('/api/height/{0}/{1}'.format(btc_addr,
+                                                       200000))
         self.assertEqual(rv.status_code, 413)
+        
+        #allowed max height
+        rv = self.app.get('/api/height/{0}/{1}'.format(btc_addr,
+	                                               199999))
+        self.assertEqual(rv.status_code, 200)
 
 
 class AppAuthenticationHeadersTest(unittest.TestCase):
@@ -237,6 +257,9 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
     def setUp(self):
         app.config["SKIP_AUTHENTICATION"] = False  # monkey patch
         self.app = app.test_client()
+        
+        self.btctxstore = BtcTxStore()
+        
         db.create_all()
 
     def tearDown(self):
@@ -246,45 +269,45 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
     def test_success(self):
 
         # create header date and authorization signature
-        blockchain = BtcTxStore()
-        wif = blockchain.create_key()
-        address = blockchain.get_address(wif)
+        wif = self.btctxstore.create_key()
+        btc_addr = self.btctxstore.get_address(wif)
         header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
                                  localtime=True, usegmt=True)
         message = app.config["ADDRESS"] + " " + header_date
-        header_authorization = blockchain.sign_unicode(wif, message)
+        header_authorization = self.btctxstore.sign_unicode(wif, message)
         headers = {"Date": header_date, "Authorization": header_authorization}
-        url = '/api/register/{0}'.format(address)
+        url = '/api/register/{0}'.format(btc_addr)
         rv = self.app.get(url, headers=headers)
         data = json.loads(rv.data.decode("utf-8"))
-        self.assertEqual(address, data["btc_addr"])
+        self.assertEqual(btc_addr, data["btc_addr"])
         self.assertEqual(rv.status_code, 200)
 
     def test_fail(self):
         # register without auth headres fails
-        rv = self.app.get('/api/register/{0}'.format(addresses["eta"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/register/{0}'.format(btc_addr))
         self.assertEqual(rv.status_code, 401)
 
         # register first because ping is lazy
-        blockchain = BtcTxStore()
-        wif = blockchain.create_key()
-        address = blockchain.get_address(wif)
+        wif = self.btctxstore.get_key(self.btctxstore.create_wallet())
+        btc_addr = self.btctxstore.get_address(wif)
         header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
                                  localtime=True, usegmt=True)
         message = app.config["ADDRESS"] + " " + header_date
-        header_authorization = blockchain.sign_unicode(wif, message)
+        header_authorization = self.btctxstore.sign_unicode(wif, message)
         headers = {"Date": header_date, "Authorization": header_authorization}
-        url = '/api/register/{0}'.format(address)
+        url = '/api/register/{0}'.format(btc_addr)
         rv = self.app.get(url, headers=headers)
         self.assertEqual(rv.status_code, 200)
 
         # ping without auth headres fails
         time.sleep(app.config["MAX_PING"])
-        rv = self.app.get('/api/ping/{0}'.format(address))
+        rv = self.app.get('/api/ping/{0}'.format(btc_addr))
         self.assertEqual(rv.status_code, 401)
 
         # set height without auth headres fails
-        rv = self.app.get('/api/height/{0}/10'.format(addresses["eta"]))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        rv = self.app.get('/api/height/{0}/10'.format(btc_addr))
         self.assertEqual(rv.status_code, 401)
 
 
@@ -307,10 +330,10 @@ class MiscAppTest(TemplateTest):
 
     # total bytes call
     def test_farmer_total_bytes(self):
-        addr1 = '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'
-        addr2 = '18c2qnUAfgF3UnJCjAz2rpWQph5xugEfkr'
-        addr3 = '1NqtfdHe3X6rqHRQjsGq5CT9LYYjTFJ1qD'
-        addr4 = '1JnaPB29Un3FBSf3e4Jzabwi1ekeKoh1Gr'
+        addr1 = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        addr2 = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        addr3 = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        addr4 = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
 
         # register farmers
         self.app.get('/api/register/{0}'.format(addr1))
