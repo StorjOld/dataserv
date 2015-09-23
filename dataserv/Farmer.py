@@ -2,6 +2,7 @@ import json
 import hashlib
 import storjcore
 from datetime import datetime
+from datetime import timedelta
 from sqlalchemy import DateTime
 from dataserv.run import db, app
 from btctxstore import BtcTxStore
@@ -114,15 +115,17 @@ class Farmer(db.Model):
         # make sure the farmer is valid
         farmer = self.lookup()
         # find time delta since we last pinged
-        delta = ping_time - farmer.last_seen
+        delta_ping = ping_time - farmer.last_seen
 
         # if we are above the time limit, update last seen
-        if delta.seconds >= app.config["MAX_PING"]:
+        if delta_ping >= timedelta(seconds=app.config["MAX_PING"]):
             farmer.last_seen = ping_time
             # if the farmer has been online in the last ONLINE_TIME seconds
             # then we can update their uptime statistic
-            if delta.seconds <= (app.config["ONLINE_TIME"] * 60):
-                farmer.uptime += delta.seconds
+            if delta_ping <= timedelta(minutes=app.config["ONLINE_TIME"]):
+                farmer.uptime += delta_ping.seconds
+            else:
+                farmer.uptime += timedelta(minutes=app.config["ONLINE_TIME"]).seconds
             # call to the authentication module
             if before_commit_callback:
                 before_commit_callback()
@@ -141,28 +144,31 @@ class Farmer(db.Model):
         """Set the farmers advertised height."""
         farmer = self.lookup()
         farmer.height = height
-        farmer.last_seen = datetime.utcnow()
+        self.ping() #better 2 db commits than implementing ping with update calculation again
         db.session.commit()
         return self.height
 
     def calculate_uptime(self):
         """Calculate uptime from registration date."""
         farmer = self.lookup()
-        # time delta from registration
-        delta_reg = datetime.utcnow() - farmer.reg_time
-
-        # convert to seconds
-        delta_reg = delta_reg.seconds
+        
+        # save datetime.utcnow() to avoid a difference
+        utcnow = datetime.utcnow()
+        # time delta from registration and ping
+        delta_reg = utcnow - farmer.reg_time
+        delta_ping = utcnow - farmer.last_seen
 
         # in case registration happened a short bit ago
-        if delta_reg == 0:
-            delta_reg = 1
-        farmer_uptime = farmer.uptime + (app.config["ONLINE_TIME"] * 60)
-        uptime = round(farmer_uptime / delta_reg, 3)
+        if delta_reg < timedelta(seconds=1):
+            return 100
+
+        if delta_ping <= timedelta(minutes=app.config["ONLINE_TIME"]):
+            farmer_uptime = farmer.uptime + delta_ping.seconds
+        else:
+            farmer_uptime = farmer.uptime + timedelta(minutes=app.config["ONLINE_TIME"]).seconds
+        uptime = round(timedelta(seconds=farmer_uptime).total_seconds() / delta_reg.total_seconds(), 3)
         # clip if we completed the audit recently (which sends us over 100%)
         uptime *= 100  # covert from decimal to percentage
-        if uptime > 100:
-            uptime = 100
 
         return round(uptime, 3)
 
