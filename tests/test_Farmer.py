@@ -284,22 +284,30 @@ class FarmerUpTime(unittest.TestCase):
             "uptime": 100
         }
         call_payload = json.loads(farmer.to_json())
+        call_payload["uptime"] = round(call_payload["uptime"])
         self.assertEqual(test_json, call_payload)
 
         # reg_time = max online time -> 100% uptime
-        farmer.reg_time = datetime.utcnow() - timedelta(minutes=app.config["ONLINE_TIME"])
+        delta = timedelta(minutes=app.config["ONLINE_TIME"])
+        farmer.last_seen = datetime.utcnow() - delta
+        farmer.reg_time = datetime.utcnow() - delta
 
         test_json = {
             "height": 0,
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
-            "last_seen": 0,
+            "last_seen": delta.seconds,
             "uptime": 100
         }
         call_payload = json.loads(farmer.to_json())
+        call_payload["uptime"] = round(call_payload["uptime"])
+        self.assertEqual(test_json, call_payload)
 
         # reg_time = 2 * max online time -> 50% uptime
-        farmer.reg_time = datetime.utcnow() - timedelta(minutes=(2*app.config["ONLINE_TIME"]))
+        delta = timedelta(minutes=(2*app.config["ONLINE_TIME"]))
+        farmer.last_seen = datetime.utcnow() - delta
+        farmer.reg_time = datetime.utcnow() - delta
+        farmer.ping()
 
         test_json = {
             "height": 0,
@@ -309,16 +317,18 @@ class FarmerUpTime(unittest.TestCase):
             "uptime": 50
         }
         call_payload = json.loads(farmer.to_json())
+        call_payload["uptime"] = round(call_payload["uptime"])
         self.assertEqual(test_json, call_payload)
 
-    def test_ping(self):
+    def test_ping_100(self):
         btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
         
         # lastest ping for 100%
-        farmer.last_seen = datetime.utcnow() - timedelta(minutes=app.config["ONLINE_TIME"])
-        farmer.reg_time = datetime.utcnow() - timedelta(minutes=(2*app.config["ONLINE_TIME"]))
+        delta = timedelta(minutes=app.config["ONLINE_TIME"])
+        farmer.last_seen = datetime.utcnow() - delta
+        farmer.reg_time = datetime.utcnow() - delta
         farmer.ping()
 
         test_json = {
@@ -329,11 +339,18 @@ class FarmerUpTime(unittest.TestCase):
             "uptime": 100
         }
         call_payload = json.loads(farmer.to_json())
+        call_payload["uptime"] = round(call_payload["uptime"])
         self.assertEqual(test_json, call_payload)
 
-        # ping to late -> 50%
-        farmer.last_seen = datetime.utcnow() - timedelta(minutes=(2*app.config["ONLINE_TIME"]))
-        farmer.reg_time = datetime.utcnow() - timedelta(minutes=(4*app.config["ONLINE_TIME"]))
+    def test_ping_50(self):
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        farmer = Farmer(btc_addr)
+        farmer.register()
+        
+        # lastest ping for 100%
+        delta = timedelta(minutes=(2*app.config["ONLINE_TIME"]))
+        farmer.last_seen = datetime.utcnow() - delta
+        farmer.reg_time = datetime.utcnow() - delta
         farmer.ping()
 
         test_json = {
@@ -344,31 +361,63 @@ class FarmerUpTime(unittest.TestCase):
             "uptime": 50
         }
         call_payload = json.loads(farmer.to_json())
+        call_payload["uptime"] = round(call_payload["uptime"])
         self.assertEqual(test_json, call_payload)
 
-    def test_set_height(self):
+    def test_ping_25(self):
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        farmer = Farmer(btc_addr)
+        farmer.register()
+        
+        # ping to late -> 50%
+        delta = timedelta(minutes=(4*app.config["ONLINE_TIME"]))
+        farmer.last_seen = datetime.utcnow() - delta
+        farmer.reg_time = datetime.utcnow() - delta
+        farmer.ping()
+
+        test_json = {
+            "height": 0,
+            "btc_addr": btc_addr,
+            'payout_addr': btc_addr,
+            "last_seen": 0,
+            "uptime": 25
+        }
+        call_payload = json.loads(farmer.to_json())
+        call_payload["uptime"] = round(call_payload["uptime"])
+        self.assertEqual(test_json, call_payload)
+
+    def test_ping_days(self):
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        farmer = Farmer(btc_addr)
+        farmer.register()
+        
+        # ping to late -> 50%
+        delta = timedelta(days=2)
+        farmer.last_seen = datetime.utcnow() - delta
+        farmer.reg_time = datetime.utcnow() - delta
+        farmer.uptime = 86401 # 1 / 2 days farmer was online
+        farmer.ping()
+
+        test_json = {
+            "height": 0,
+            "btc_addr": btc_addr,
+            'payout_addr': btc_addr,
+            "last_seen": 0,
+            "uptime": 50
+        }
+        call_payload = json.loads(farmer.to_json())
+        call_payload["uptime"] = round(call_payload["uptime"])
+        self.assertEqual(test_json, call_payload)
+
+    def test_height_100(self):
         btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
 
         # lastest ping for 100%
-        farmer.last_seen = datetime.utcnow() - timedelta(minutes=app.config["ONLINE_TIME"])
-        farmer.reg_time = datetime.utcnow() - timedelta(minutes=(2*app.config["ONLINE_TIME"]))
-        farmer.set_height(50)
-
-        test_json = {
-            "height": 50,
-            "btc_addr": btc_addr,
-            'payout_addr': btc_addr,
-            "last_seen": 0,
-            "uptime": 100
-        }
-        call_payload = json.loads(farmer.to_json())
-        self.assertEqual(test_json, call_payload)
-
-        #ping to late -> 50%
-        farmer.last_seen = datetime.utcnow() - timedelta(minutes=(2*app.config["ONLINE_TIME"]))
-        farmer.reg_time = datetime.utcnow() - timedelta(minutes=(4*app.config["ONLINE_TIME"]))
+        delta = timedelta(minutes=app.config["ONLINE_TIME"])
+        farmer.last_seen = datetime.utcnow() - delta
+        farmer.reg_time = datetime.utcnow() - delta
         farmer.set_height(100)
 
         test_json = {
@@ -376,7 +425,52 @@ class FarmerUpTime(unittest.TestCase):
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
+            "uptime": 100
+        }
+        call_payload = json.loads(farmer.to_json())
+        call_payload["uptime"] = round(call_payload["uptime"])
+        self.assertEqual(test_json, call_payload)
+
+    def test_height_50(self):
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        farmer = Farmer(btc_addr)
+        farmer.register()
+
+        # lastest ping for 100%
+        delta = timedelta(minutes=(2*app.config["ONLINE_TIME"]))
+        farmer.last_seen = datetime.utcnow() - delta
+        farmer.reg_time = datetime.utcnow() - delta
+        farmer.set_height(50)
+
+        test_json = {
+            "height": 50,
+            "btc_addr": btc_addr,
+            'payout_addr': btc_addr,
+            "last_seen": 0,
             "uptime": 50
         }
         call_payload = json.loads(farmer.to_json())
+        call_payload["uptime"] = round(call_payload["uptime"])
+        self.assertEqual(test_json, call_payload)
+
+    def test_height_25(self):
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        farmer = Farmer(btc_addr)
+        farmer.register()
+
+        #ping to late -> 50%
+        delta = timedelta(minutes=(4*app.config["ONLINE_TIME"]))
+        farmer.last_seen = datetime.utcnow() - delta
+        farmer.reg_time = datetime.utcnow() - delta
+        farmer.set_height(25)
+
+        test_json = {
+            "height": 25,
+            "btc_addr": btc_addr,
+            'payout_addr': btc_addr,
+            "last_seen": 0,
+            "uptime": 25
+        }
+        call_payload = json.loads(farmer.to_json())
+        call_payload["uptime"] = round(call_payload["uptime"])
         self.assertEqual(test_json, call_payload)
