@@ -39,7 +39,8 @@ class FarmerTest(unittest.TestCase):
 
     def test_register(self):
         # test success
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer1 = Farmer(btc_addr)
         self.assertFalse(farmer1.exists())
         farmer1.register()
@@ -53,7 +54,8 @@ class FarmerTest(unittest.TestCase):
         self.assertRaises(ValueError, callback_a)
 
     def test_ping(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
 
         # test ping before registration
@@ -71,7 +73,8 @@ class FarmerTest(unittest.TestCase):
         self.assertTrue(register_time < ping_time)
 
     def test_ping_time_limit(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
 
@@ -84,7 +87,8 @@ class FarmerTest(unittest.TestCase):
         self.assertEqual(delta_seconds, 0)
 
     def test_height(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
 
@@ -98,7 +102,8 @@ class FarmerTest(unittest.TestCase):
         self.assertEqual(farmer2.height, 5)
 
     def test_audit(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
 
         # test audit before registration
@@ -116,7 +121,8 @@ class FarmerTest(unittest.TestCase):
         self.assertTrue(register_time < ping_time)
 
     def test_to_json(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
 
@@ -272,7 +278,8 @@ class FarmerUpTime(unittest.TestCase):
         db.drop_all()
 
     def test_register(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
 
@@ -321,7 +328,8 @@ class FarmerUpTime(unittest.TestCase):
         self.assertEqual(test_json, call_payload)
 
     def test_ping_100(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
         
@@ -343,7 +351,8 @@ class FarmerUpTime(unittest.TestCase):
         self.assertEqual(test_json, call_payload)
 
     def test_ping_50(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
         
@@ -365,7 +374,8 @@ class FarmerUpTime(unittest.TestCase):
         self.assertEqual(test_json, call_payload)
 
     def test_ping_25(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
         
@@ -387,7 +397,8 @@ class FarmerUpTime(unittest.TestCase):
         self.assertEqual(test_json, call_payload)
 
     def test_ping_days(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
         
@@ -410,7 +421,8 @@ class FarmerUpTime(unittest.TestCase):
         self.assertEqual(test_json, call_payload)
 
     def test_height_100(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
 
@@ -432,7 +444,8 @@ class FarmerUpTime(unittest.TestCase):
         self.assertEqual(test_json, call_payload)
 
     def test_height_50(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
 
@@ -454,7 +467,8 @@ class FarmerUpTime(unittest.TestCase):
         self.assertEqual(test_json, call_payload)
 
     def test_height_25(self):
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
 
