@@ -182,7 +182,7 @@ def set_height(btc_addr, height):
     try:
         user = Farmer(btc_addr)
         user.authenticate(dict(request.headers))
-        if height < app.config["HEIGHT_LIMIT"]:
+        if height <= app.config["HEIGHT_LIMIT"]:
             user.set_height(height)
             return make_response("Height accepted.", 200)
         else:

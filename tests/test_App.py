@@ -243,12 +243,12 @@ class HeightTest(TemplateTest):
 
         # set a crazy height
         rv = self.app.get('/api/height/{0}/{1}'.format(btc_addr,
-                                                       200000))
+                                                       200001))
         self.assertEqual(rv.status_code, 413)
         
         #allowed max height
         rv = self.app.get('/api/height/{0}/{1}'.format(btc_addr,
-	                                               199999))
+	                                               200000))
         self.assertEqual(rv.status_code, 200)
 
 
