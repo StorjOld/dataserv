@@ -16,7 +16,7 @@ help:
 	@echo "  shell      Open ipython from the development environment."
 	@echo "  test       Run tests and analysis tools."
 	@echo "  wheel      Build package wheel and save in '$(WHEEL_DIR)'."
-	@echo "  wheels     Build dependency wheels and save in '$(WHEEL_DIR)'."
+	@echo "  wheels     Build dependencie wheels and save in '$(WHEEL_DIR)'."
 	@echo "  publish    Build and upload package to pypi.python.org"
 
 
