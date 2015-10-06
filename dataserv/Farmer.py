@@ -144,7 +144,9 @@ class Farmer(db.Model):
         """Set the farmers advertised height."""
         farmer = self.lookup()
         farmer.height = height
-        self.ping() #better 2 db commits than implementing ping with update calculation again
+        # better 2 db commits than implementing ping with
+        # update calculation again
+        self.ping()
         db.session.commit()
         return self.height
 
@@ -165,8 +167,10 @@ class Farmer(db.Model):
         if delta_ping <= timedelta(minutes=app.config["ONLINE_TIME"]):
             farmer_uptime = farmer.uptime + delta_ping.seconds
         else:
-            farmer_uptime = farmer.uptime + timedelta(minutes=app.config["ONLINE_TIME"]).seconds
-        uptime = round(timedelta(seconds=farmer_uptime).total_seconds() / delta_reg.total_seconds(), 3)
+            farmer_uptime = farmer.uptime + timedelta(
+                minutes=app.config["ONLINE_TIME"]).seconds
+        uptime = round(timedelta(seconds=farmer_uptime).total_seconds() /
+                       delta_reg.total_seconds(), 3)
         # clip if we completed the audit recently (which sends us over 100%)
         uptime *= 100  # covert from decimal to percentage
 

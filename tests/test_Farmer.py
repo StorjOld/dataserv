@@ -263,6 +263,7 @@ class FarmerAuthenticationTest(unittest.TestCase):
             farmer.authenticate(headers)
         self.assertRaises(storjcore.auth.AuthError, callback)
 
+
 class FarmerUpTime(unittest.TestCase):
 
     def setUp(self):
@@ -406,7 +407,7 @@ class FarmerUpTime(unittest.TestCase):
         delta = timedelta(days=2)
         farmer.last_seen = datetime.utcnow() - delta
         farmer.reg_time = datetime.utcnow() - delta
-        farmer.uptime = 86401 # 1 / 2 days farmer was online
+        farmer.uptime = 86401  # 1 / 2 days farmer was online
         farmer.ping()
 
         test_json = {
@@ -472,7 +473,7 @@ class FarmerUpTime(unittest.TestCase):
         farmer = Farmer(btc_addr)
         farmer.register()
 
-        #ping to late -> 50%
+        # ping to late -> 50%
         delta = timedelta(minutes=(4*app.config["ONLINE_TIME"]))
         farmer.last_seen = datetime.utcnow() - delta
         farmer.reg_time = datetime.utcnow() - delta

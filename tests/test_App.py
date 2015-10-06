@@ -1,6 +1,6 @@
+import time
 import json
 import unittest
-import time
 from time import mktime
 from datetime import datetime
 from dataserv.run import app, db
@@ -24,13 +24,13 @@ class TemplateTest(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
-
-class RegisterTest(TemplateTest):
-
     def gen_wallet(self):
         """Generate a testing wallet, and return its public key."""
         return self.btctxstore.get_address(
             self.btctxstore.get_key(self.btctxstore.create_wallet()))
+
+
+class RegisterTest(TemplateTest):
 
     def test_register(self):
         btc_addr = self.gen_wallet()
@@ -161,7 +161,6 @@ class PingTest(TemplateTest):
         self.assertEqual(rv.status_code, 400)
 
 
-
 class OnlineTest(TemplateTest):
 
     def test_online(self):
@@ -179,7 +178,7 @@ class OnlineTest(TemplateTest):
         self.assertTrue(btc_addr in str(rv.data))
 
     def test_farmer_json(self):  # test could be better
-        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(self.btctxstore.create_wallet()))
+        btc_addr = self.gen_wallet()
         rv = self.app.get('/api/register/{0}'.format(btc_addr))
         self.assertEqual(rv.status_code, 200)
 
@@ -270,6 +269,11 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
     def tearDown(self):
         db.session.remove()
         db.drop_all()
+
+    def gen_wallet(self):
+        """Generate a testing wallet, and return its public key."""
+        return self.btctxstore.get_address(
+            self.btctxstore.get_key(self.btctxstore.create_wallet()))
 
     def test_success(self):
 
