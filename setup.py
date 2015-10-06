@@ -24,7 +24,7 @@ setup(
     author_email='shawn+dataserv@storj.io',
     license='MIT',
     packages=find_packages(),
-    include_package_data = True,
+    include_package_data=True,
     package_data={
         "dataserv.migrations": ["*.*"],
         "dataserv.migrations.versions": ["*.*"],

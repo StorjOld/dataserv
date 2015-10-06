@@ -334,7 +334,7 @@ class FarmerUpTime(unittest.TestCase):
         farmer = Farmer(btc_addr)
         farmer.register()
         
-        # lastest ping for 100%
+        # latest ping for 100%
         delta = timedelta(minutes=app.config["ONLINE_TIME"])
         farmer.last_seen = datetime.utcnow() - delta
         farmer.reg_time = datetime.utcnow() - delta
@@ -357,7 +357,7 @@ class FarmerUpTime(unittest.TestCase):
         farmer = Farmer(btc_addr)
         farmer.register()
         
-        # lastest ping for 100%
+        # latest ping for 100%
         delta = timedelta(minutes=(2*app.config["ONLINE_TIME"]))
         farmer.last_seen = datetime.utcnow() - delta
         farmer.reg_time = datetime.utcnow() - delta
@@ -427,7 +427,7 @@ class FarmerUpTime(unittest.TestCase):
         farmer = Farmer(btc_addr)
         farmer.register()
 
-        # lastest ping for 100%
+        # latest ping for 100%
         delta = timedelta(minutes=app.config["ONLINE_TIME"])
         farmer.last_seen = datetime.utcnow() - delta
         farmer.reg_time = datetime.utcnow() - delta
@@ -450,7 +450,7 @@ class FarmerUpTime(unittest.TestCase):
         farmer = Farmer(btc_addr)
         farmer.register()
 
-        # lastest ping for 100%
+        # latest ping for 100%
         delta = timedelta(minutes=(2*app.config["ONLINE_TIME"]))
         farmer.last_seen = datetime.utcnow() - delta
         farmer.reg_time = datetime.utcnow() - delta

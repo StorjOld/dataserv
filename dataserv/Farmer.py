@@ -125,7 +125,8 @@ class Farmer(db.Model):
             if delta_ping <= timedelta(minutes=app.config["ONLINE_TIME"]):
                 farmer.uptime += delta_ping.seconds
             else:
-                farmer.uptime += timedelta(minutes=app.config["ONLINE_TIME"]).seconds
+                farmer.uptime += timedelta(
+                    minutes=app.config["ONLINE_TIME"]).seconds
             # call to the authentication module
             if before_commit_callback:
                 before_commit_callback()
