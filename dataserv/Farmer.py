@@ -90,6 +90,8 @@ class Farmer(db.Model):
         db.session.add(self)
         db.session.commit()
 
+        return self.reg_time
+
     def exists(self):
         """Check to see if this address is already listed."""
         return Farmer.query.filter(Farmer.btc_addr ==

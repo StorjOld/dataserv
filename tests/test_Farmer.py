@@ -27,6 +27,10 @@ class FarmerTest(unittest.TestCase):
         db.session.remove()
         db.drop_all()
 
+    def get_reg_sec(self, farmer_obj):
+        epoch = datetime.utcfromtimestamp(0)
+        return int((farmer_obj.reg_time - epoch).total_seconds())
+
     def test_repr(self):
         farmer = Farmer('191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc')
         ans = "<Farmer BTC Address: '191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc'>"
@@ -41,6 +45,7 @@ class FarmerTest(unittest.TestCase):
         # test success
         btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
                                         self.btctxstore.create_wallet()))
+
         farmer1 = Farmer(btc_addr)
         self.assertFalse(farmer1.exists())
         farmer1.register()
@@ -64,7 +69,7 @@ class FarmerTest(unittest.TestCase):
         # register farmer
         farmer.register()
 
-        # get register time, and make sure the ping work
+        # get register time, and make sure the ping works
         register_time = farmer.last_seen
         # ping faster than max_ping would be ignored
         time.sleep(app.config["MAX_PING"] + 1)
@@ -134,7 +139,8 @@ class FarmerTest(unittest.TestCase):
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 100
+            "uptime": 100,
+            "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
         self.assertEqual(test_json, call_payload)
@@ -266,6 +272,10 @@ class FarmerAuthenticationTest(unittest.TestCase):
 
 class FarmerUpTime(unittest.TestCase):
 
+    def get_reg_sec(self, farmer_obj):
+        epoch = datetime.utcfromtimestamp(0)
+        return int((farmer_obj.reg_time - epoch).total_seconds())
+
     def setUp(self):
         app.config["SKIP_AUTHENTICATION"] = True  # monkey patch
         app.config["DISABLE_CACHING"] = True
@@ -282,14 +292,15 @@ class FarmerUpTime(unittest.TestCase):
         btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
                                         self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
-        farmer.register()
+        reg_time = farmer.register()
 
         test_json = {
             "height": 0,
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 100
+            "uptime": 100,
+            "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
         call_payload["uptime"] = round(call_payload["uptime"])
@@ -305,7 +316,8 @@ class FarmerUpTime(unittest.TestCase):
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": delta.seconds,
-            "uptime": 100
+            "uptime": 100,
+            "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
         call_payload["uptime"] = round(call_payload["uptime"])
@@ -322,7 +334,8 @@ class FarmerUpTime(unittest.TestCase):
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 50
+            "uptime": 50,
+            "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
         call_payload["uptime"] = round(call_payload["uptime"])
@@ -345,7 +358,8 @@ class FarmerUpTime(unittest.TestCase):
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 100
+            "uptime": 100,
+            "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
         call_payload["uptime"] = round(call_payload["uptime"])
@@ -368,7 +382,8 @@ class FarmerUpTime(unittest.TestCase):
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 50
+            "uptime": 50,
+            "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
         call_payload["uptime"] = round(call_payload["uptime"])
@@ -391,7 +406,8 @@ class FarmerUpTime(unittest.TestCase):
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 25
+            "uptime": 25,
+            "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
         call_payload["uptime"] = round(call_payload["uptime"])
@@ -415,7 +431,8 @@ class FarmerUpTime(unittest.TestCase):
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 50
+            "uptime": 50,
+            "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
         call_payload["uptime"] = round(call_payload["uptime"])
@@ -438,7 +455,8 @@ class FarmerUpTime(unittest.TestCase):
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 100
+            "uptime": 100,
+            "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
         call_payload["uptime"] = round(call_payload["uptime"])
@@ -461,7 +479,8 @@ class FarmerUpTime(unittest.TestCase):
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 50
+            "uptime": 50,
+            "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
         call_payload["uptime"] = round(call_payload["uptime"])
@@ -484,7 +503,8 @@ class FarmerUpTime(unittest.TestCase):
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 25
+            "uptime": 25,
+            "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
         call_payload["uptime"] = round(call_payload["uptime"])
