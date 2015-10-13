@@ -179,11 +179,13 @@ class Farmer(db.Model):
 
     def to_json(self):
         """Object to JSON payload."""
+        epoch = datetime.utcfromtimestamp(0)
         payload = {
             "btc_addr": self.btc_addr,
             "payout_addr": self.payout_addr,
             "last_seen": (datetime.utcnow() - self.last_seen).seconds,
             "height": self.height,
-            "uptime": self.calculate_uptime()
+            "uptime": self.calculate_uptime(),
+            "reg_time": int((self.reg_time - epoch).total_seconds())
         }
         return json.dumps(payload)
