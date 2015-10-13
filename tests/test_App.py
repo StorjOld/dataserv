@@ -5,6 +5,7 @@ from time import mktime
 from datetime import datetime
 from dataserv.run import app, db
 from btctxstore import BtcTxStore
+from dataserv.Farmer import Farmer
 from email.utils import formatdate
 from dataserv.app import secs_to_mins, online_farmers
 
@@ -31,6 +32,9 @@ class TemplateTest(unittest.TestCase):
 
 
 class RegisterTest(TemplateTest):
+    def get_reg_sec(self, farmer_obj):
+        epoch = datetime.utcfromtimestamp(0)
+        return int((farmer_obj.reg_time - epoch).total_seconds())
 
     def test_register(self):
         btc_addr = self.gen_wallet()
@@ -49,12 +53,14 @@ class RegisterTest(TemplateTest):
 
         # good registration
         return_data = json.loads(rv.data.decode("utf-8"))
+        farmer = Farmer(btc_addr).lookup()
         expected_data = {
             "height": 0,
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 100
+            "uptime": 100,
+            "reg_time": self.get_reg_sec(farmer)
         }
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(return_data, expected_data)
@@ -72,12 +78,14 @@ class RegisterTest(TemplateTest):
                                                          payout_addr))
         # good registration
         return_data = json.loads(rv.data.decode("utf-8"))
+        farmer = Farmer(btc_addr).lookup()
         expected_data = {
             "height": 0,
             "btc_addr": btc_addr,
             'payout_addr': payout_addr,
             "last_seen": 0,
-            "uptime": 100
+            "uptime": 100,
+            "reg_time": self.get_reg_sec(farmer)
         }
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(return_data, expected_data)
@@ -95,12 +103,14 @@ class RegisterTest(TemplateTest):
         rv = self.app.get('/api/register/{0}/{1}'.format(new_btc_addr,
                                                          payout_addr))
         return_data = json.loads(rv.data.decode("utf-8"))
+        farmer = Farmer(new_btc_addr).lookup()
         expected_data = {
             "height": 0,
             "btc_addr": new_btc_addr,
             'payout_addr': payout_addr,
             "last_seen": 0,
-            "uptime": 100
+            "uptime": 100,
+            "reg_time": self.get_reg_sec(farmer)
         }
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(return_data, expected_data)
