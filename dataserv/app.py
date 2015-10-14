@@ -11,9 +11,9 @@ from flask import make_response, jsonify, request
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from sqlalchemy import desc
-from dataserv.run import app, db, cache, manager
 from dataserv.Farmer import Farmer
 from dataserv.config import logging
+from dataserv.run import app, db, cache
 
 
 logger = logging.getLogger(__name__)

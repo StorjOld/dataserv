@@ -292,7 +292,7 @@ class FarmerUpTime(unittest.TestCase):
         btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
                                         self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
-        reg_time = farmer.register()
+        farmer.register()
 
         test_json = {
             "height": 0,
