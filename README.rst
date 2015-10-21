@@ -140,32 +140,6 @@ Fail Examples:
         Status Code: 404
         Text: Ping Failed: Farmer not found.
 
-Online Status - Readable
-************************
-
-This API call was built to be human readable rather than machine readable. We get a simple
-list of the all the farmers, their addresses, and their advertised heights. All of this is ordered by height.
-We only display farmers that have done a ping in the last `online_time` minutes, which by default
-is 15 minutes.
-
-::
-
-    GET /api/online
-
-Success Example:
-
-::
-
-    GET /api/online
-    RESPONSE:
-        Status Code: 200
-        Text:
-            18RZNu2nxTdeNyuDCwAMq8aBpgC3FFERPp | Last Seen: 3 second(s) | Height: 7634
-            137x69jwmcyy4mYCBtQUVoxa21p9Fxyss5 | Last Seen: 7 second(s) | Height: 6234
-            14wLMb2A9APqrdXJhTQArYLyivmEAf7Y1r | Last Seen: 10 second(s) | Height: 431
-            1CgLoZT1ZuSHPBp3H4rLTXJvEUDV3kK7QK | Last Seen: 13 second(s) | Height: 245
-            1QACy1Tx5JFzGDyPd8J3oU8SrjhkZkru4H | Last Seen: 14 second(s) | Height: 88
-            1NeV1z5BMmFpCXgotwVeZjuN5k124W76MA | Last Seen: 14 second(s) | Height: 10
 
 Online Status - JSON
 ********************
@@ -193,13 +167,17 @@ Success Example:
                   "btc_addr": "1JdEaubcd36ufmT64drdVsGu5SN65A3Z1L",
                   "height": 0,
                   "last_seen": 30,
-                  "uptime": 100
+                  "payout_addr": "1GTfrYEi9cRzMNAsz6DESXihTnaJpYxJot",
+                  "reg_time": 1445459786,
+                  "uptime": 59.0
                 },
                 {
-                  "btc_addr": "1JdEaubcM36ufmT64drdVsGu5SN65A3Z1A",
+                  "btc_addr": "1GTfrYEi9cRzMNAsz6DESXihTnaJpYxJot",
                   "height": 0,
-                  "last_seen": 2,
-                  "uptime": 93
+                  "last_seen": 58,
+                  "payout_addr": "1GTfrYEi9cRzMNAsz6DESXihTnaJpYxJot",
+                  "reg_time": 1445459756,
+                  "uptime": 99.0
                 }
               ]
             }
