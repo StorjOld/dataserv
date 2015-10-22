@@ -53,3 +53,19 @@ class AuditTest(unittest.TestCase):
         self.assertRaises(ValueError, callback_a)
         self.assertRaises(LookupError, callback_b)
         self.assertRaises(ValueError, callback_c)
+
+    def test_lookup(self):
+        btc_addr = self.gen_btc_addr()
+        Farmer(btc_addr).register()
+
+        audit = Audit(btc_addr, 0)
+        audit.save()
+
+        def callback_a():
+            Audit(btc_addr, 1).lookup()
+
+        self.assertRaises(LookupError, callback_a)
+
+        audit2 = Audit(btc_addr, 0).lookup()
+        audit3 = Audit(btc_addr, 0)
+        self.assertEqual(audit2, audit3)
