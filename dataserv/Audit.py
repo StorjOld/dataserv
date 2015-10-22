@@ -28,10 +28,6 @@ class Audit(db.Model):
             msg = "Farmer Not Found: {0}".format(btc_addr)
             logger.warning(msg)
             raise LookupError(msg)
-        if self.exists():
-            msg = "Audit already submitted for that block."
-            logger.warning(msg)
-            raise IndexError(msg)
         if not response is None and not is_sha256(response):
             msg = "Invalid Response: {0}".format(response)
             logger.warning(msg)
@@ -41,9 +37,6 @@ class Audit(db.Model):
         self.block = block
         self.response = response
 
-        db.session.add(self)
-        db.session.commit()
-
     def save(self):
         db.session.add(self)
         db.session.commit()
@@ -51,7 +44,7 @@ class Audit(db.Model):
     def exists(self):
         """Check to see if this address is already listed."""
         response = Audit.query.filter(Audit.btc_addr == self.btc_addr,
-                                  Audit.block == self.block).count() > 0
+                                      Audit.block == self.block).count() > 0
         return response
 
     def lookup(self): 

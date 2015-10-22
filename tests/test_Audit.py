@@ -44,16 +44,12 @@ class AuditTest(unittest.TestCase):
         audit = Audit(btc_addr, 0)
         self.assertFalse(audit.exists())
         audit.save()
-        self.assertTrue(audit.exists())
+        audit2 = Audit(btc_addr, 0)
+        self.assertTrue(audit2.exists())
 
         def callback_c():
-            Audit(btc_addr, 1).save()
-            Audit(btc_addr, 1)
-
-        def callback_d():
             Audit(btc_addr, 1, 'invalid_sha')
 
         self.assertRaises(ValueError, callback_a)
         self.assertRaises(LookupError, callback_b)
-        self.assertRaises(IndexError, callback_c)
-        self.assertRaises(ValueError, callback_d)
+        self.assertRaises(ValueError, callback_c)
