@@ -41,9 +41,14 @@ class AuditTest(unittest.TestCase):
         def callback_b():
             Audit(btc_addr2, 0)
 
+        audit = Audit(btc_addr, 0)
+        self.assertFalse(audit.exists())
+        audit.save()
+        self.assertTrue(audit.exists())
+
         def callback_c():
-            Audit(btc_addr, 0).save()
-            Audit(btc_addr, 0)
+            Audit(btc_addr, 1).save()
+            Audit(btc_addr, 1)
 
         def callback_d():
             Audit(btc_addr, 1, 'invalid_sha')
