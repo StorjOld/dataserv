@@ -24,7 +24,7 @@ What is this?
 #############
 
 Federated server for managing and auditing data on untrusted nodes. Primarily
-used for capacity tests for `Test Group B <http://storj.io/earlyaccess>`_ , and
+used for capacity tests for `Test Group B <http://storj.io/earlyaccess>`_, and
 to generate useful data on distributed storage networks.
 
 #####
@@ -66,14 +66,15 @@ API
 Registration
 ************
 
-Registration of farmers into the database. All farmers must register with the node before they
-can perform any other actions.
+Registration of farmers into the node's database. All farmers must register with the node before they
+can perform any other actions. If no payout address is specified then the bitcoin address will be used
+as the payout address.
 
 ::
 
     GET /api/register/<bitcoin address>/<(optional)payout address>
 
-Success Example:
+Examples:
 
 ::
 
@@ -87,25 +88,16 @@ Success Example:
         Status Code: 200
         Text: {"last_seen": 0, "btc_addr": "12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm", "height": 0, "payout_addr": "1BZR9GHs9a1bBfh6cwnDtvq6GEvNwVWxFa"}
 
++-------------+----------------------------+-------------------------------------------------+
+| Error Codes | What probably happened     | Example                                         |
++=============+============================+=================================================+
+|     400     | Invalid Bitcoin address    | /api/register/notvalidaddress                   |
++-------------+----------------------------+-------------------------------------------------+
+|     409     | Address already registered | /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm|
++-------------+----------------------------+-------------------------------------------------+
+|     401     | Bad authentication headers | /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm|
++-------------+----------------------------+-------------------------------------------------+
 
-Fail Examples:
-
-::
-
-    GET /api/register/notvalidaddress
-    RESPONSE:
-        Status Code: 400
-        Text: Registration Failed: Invalid BTC Address.
-
-    GET /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm
-    RESPONSE:
-        Status Code: 409
-        Text: Registration failed: Address already is registered.
-
-    GET /api/register/1BZR9GHs9a1bBfh6cwnDtvq6GEvNwVWxFa
-    RESPONSE:
-        Status Code: 401
-        Text: Registration failed: Invalid authentication headers.
 
 Ping-Pong
 *********
