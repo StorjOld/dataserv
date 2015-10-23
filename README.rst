@@ -218,7 +218,7 @@ Allows the user to let the node know how much space they have generated via the 
 
     GET /api/height/<bitcoin address>/<height>
 
-Success Example:
+Example:
 
 ::
 
@@ -226,18 +226,14 @@ Success Example:
     RESPONSE:
        Status Code: 200
        Text: Height accepted.
-
-Fail Examples:
-
-::
-
-    GET /api/height/notvalidaddress/50
-    RESPONSE:
-        Status Code: 400
-        Text: Ping Failed: Invalid Bitcoin address.
-
-    GET /api/height/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd/50
-    RESPONSE:
-        Status Code: 404
-        Text: Ping Failed: Farmer not found.
+        
++-------------+----------------------------+-------------------------------------------------+
+| Error Codes | What probably happened     | Example                                         |
++=============+============================+=================================================+
+|     400     | Invalid Bitcoin address    | /api/height/notvalidaddress/50                  |
++-------------+----------------------------+-------------------------------------------------+
+|     401     | Bad authentication headers | /api/ping/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm    |
++-------------+----------------------------+-------------------------------------------------+
+|     404     | Farmer not found           | /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd    |
++-------------+----------------------------+-------------------------------------------------+
 
