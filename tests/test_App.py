@@ -182,7 +182,7 @@ class OnlineTest(TemplateTest):
         self.app.get('/api/ping/{0}'.format(btc_addr))
 
         # get online data
-        rv = self.app.get('/api/online')
+        rv = self.app.get('/api/online/json')
 
         # see if that address is in the online status
         self.assertTrue(btc_addr in str(rv.data))
@@ -239,7 +239,7 @@ class HeightTest(TemplateTest):
         # correct
         rv = self.app.get('/api/height/{0}/5'.format(btc_addr))
         self.assertEqual(rv.status_code, 200)
-        rv = self.app.get('/api/online'.format(btc_addr))
+        rv = self.app.get('/api/online/json'.format(btc_addr))
         self.assertTrue(b"5" in rv.data)
 
         # invalid btc address
@@ -252,7 +252,7 @@ class HeightTest(TemplateTest):
 
         # set height 50
         self.app.get('/api/height/{0}/{1}'.format(btc_addr, 50))
-        rv = self.app.get('/api/online')
+        rv = self.app.get('/api/online/json')
         self.assertTrue(b"50" in rv.data)
 
         # set a crazy height
@@ -412,13 +412,6 @@ class MiscAppTest(TemplateTest):
         self.app.get('/api/height/{0}/{1}'.format(addr2, 2475))
         self.app.get('/api/height/{0}/{1}'.format(addr3, 2525))
         self.app.get('/api/height/{0}/{1}'.format(addr4, 5000))
-
-        # check online
-        rv = self.app.get('/api/online')
-        self.assertTrue(b"0" in rv.data)
-        self.assertTrue(b"2475" in rv.data)
-        self.assertTrue(b"2525" in rv.data)
-        self.assertTrue(b"5000" in rv.data)
 
         # check total bytes
         rv = self.app.get('/api/total')

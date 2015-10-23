@@ -118,22 +118,6 @@ def get_address():
     return jsonify({"address": app.config["ADDRESS"]})
 
 
-@app.route('/api/online', methods=["GET"])
-@cache.cached(timeout=app.config["CACHING_TIME"], unless=disable_caching)
-def online():
-    """Display a readable list of online farmers."""
-    logger.info("CALLED /api/online")
-    output = ""
-    current_time = datetime.datetime.utcnow()
-    text = "{0} |  Last Seen: {1} | Height: {2}<br/>"
-
-    for farmer in online_farmers():
-        last_seen = secs_to_mins((current_time - farmer.last_seen).seconds)
-        output += text.format(farmer.payout_addr, last_seen, farmer.height)
-
-    return output
-
-
 @app.route('/api/online/json', methods=["GET"])
 @cache.cached(timeout=app.config["CACHING_TIME"], unless=disable_caching)
 def online_json():
