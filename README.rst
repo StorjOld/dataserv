@@ -23,9 +23,9 @@ dataserv
 What is this?
 #############
 
-Federated server for getting, pushing, and auditing data on untrusted nodes. Primarily used
-for capacity tests for `Test Group B <http://storj.io/earlyaccess>`_ , as well as federated
-server based file transfer.
+Federated server for managing and auditing data on untrusted nodes. Primarily
+used for capacity tests for `Test Group B <http://storj.io/earlyaccess>`_ , and
+to generate useful data on distributed storage networks.
 
 #####
 Setup
