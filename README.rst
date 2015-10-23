@@ -141,7 +141,7 @@ is 15 minutes. Last seen is the amount of seconds since we have last seen an API
 
     GET /api/online/json
 
-Success Example:
+Example:
 
 ::
 
@@ -177,6 +177,12 @@ Display the unique address used for authentication for the node.
 ::
 
     GET /api/online
+
+Example:
+
+::
+
+    GET /api/online
     RESPONSE:
         {
           "address": "16ZcxFDdkVJR1P8GMNmWFyhS4EKrRMsWNG"
@@ -185,7 +191,7 @@ Display the unique address used for authentication for the node.
 Total Bytes
 ***********
 
-Get the total number of terabytes currently being managed by the node.
+Get the total number of terabytes and farmers currently being managed by the node. Increments id every 30 minutes for indexing software.
 
 ::
 
@@ -197,8 +203,11 @@ Success Example:
 
     GET /api/total
     RESPONSE:
-        Status Code: 200
-        Text: 35 TB
+        {
+            "id": 803096,
+            "total_TB": 1343.78,
+            "total_farmers": 346
+        }
 
 Advertise Height
 ****************
