@@ -207,5 +207,5 @@ def set_height(btc_addr, height):
         return make_response(error_msg.format(msg), 401)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     app.run(debug=True)
