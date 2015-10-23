@@ -1,11 +1,10 @@
 import json
 import hashlib
 import storjcore
-from datetime import datetime
-from datetime import timedelta
 from sqlalchemy import DateTime
 from dataserv.run import db, app
 from btctxstore import BtcTxStore
+from datetime import datetime, timedelta
 
 
 from dataserv.config import logging
@@ -134,7 +133,6 @@ class Farmer(db.Model):
                 before_commit_callback()
             db.session.commit()
 
-    # TODO: Actually do an audit.
     def audit(self):
         """
         Complete a cryptographic audit of files stored on the farmer. If

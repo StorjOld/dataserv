@@ -6,7 +6,7 @@ ONLINE_TIME = 5  # minutes
 
 
 # MAX_PING is the most a client may ping
-if os.environ.get("DATASERV_MAX_PING"):
+if os.environ.get("DATASERV_MAX_PING"):  # pragma: no cover
     MAX_PING = int(os.environ.get("DATASERV_MAX_PING"))
 else:
     MAX_PING = 60  # default seconds
@@ -14,7 +14,7 @@ else:
 
 # db setup
 # example `export DATASERV_DATABASE_URI="postgresql:///dataserv"`
-if os.environ.get("DATASERV_DATABASE_URI"):
+if os.environ.get("DATASERV_DATABASE_URI"):  # pragma: no cover
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATASERV_DATABASE_URI")
 else:  # default to sqlite
     SQLALCHEMY_DATABASE_URI = "sqlite:///dataserv.db"
@@ -33,7 +33,7 @@ logging.basicConfig(format=_log_format, filename='dataserv.log',
                     level=logging.DEBUG)
 TOTAL_UPDATE = 30  # minutes
 
-if os.environ.get("DATASERV_CACHING_TIME"):
+if os.environ.get("DATASERV_CACHING_TIME"):  # pragma: no cover
     CACHING_TIME = int(os.environ.get("DATASERV_CACHING_TIME"))
 else:
     CACHING_TIME = 30  # seconds
