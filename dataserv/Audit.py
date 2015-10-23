@@ -37,6 +37,10 @@ class Audit(db.Model):
         self.block = block
         self.response = response
 
+    def __eq__(self, other):
+        return self.btc_addr == other.btc_addr and self.block == other.block \
+               and self.response == other.response
+
     def save(self):
         db.session.add(self)
         db.session.commit()
