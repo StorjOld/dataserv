@@ -11,6 +11,7 @@ from flask import make_response, jsonify, request
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from sqlalchemy import desc
+from dataserv.Audit import Audit
 from dataserv.Farmer import Farmer
 from dataserv.config import logging
 from dataserv.run import app, db, cache
@@ -201,6 +202,47 @@ def set_height(btc_addr, height):
         msg = "Farmer not found."
         logger.warning(msg)
         return make_response(msg, 404)
+    except storjcore.auth.AuthError:
+        msg = "Invalid authentication headers."
+        logger.warning(msg)
+        return make_response(error_msg.format(msg), 401)
+
+
+@app.route('/api/audit/<btc_addr>/<int:block_height>/<response>',
+           methods=["GET"])
+def audit(btc_addr, block_height, response):
+    logger.info("CALLED /api/audit/{0}/{1}/{2}".format(btc_addr, block_height,
+                                                       response))
+    error_msg = "Audit failed: {0}"
+
+    try:
+        user = Farmer(btc_addr)
+        user.authenticate(dict(request.headers))
+
+        audit_msg = Audit(btc_addr, block_height, response)
+        if audit_msg.exists():
+            msg = "Duplicate audit: Block {0}".format(block_height)
+            logger.warning(msg)
+            return make_response(msg, 409)
+        else:
+            audit_msg.save()
+            return make_response("Audit accepted.", 201)
+
+    except TypeError:
+        msg = "Invalid response."
+        logger.warning(msg)
+        return make_response(msg, 400)
+
+    except ValueError:
+        msg = "Invalid Bitcoin address."
+        logger.warning(msg)
+        return make_response(msg, 400)
+
+    except LookupError:
+        msg = "Farmer not found."
+        logger.warning(msg)
+        return make_response(msg, 404)
+
     except storjcore.auth.AuthError:
         msg = "Invalid authentication headers."
         logger.warning(msg)

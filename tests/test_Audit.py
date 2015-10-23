@@ -52,7 +52,7 @@ class AuditTest(unittest.TestCase):
 
         self.assertRaises(ValueError, callback_a)
         self.assertRaises(LookupError, callback_b)
-        self.assertRaises(ValueError, callback_c)
+        self.assertRaises(TypeError, callback_c)
 
     def test_lookup(self):
         btc_addr = self.gen_btc_addr()

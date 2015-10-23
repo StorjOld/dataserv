@@ -31,7 +31,7 @@ class Audit(db.Model):
         if not response is None and not is_sha256(response):
             msg = "Invalid Response: {0}".format(response)
             logger.warning(msg)
-            raise ValueError(msg)
+            raise TypeError(msg)
 
         self.btc_addr = btc_addr
         self.block = block

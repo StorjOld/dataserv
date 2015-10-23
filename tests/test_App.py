@@ -266,6 +266,53 @@ class HeightTest(TemplateTest):
         self.assertEqual(rv.status_code, 200)
 
 
+class AuditTest(TemplateTest):
+
+    def test_first_audit(self):
+        btc_addr = self.gen_wallet()
+        self.app.get('/api/register/{0}'.format(btc_addr))
+
+        ha = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
+
+        # accepted audit
+        rv = self.app.get('/api/audit/{0}/{1}/{2}'.format(btc_addr, 0, ha))
+        self.assertEqual(rv.status_code, 201)
+
+        # duplicate audit
+        rv = self.app.get('/api/audit/{0}/{1}/{2}'.format(btc_addr, 0, ha))
+        self.assertEqual(rv.status_code, 409)
+
+    def test_invalid_response(self):
+        btc_addr = self.gen_wallet()
+        self.app.get('/api/register/{0}'.format(btc_addr))
+
+        ha = 'invalid hash'
+        rv = self.app.get('/api/audit/{0}/{1}/{2}'.format(btc_addr, 0, ha))
+        self.assertEqual(rv.status_code, 400)
+
+    def test_invalid_address(self):
+        ha = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
+        rv = self.app.get('/api/audit/{0}/{1}/{2}'.format('bad', 0, ha))
+        self.assertEqual(rv.status_code, 400)
+
+    def test_farmer_not_found(self):
+        btc_addr = self.gen_wallet()
+        ha = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
+        rv = self.app.get('/api/audit/{0}/{1}/{2}'.format(btc_addr, 0, ha))
+        self.assertEqual(rv.status_code, 404)
+
+    def test_auth(self):
+        app.config["SKIP_AUTHENTICATION"] = False
+
+        btc_addr = self.gen_wallet()
+        self.app.get('/api/register/{0}'.format(btc_addr))
+
+        ha = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
+        rv = self.app.get('/api/audit/{0}/{1}/{2}'.format(btc_addr, 0, ha))
+
+        self.assertEqual(rv.status_code, 401)
+
+
 class AppAuthenticationHeadersTest(unittest.TestCase):
 
     def setUp(self):
