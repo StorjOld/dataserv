@@ -4,7 +4,7 @@ import storjcore
 from sqlalchemy import DateTime
 from dataserv.run import db, app
 from btctxstore import BtcTxStore
-from datetime import  datetime, timedelta
+from datetime import datetime, timedelta
 
 
 from dataserv.config import logging
