@@ -3,7 +3,7 @@ dataserv
 ########
 
 
-|BuildLink|_ |CoverageLink|_ |LicenseLink|_ |IssuesLink|_
+|BuildLink|_ |CoverageLink|_ |LicenseLink|_
 
 
 .. |BuildLink| image:: https://travis-ci.org/Storj/dataserv.svg?branch=master
@@ -14,9 +14,6 @@ dataserv
 
 .. |LicenseLink| image:: https://img.shields.io/badge/license-MIT-blue.svg
 .. _LicenseLink: https://raw.githubusercontent.com/Storj/dataserv
-
-.. |IssuesLink| image:: https://img.shields.io/github/issues/Storj/dataserv.svg
-.. _IssuesLink: https://github.com/Storj/dataserv
 
 
 #############
