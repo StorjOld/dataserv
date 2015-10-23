@@ -109,7 +109,7 @@ has gone offline, and that we should not issue more challenges.
 
     GET /api/ping/<bitcoin address>
 
-Success Example:
+Example:
 
 ::
 
@@ -117,20 +117,16 @@ Success Example:
     RESPONSE:
        Status Code: 200
        Text: Ping accepted.
-
-Fail Examples:
-
-::
-
-    GET /api/ping/notvalidaddress
-    RESPONSE:
-        Status Code: 400
-        Text: Ping failed: Invalid Bitcoin address.
-
-    GET /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd
-    RESPONSE:
-        Status Code: 404
-        Text: Ping Failed: Farmer not found.
+        
++-------------+----------------------------+-------------------------------------------------+
+| Error Codes | What probably happened     | Example                                         |
++=============+============================+=================================================+
+|     400     | Invalid Bitcoin address    | /api/ping/notvalidaddress                       |
++-------------+----------------------------+-------------------------------------------------+
+|     401     | Bad authentication headers | /api/ping/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm    |
++-------------+----------------------------+-------------------------------------------------+
+|     404     | Farmer not found           | /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd    |
++-------------+----------------------------+-------------------------------------------------+
 
 
 Online Status - JSON
