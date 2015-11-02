@@ -163,7 +163,7 @@ class Farmer(db.Model):
 
         # in case registration happened a short bit ago
         if delta_reg < timedelta(seconds=1):
-            return 100
+            return 100.0
 
         if delta_ping <= timedelta(minutes=app.config["ONLINE_TIME"]):
             farmer_uptime = farmer.uptime + delta_ping.seconds
