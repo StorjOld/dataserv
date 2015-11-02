@@ -173,13 +173,13 @@ Display the unique address used for authentication for the node.
 
 ::
 
-    GET /api/online
+    GET /api/address
 
 Example:
 
 ::
 
-    GET /api/online
+    GET /api/address
     RESPONSE:
         {
           "address": "16ZcxFDdkVJR1P8GMNmWFyhS4EKrRMsWNG"
