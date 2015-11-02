@@ -1,6 +1,6 @@
+from dataserv.run import db
 from datetime import datetime
 from sqlalchemy import DateTime
-from dataserv.run import db, app
 from btctxstore import BtcTxStore
 from dataserv.Farmer import Farmer
 from dataserv.Validator import is_sha256
