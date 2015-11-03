@@ -27,7 +27,7 @@ class Farmer(db.Model):
 
     last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
     reg_time = db.Column(DateTime, default=datetime.utcnow)
-    uptime = db.Column(db.Integer, default=0)
+    uptime = db.Column(db.Interval, default=timedelta(seconds=0))
 
     def __init__(self, btc_addr, last_seen=None):
         """
@@ -124,10 +124,10 @@ class Farmer(db.Model):
             # if the farmer has been online in the last ONLINE_TIME seconds
             # then we can update their uptime statistic
             if delta_ping <= timedelta(minutes=app.config["ONLINE_TIME"]):
-                farmer.uptime += delta_ping.seconds
+                farmer.uptime += delta_ping
             else:
                 farmer.uptime += timedelta(
-                    minutes=app.config["ONLINE_TIME"]).seconds
+                    minutes=app.config["ONLINE_TIME"])
             # call to the authentication module
             if before_commit_callback:
                 before_commit_callback()
@@ -166,12 +166,12 @@ class Farmer(db.Model):
             return 100.0
 
         if delta_ping <= timedelta(minutes=app.config["ONLINE_TIME"]):
-            farmer_uptime = farmer.uptime + delta_ping.seconds
+            farmer_uptime = farmer.uptime + delta_ping
         else:
             farmer_uptime = farmer.uptime + timedelta(
-                minutes=app.config["ONLINE_TIME"]).seconds
-        uptime = round(timedelta(seconds=farmer_uptime).total_seconds() /
-                       int(delta_reg.total_seconds()), 3)
+                minutes=app.config["ONLINE_TIME"])
+        uptime = round(farmer_uptime.total_seconds() /
+                       delta_reg.total_seconds(), 3)
         # clip if we completed the audit recently (which sends us over 100%)
         uptime *= 100  # covert from decimal to percentage
 
