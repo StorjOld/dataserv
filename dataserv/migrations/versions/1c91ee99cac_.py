@@ -1,17 +1,18 @@
 """empty message
 
-Revision ID: 1c9790acd60
+Revision ID: 1c91ee99cac
 Revises: 14d4ac0f0f1
-Create Date: 2015-11-02 02:58:57.959981
+Create Date: 2015-11-04 07:23:19.991912
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '1c9790acd60'
+revision = '1c91ee99cac'
 down_revision = '14d4ac0f0f1'
 
 from alembic import op
 import sqlalchemy as sa
+from datetime import datetime, timedelta
 
 
 def upgrade():
@@ -26,8 +27,11 @@ def upgrade():
     )
     op.create_index(op.f('ix_audit_block'), 'audit', ['block'], unique=False)
     op.add_column('farmer', sa.Column('reg_time', sa.DateTime(), nullable=True))
-    op.add_column('farmer', sa.Column('uptime', sa.Integer(), nullable=True))
-    op.create_index(op.f('ix_farmer_last_seen'), 'farmer', ['last_seen'], unique=False)
+    op.add_column('farmer', sa.Column('uptime', sa.Interval(), nullable=True))
+    op.create_index(op.f('ix_farmer_last_seen'), 'farmer', ['last_seen'], unique=False)    
+    farmer = sa.table('farmer',sa.column('reg_time'),sa.column('last_seen'))
+    op.execute(farmer.update().values(reg_time=datetime.utcnow()))
+    op.execute(farmer.update().values(last_seen=datetime.utcnow()))
     ### end Alembic commands ###
 
 
