@@ -349,7 +349,7 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
         self.assertEqual(rv.status_code, 200)
 
     def test_fail(self):
-        # register without auth headres fails
+        # register without auth headers fails
         btc_addr = self.gen_wallet()
         rv = self.app.get('/api/register/{0}'.format(btc_addr))
         self.assertEqual(rv.status_code, 401)
@@ -366,12 +366,12 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
         rv = self.app.get(url, headers=headers)
         self.assertEqual(rv.status_code, 200)
 
-        # ping without auth headres fails
+        # ping without auth headers fails
         time.sleep(app.config["MAX_PING"])
         rv = self.app.get('/api/ping/{0}'.format(btc_addr))
         self.assertEqual(rv.status_code, 401)
 
-        # set height without auth headres fails
+        # set height without auth headers fails
         btc_addr = self.gen_wallet()
         rv = self.app.get('/api/height/{0}/10'.format(btc_addr))
         self.assertEqual(rv.status_code, 401)

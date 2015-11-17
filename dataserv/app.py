@@ -14,7 +14,7 @@ from sqlalchemy import desc
 from dataserv.Audit import Audit
 from dataserv.Farmer import Farmer
 from dataserv.config import logging
-from dataserv.run import app, db, cache
+from dataserv.run import app, db, cache, manager
 
 
 logger = logging.getLogger(__name__)
@@ -234,4 +234,4 @@ def audit(btc_addr, block_height, response):
 
 
 if __name__ == '__main__':  # pragma: no cover
-    app.run(debug=True)
+    manager.run()

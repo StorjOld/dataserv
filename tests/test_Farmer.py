@@ -423,7 +423,7 @@ class FarmerUpTime(unittest.TestCase):
         delta = timedelta(days=2)
         farmer.last_seen = datetime.utcnow() - delta
         farmer.reg_time = datetime.utcnow() - delta
-        farmer.uptime = 86401  # 1 / 2 days farmer was online
+        farmer.uptime = timedelta(seconds=86401)  # 1 / 2 days farmer was online
         farmer.ping()
 
         test_json = {

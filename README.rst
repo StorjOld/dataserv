@@ -173,13 +173,13 @@ Display the unique address used for authentication for the node.
 
 ::
 
-    GET /api/online
+    GET /api/address
 
 Example:
 
 ::
 
-    GET /api/online
+    GET /api/address
     RESPONSE:
         {
           "address": "16ZcxFDdkVJR1P8GMNmWFyhS4EKrRMsWNG"
@@ -233,4 +233,36 @@ Example:
 +-------------+----------------------------+-------------------------------------------------+
 |     404     | Farmer not found           | /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd    |
 +-------------+----------------------------+-------------------------------------------------+
+
+
+Block Audit
+***********
+
+User can post a block audit of their data to the node. Note: You can only do
+this once per block.
+
+::
+
+    GET /api/audit/<btc_addr>/<int:block_height>/<response>
+
+Example:
+
+::
+
+    GET /api/audit/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/381737/c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8
+    RESPONSE:
+       Status Code: 201
+       Text: Audit accepted.
+
++-------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------+
+| Error Codes | What probably happened     | Example                                                                                                               |
++=============+============================+=======================================================================================================================+
+|     400     | Invalid Bitcoin address    | /api/audit/notvalidaddress/381737/c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8                    |
++-------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------+
+|     400     | Invalid response           | /api/audit/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm/381737/invalidhash                                                      |
++-------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------+
+|     401     | Bad authentication headers | /api/audit/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/381737/c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8 |
++-------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------+
+|     404     | Farmer not found           | /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd                                                                          |
++-------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------+
 
