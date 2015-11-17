@@ -4,7 +4,11 @@ python:
   - "3.4"
   - "3.5"
 
-# install dependencies, e.g. pip install -r requirements.txt
+addons:
+  apt:
+    packages:
+    - libpq-dev
+
 install:
   - pip install -r requirements.txt
   - pip install -r test_requirements.txt
@@ -12,15 +16,12 @@ install:
 before_script:
   - touch dataserv.db
 
-# run tests, e.g. python setup.py test
 script:
   - coverage run --source="dataserv" setup.py test
 
-# run coverage
 after_success:
   - coveralls
 
-# post to slack
 notifications:
   slack: storjcommunity:TZfUO9ycY8R9UYwztWZTo0jk
   email: false
