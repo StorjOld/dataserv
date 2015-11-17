@@ -276,7 +276,7 @@ class AuditTest(TemplateTest):
 
         # accepted audit
         rv = self.app.get('/api/audit/{0}/{1}/{2}'.format(btc_addr, 0, ha))
-        self.assertEqual(rv.status_code, 201)
+        self.assertEqual(rv.status_code, 200)
 
         # duplicate audit
         rv = self.app.get('/api/audit/{0}/{1}/{2}'.format(btc_addr, 0, ha))

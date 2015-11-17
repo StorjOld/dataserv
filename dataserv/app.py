@@ -210,7 +210,7 @@ def audit(btc_addr, block_height, response):
             return make_response(msg, 409)
         else:
             audit_msg.save()
-            return make_response("Audit accepted.", 201)
+            return make_response("Audit accepted.", 200)
 
     except TypeError:
         msg = "Invalid response."
