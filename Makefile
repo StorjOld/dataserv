@@ -8,6 +8,7 @@ ifeq ($(USE_WHEELS), 0)
 else
   WHEEL_INSTALL_ARGS := --use-wheel --no-index --find-links=$(WHEEL_DIR)
 endif
+export PYCOIN_NATIVE = openssl
 
 
 help:
