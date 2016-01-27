@@ -16,4 +16,4 @@ export PYCOIN_NATIVE=openssl
 
 # start server
 cd dataserv
-authbind gunicorn -w 8 -b 0.0.0.0:80 app:app --log-file=gunicorn.log
+authbind gunicorn -w 16 -b 0.0.0.0:80 app:app --log-file=gunicorn.log
