@@ -95,8 +95,7 @@ def ping(btc_addr):
         def before_commit():  # lazy authentication
             user.authenticate(dict(request.headers))
 
-        user.ping(before_commit_callback=before_commit,
-                  ip=request.request.remote_addr)
+        user.ping(before_commit_callback=before_commit, ip=request.remote_addr)
         return make_response("Ping accepted.", 200)
     except ValueError:
         msg = "Invalid Bitcoin address."
@@ -169,7 +168,7 @@ def set_height(btc_addr, height):
         user = Farmer(btc_addr)
         user.authenticate(dict(request.headers))
         if height <= app.config["HEIGHT_LIMIT"]:
-            user.set_height(height, ip=request.request.remote_addr)
+            user.set_height(height, ip=request.remote_addr)
             return make_response("Height accepted.", 200)
         else:
             msg = "Height limit exceeded."
