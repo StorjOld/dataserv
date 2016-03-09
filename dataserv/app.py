@@ -10,11 +10,11 @@ import storjcore
 from flask import make_response, jsonify, request
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from sqlalchemy import desc
-from dataserv.Audit import Audit
-from dataserv.Farmer import Farmer
-from dataserv.config import logging
-from dataserv.run import app, db, cache, manager
+from sqlalchemy import desc  # NOQA
+from dataserv.Audit import Audit  # NOQA
+from dataserv.Farmer import Farmer  # NOQA
+from dataserv.config import logging  # NOQA
+from dataserv.run import app, db, cache, manager  # NOQA
 
 
 logger = logging.getLogger(__name__)
@@ -95,7 +95,8 @@ def ping(btc_addr):
         def before_commit():  # lazy authentication
             user.authenticate(dict(request.headers))
 
-        user.ping(before_commit_callback=before_commit)
+        user.ping(before_commit_callback=before_commit,
+                  ip=request.request.remote_addr)
         return make_response("Ping accepted.", 200)
     except ValueError:
         msg = "Invalid Bitcoin address."
@@ -168,7 +169,7 @@ def set_height(btc_addr, height):
         user = Farmer(btc_addr)
         user.authenticate(dict(request.headers))
         if height <= app.config["HEIGHT_LIMIT"]:
-            user.set_height(height)
+            user.set_height(height, ip=request.request.remote_addr)
             return make_response("Height accepted.", 200)
         else:
             msg = "Height limit exceeded."

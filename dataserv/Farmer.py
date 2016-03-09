@@ -108,7 +108,7 @@ class Farmer(db.Model):
             raise LookupError(msg)
         return farmer
 
-    def ping(self, before_commit_callback=None):
+    def ping(self, before_commit_callback=None, ip=None):
         """
         Keep-alive for the farmer. Validation can take a long time, so
         we just want to know if they are still there.
@@ -136,23 +136,28 @@ class Farmer(db.Model):
             # call to the authentication module
             if before_commit_callback:
                 before_commit_callback()
+
+            # update the ip while were at it
+            if ip is not None:
+                farmer.ip = ip
+
             db.session.commit()
 
-    def audit(self):
+    def audit(self, ip=None):
         """
         Complete a cryptographic audit of files stored on the farmer. If
         the farmer completes an audit we also update when we last saw them.
 
         """
-        self.ping()
+        self.ping(ip=ip)
 
-    def set_height(self, height):
+    def set_height(self, height, ip=None):
         """Set the farmers advertised height."""
         farmer = self.lookup()
         farmer.height = height
         # better 2 db commits than implementing ping with
         # update calculation again
-        self.ping()
+        self.ping(ip=ip)
         db.session.commit()
         return self.height
 
@@ -194,6 +199,8 @@ class Farmer(db.Model):
             "last_seen": (datetime.utcnow() - self.last_seen).seconds,
             "height": self.height,
             "uptime": self.calculate_uptime(),
-            "reg_time": int((self.reg_time - epoch).total_seconds())
+            "reg_time": int((self.reg_time - epoch).total_seconds()),
+            "bandwidth": self.bandwidth,
+            "ip": self.ip,
         }
         return json.dumps(payload)
