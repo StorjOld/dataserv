@@ -21,13 +21,16 @@ def sha256(content):
 class Farmer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
-    btc_addr = db.Column(db.String(35), unique=True)
+    btc_addr = db.Column(db.String(35), unique=True)  # TODO change to node_id
     payout_addr = db.Column(db.String(35))
     height = db.Column(db.Integer, default=0)
 
     last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
     reg_time = db.Column(DateTime, default=datetime.utcnow)
     uptime = db.Column(db.Interval, default=timedelta(seconds=0))
+
+    bandwidth = db.Column(db.Integer, default=0)
+    # TODO add ip field
 
     def __init__(self, btc_addr, last_seen=None):
         """
@@ -123,7 +126,7 @@ class Farmer(db.Model):
             farmer.last_seen = ping_time
             # if the farmer has been online in the last ONLINE_TIME seconds
             # then we can update their uptime statistic
-            if farmer.uptime == None:
+            if farmer.uptime is None:
                 farmer.uptime = timedelta(seconds=0)
             if delta_ping <= timedelta(minutes=app.config["ONLINE_TIME"]):
                 farmer.uptime += delta_ping
@@ -156,7 +159,7 @@ class Farmer(db.Model):
     def calculate_uptime(self):
         """Calculate uptime from registration date."""
         farmer = self.lookup()
-        
+
         # save datetime.utcnow() to avoid a difference
         utcnow = datetime.utcnow()
         # time delta from registration and ping
@@ -168,7 +171,7 @@ class Farmer(db.Model):
             return 100.0
 
         if delta_ping <= timedelta(minutes=app.config["ONLINE_TIME"]):
-            if farmer.uptime == None:
+            if farmer.uptime is None:
                 farmer_uptime = delta_ping
             else:
                 farmer_uptime = farmer.uptime + delta_ping
