@@ -30,7 +30,7 @@ class Farmer(db.Model):
     uptime = db.Column(db.Interval, default=timedelta(seconds=0))
 
     bandwidth = db.Column(db.Integer, default=0)
-    # TODO add ip field
+    ip = db.Column(db.String(40), default="")  # TODO save ip
 
     def __init__(self, btc_addr, last_seen=None):
         """
