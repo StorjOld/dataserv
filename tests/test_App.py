@@ -56,6 +56,8 @@ class RegisterTest(TemplateTest):
         farmer = Farmer(btc_addr).lookup()
         expected_data = {
             "height": 0,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
@@ -67,8 +69,8 @@ class RegisterTest(TemplateTest):
 
         # duplicate registration
         rv = self.app.get('/api/register/{0}'.format(btc_addr))
-        self.assertEqual(b"Registration Failed: Address already is registered."
-                         , rv.data)
+        self.assertEqual(b"Registration Failed: Address already is registered.",
+                         rv.data)
         self.assertEqual(rv.status_code, 409)
 
     def test_register_w_payout(self):
@@ -81,6 +83,8 @@ class RegisterTest(TemplateTest):
         farmer = Farmer(btc_addr).lookup()
         expected_data = {
             "height": 0,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": btc_addr,
             'payout_addr': payout_addr,
             "last_seen": 0,
@@ -93,8 +97,8 @@ class RegisterTest(TemplateTest):
         # duplicate registration
         rv = self.app.get('/api/register/{0}/{1}'.format(btc_addr,
                                                          payout_addr))
-        self.assertEqual(b"Registration Failed: Address already is registered."
-                         , rv.data)
+        self.assertEqual(b"Registration Failed: Address already is registered.",
+                         rv.data)
         self.assertEqual(rv.status_code, 409)
 
         new_btc_addr = self.gen_wallet()
@@ -106,6 +110,8 @@ class RegisterTest(TemplateTest):
         farmer = Farmer(new_btc_addr).lookup()
         expected_data = {
             "height": 0,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": new_btc_addr,
             'payout_addr': payout_addr,
             "last_seen": 0,
@@ -259,7 +265,7 @@ class HeightTest(TemplateTest):
         rv = self.app.get('/api/height/{0}/{1}'.format(btc_addr,
                                                        200001))
         self.assertEqual(rv.status_code, 413)
-        
+
         # allowed max height
         rv = self.app.get('/api/height/{0}/{1}'.format(btc_addr,
                                                        200000))
@@ -318,9 +324,9 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
     def setUp(self):
         app.config["SKIP_AUTHENTICATION"] = False  # monkey patch
         self.app = app.test_client()
-        
+
         self.btctxstore = BtcTxStore()
-        
+
         db.create_all()
 
     def tearDown(self):

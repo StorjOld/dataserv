@@ -19,18 +19,16 @@ def sha256(content):
 
 
 class Farmer(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
 
+    id = db.Column(db.Integer, primary_key=True)
     btc_addr = db.Column(db.String(35), unique=True)  # TODO change to node_id
     payout_addr = db.Column(db.String(35))
     height = db.Column(db.Integer, default=0)
-
     last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
     reg_time = db.Column(DateTime, default=datetime.utcnow)
     uptime = db.Column(db.Interval, default=timedelta(seconds=0))
-
-    bandwidth = db.Column(db.Integer, default=0)
-    ip = db.Column(db.String(40), default="")  # TODO save ip
+    bandwidth = db.Column(db.Integer, default=0)  # TODO add set bandwidth call
+    ip = db.Column(db.String(40), default="")
 
     def __init__(self, btc_addr, last_seen=None):
         """

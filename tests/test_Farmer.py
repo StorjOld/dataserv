@@ -136,10 +136,12 @@ class FarmerTest(unittest.TestCase):
 
         test_json = {
             "height": 50,
+            "ip": "",
+            "bandwidth": 0,
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
-            "uptime": 100,
+            "uptime": 100.0,
             "reg_time": self.get_reg_sec(farmer)
         }
         call_payload = json.loads(farmer.to_json())
@@ -208,8 +210,8 @@ class FarmerAuthenticationTest(unittest.TestCase):
             address = blockchain.get_address(wif)
             farmer = Farmer(address)
 
-            header_date = formatdate(timeval=mktime(datetime.now().timetuple())
-                                     , localtime=True, usegmt=True)
+            header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
+                                     localtime=True, usegmt=True)
             message = farmer.get_server_address() + " " + header_date
             header_authorization = blockchain.sign_unicode(wif, message)
             headers = {"Date": None, "Authorization": header_authorization}
@@ -261,8 +263,8 @@ class FarmerAuthenticationTest(unittest.TestCase):
             address = blockchain.get_address(wif)
             farmer = Farmer(address)
 
-            header_date = formatdate(timeval=mktime(datetime.now().timetuple())
-                                     , localtime=True, usegmt=True)
+            header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
+                                     localtime=True, usegmt=True)
             header_authorization = blockchain.sign_unicode(wif, "lalala-wrong")
             headers = {"Date": header_date,
                        "Authorization": header_authorization}
@@ -296,6 +298,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
@@ -313,6 +317,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": delta.seconds,
@@ -331,6 +337,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
@@ -346,7 +354,7 @@ class FarmerUpTime(unittest.TestCase):
                                         self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
-        
+
         # latest ping for 100%
         delta = timedelta(minutes=app.config["ONLINE_TIME"])
         farmer.last_seen = datetime.utcnow() - delta
@@ -355,6 +363,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
@@ -370,7 +380,7 @@ class FarmerUpTime(unittest.TestCase):
                                         self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
-        
+
         # latest ping for 100%
         delta = timedelta(minutes=(2*app.config["ONLINE_TIME"]))
         farmer.last_seen = datetime.utcnow() - delta
@@ -379,6 +389,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
@@ -394,7 +406,7 @@ class FarmerUpTime(unittest.TestCase):
                                         self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
-        
+
         # ping to late -> 50%
         delta = timedelta(minutes=(4*app.config["ONLINE_TIME"]))
         farmer.last_seen = datetime.utcnow() - delta
@@ -405,6 +417,8 @@ class FarmerUpTime(unittest.TestCase):
             "height": 0,
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
+            "bandwidth": 0,
+            "ip": "",
             "last_seen": 0,
             "uptime": 25,
             "reg_time": self.get_reg_sec(farmer)
@@ -418,7 +432,7 @@ class FarmerUpTime(unittest.TestCase):
                                         self.btctxstore.create_wallet()))
         farmer = Farmer(btc_addr)
         farmer.register()
-        
+
         # ping to late -> 50%
         delta = timedelta(days=2)
         farmer.last_seen = datetime.utcnow() - delta
@@ -428,6 +442,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
@@ -452,6 +468,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 100,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
@@ -476,6 +494,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 50,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
@@ -500,6 +520,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 25,
+            "bandwidth": 0,
+            "ip": "",
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,
