@@ -27,7 +27,7 @@ class Farmer(db.Model):
     last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
     reg_time = db.Column(DateTime, default=datetime.utcnow)
     uptime = db.Column(db.Interval, default=timedelta(seconds=0))
-    bandwidth = db.Column(db.Integer, default=0)  # TODO add set bandwidth call
+    bandwidth = db.Column(db.Integer, default=0)
     ip = db.Column(db.String(40), default="")
 
     def __init__(self, btc_addr, last_seen=None):
@@ -158,6 +158,15 @@ class Farmer(db.Model):
         self.ping(ip=ip)
         db.session.commit()
         return self.height
+
+    def set_bandwidth(self, bandwidth, ip=None):
+        farmer = self.lookup()
+        farmer.bandwidth = bandwidth
+        # better 2 db commits than implementing ping with
+        # update calculation again
+        self.ping(ip=ip)
+        db.session.commit()
+        return self.bandwidth
 
     def calculate_uptime(self):
         """Calculate uptime from registration date."""

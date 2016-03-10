@@ -160,6 +160,34 @@ def total():
     return resp
 
 
+@app.route('/api/bandwidth/<btc_addr>/<int:bandwidth>', methods=["GET"])
+def set_bandwidth(btc_addr, bandwidth):
+    logger.info("CALLED /api/bandwidth/{0}/{1}".format(btc_addr, bandwidth))
+    error_msg = "Set height failed: {0}"
+    try:
+        user = Farmer(btc_addr)
+        user.authenticate(dict(request.headers))
+        assert(bandwidth >= 0)
+        user.set_bandwidth(bandwidth, ip=request.remote_addr)
+        return make_response("Bandwidth accepted.", 200)
+    except AssertionError:
+        msg = "Invalid bandwidth value: {0}".format(bandwidth)
+        logger.warning(msg)
+        return make_response(msg, 400)
+    except ValueError:
+        msg = "Invalid Bitcoin address."
+        logger.warning(msg)
+        return make_response(msg, 400)
+    except LookupError:
+        msg = "Farmer not found."
+        logger.warning(msg)
+        return make_response(msg, 404)
+    except storjcore.auth.AuthError:
+        msg = "Invalid authentication headers."
+        logger.warning(msg)
+        return make_response(error_msg.format(msg), 401)
+
+
 @app.route('/api/height/<btc_addr>/<int:height>', methods=["GET"])
 def set_height(btc_addr, height):
     logger.info("CALLED /api/height/{0}/{1}".format(btc_addr, height))
