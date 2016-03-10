@@ -21,8 +21,7 @@ def sha256(content):
 class Farmer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    btc_addr = db.Column(db.String(35), unique=True)  # TODO change to node_id
-    nodeid = db.Column(db.String(40))
+    nodeid = db.Column(db.String(40)) # FIXME unique=True, nullable=False
     payout_addr = db.Column(db.String(35))
     height = db.Column(db.Integer, default=0)
     last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
