@@ -22,6 +22,7 @@ class Farmer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     btc_addr = db.Column(db.String(35), unique=True)  # TODO change to node_id
+    nodeid = db.Column(db.String(40))
     payout_addr = db.Column(db.String(35))
     height = db.Column(db.Integer, default=0)
     last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
@@ -203,6 +204,7 @@ class Farmer(db.Model):
         payload = {
             "btc_addr": self.btc_addr,
             "payout_addr": self.payout_addr,
+            "nodeid": self.nodeid,
             "last_seen": (datetime.utcnow() - self.last_seen).seconds,
             "height": self.height,
             "uptime": self.calculate_uptime(),
