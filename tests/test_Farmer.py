@@ -91,6 +91,21 @@ class FarmerTest(unittest.TestCase):
         delta_seconds = int((farmer.last_seen - register_time).seconds)
         self.assertEqual(delta_seconds, 0)
 
+    def test_bandwidth(self):
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
+        farmer = Farmer(btc_addr)
+        farmer.register()
+
+        # set height and check function output
+        self.assertEqual(farmer.bandwidth, 0)
+        self.assertEqual(farmer.set_bandwidth(5), 5)
+        self.assertEqual(farmer.bandwidth, 5)
+
+        # check the db object as well
+        farmer2 = farmer.lookup()
+        self.assertEqual(farmer2.bandwidth, 5)
+
     def test_height(self):
         btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
                                         self.btctxstore.create_wallet()))
@@ -133,11 +148,12 @@ class FarmerTest(unittest.TestCase):
 
         farmer.ping()
         farmer.set_height(50)
+        farmer.set_bandwidth(55)
 
         test_json = {
             "height": 50,
             "ip": "",
-            "bandwidth": 0,
+            "bandwidth": 55,
             "btc_addr": btc_addr,
             'payout_addr': btc_addr,
             "last_seen": 0,

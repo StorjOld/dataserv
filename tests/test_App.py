@@ -231,6 +231,28 @@ class OnlineTest(TemplateTest):
         self.assertEqual(farmers[0].btc_addr, addr1)
 
 
+class BandwidthTest(TemplateTest):
+
+    def test_farmer_set_bandwidth(self):
+        # not found
+        btc_addr = self.gen_wallet()
+        rv = self.app.get('/api/bandwidth/{0}/1'.format(btc_addr))
+        self.assertEqual(rv.status_code, 404)
+
+        # register farmer
+        self.app.get('/api/register/{0}'.format(btc_addr))
+
+        # correct
+        rv = self.app.get('/api/bandwidth/{0}/5'.format(btc_addr))
+        self.assertEqual(rv.status_code, 200)
+        # rv = self.app.get('/api/online/json'.format(btc_addr))
+        # self.assertTrue(b"5" in rv.data)
+
+        # invalid btc address
+        rv = self.app.get('/api/bandwidth/{0}/1'.format(self.bad_addr))
+        self.assertEqual(rv.status_code, 400)
+
+
 class HeightTest(TemplateTest):
 
     def test_farmer_set_height(self):

@@ -167,13 +167,8 @@ def set_bandwidth(btc_addr, bandwidth):
     try:
         user = Farmer(btc_addr)
         user.authenticate(dict(request.headers))
-        assert(bandwidth >= 0)
         user.set_bandwidth(bandwidth, ip=request.remote_addr)
         return make_response("Bandwidth accepted.", 200)
-    except AssertionError:
-        msg = "Invalid bandwidth value: {0}".format(bandwidth)
-        logger.warning(msg)
-        return make_response(msg, 400)
     except ValueError:
         msg = "Invalid Bitcoin address."
         logger.warning(msg)
