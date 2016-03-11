@@ -15,10 +15,25 @@ from alembic import op  # NOQA
 import sqlalchemy as sa  # NOQA
 from pycoin.encoding import a2b_hashed_base58  # NOQA
 from binascii import hexlify  # NOQA
-from dataserv.Farmer import Farmer  # NOQA
+from datetime import datetime, timedelta  # NOQA
+from sqlalchemy.ext.declarative import declarative_base  # NOQA
 
 
+Base = declarative_base()
 Session = sa.orm.sessionmaker()
+
+
+class Farmer(Base):
+    __tablename__ = 'farmer'
+    id = sa.Column(sa.Integer, primary_key=True)
+    btc_addr = sa.Column(sa.String(35), unique=True)  # TODO change to node_id
+    payout_addr = sa.Column(sa.String(35))
+    height = sa.Column(sa.Integer, default=0)
+    last_seen = sa.Column(sa.DateTime, index=True, default=datetime.utcnow)
+    reg_time = sa.Column(sa.DateTime, default=datetime.utcnow)
+    uptime = sa.Column(sa.Interval, default=timedelta(seconds=0))
+    bandwidth = sa.Column(sa.Integer, default=0)
+    ip = sa.Column(sa.String(40), default="")
 
 
 def upgrade():
