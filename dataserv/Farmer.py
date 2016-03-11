@@ -1,15 +1,16 @@
 import json
+import re
 import hashlib
 import storjcore
 from sqlalchemy import DateTime
 from dataserv.run import db, app
 from btctxstore import BtcTxStore
 from datetime import datetime, timedelta
-
-
 from dataserv.config import logging
-logger = logging.getLogger(__name__)
-is_btc_address = BtcTxStore().validate_address
+
+
+log = logging.getLogger(__name__)
+NODEID_PATTERN = "^[a-f0-9]{40}$"
 
 
 def sha256(content):
@@ -30,22 +31,22 @@ class Farmer(db.Model):
     bandwidth = db.Column(db.Integer, default=0)
     ip = db.Column(db.String(40), default="")
 
-    def __init__(self, btc_addr, last_seen=None):
+    def __init__(self, nodeid, last_seen=None):
         """
         A farmer is a un-trusted client that provides some disk space
         in exchange for payment. We use this object to keep track of
         farmers connected to this node.
 
         """
-        if not is_btc_address(btc_addr):
-            msg = "Invalid BTC Address: {0}".format(btc_addr)
-            logger.warning(msg)
+        if not re.match(NODEID_PATTERN, nodeid):
+            msg = "Invalid nodeid: {0}".format(nodeid)
+            log.warning(msg)
             raise ValueError(msg)
-        self.btc_addr = btc_addr
+        self.nodeid = nodeid
         self.last_seen = last_seen
 
     def __repr__(self):
-        return '<Farmer BTC Address: %r>' % self.btc_addr
+        return '<Farmer nodeid: %r>' % self.nodeid
 
     @staticmethod
     def get_server_address():
@@ -67,25 +68,26 @@ class Farmer(db.Model):
         btctxstore = BtcTxStore()
         timeout = self.get_server_authentication_timeout()
         recipient_address = self.get_server_address()
-        sender_address = self.btc_addr
+        sender_address = self.nodeid
         return storjcore.auth.verify_headers(btctxstore, headers, timeout,
                                              sender_address, recipient_address)
 
     def validate(self, registering=False):
         """Make sure this farmer fits the rules for this node."""
+        is_btc_address = BtcTxStore().validate_address
         if not is_btc_address(self.payout_addr):
             msg = "Invalid BTC Address: {0}".format(self.payout_addr)
-            logger.warning(msg)
+            log.warning(msg)
             raise ValueError(msg)
         exists = self.exists()
         if exists and registering:
             msg = "Address already registered: {0}".format(self.payout_addr)
-            logger.warning(msg)
+            log.warning(msg)
             raise LookupError(msg)
 
     def register(self, payout_addr=None):
         """Add the farmer to the database."""
-        self.payout_addr = payout_addr if payout_addr else self.btc_addr
+        self.payout_addr = payout_addr if payout_addr else self.nodeid
         self.validate(registering=True)
         db.session.add(self)
         db.session.commit()
@@ -94,15 +96,15 @@ class Farmer(db.Model):
 
     def exists(self):
         """Check to see if this address is already listed."""
-        return Farmer.query.filter(Farmer.btc_addr ==
-                                   self.btc_addr).count() > 0
+        return Farmer.query.filter(Farmer.nodeid ==
+                                   self.nodeid).count() > 0
 
     def lookup(self):
         """Return the Farmer object for the bitcoin address passed."""
-        farmer = Farmer.query.filter_by(btc_addr=self.btc_addr).first()
+        farmer = Farmer.query.filter_by(nodeid=self.nodeid).first()
         if not farmer:
-            msg = "Address not registered: {0}".format(self.btc_addr)
-            logger.warning(msg)
+            msg = "Address not registered: {0}".format(self.nodeid)
+            log.warning(msg)
             raise LookupError(msg)
         return farmer
 
@@ -201,7 +203,7 @@ class Farmer(db.Model):
         """Object to JSON payload."""
         epoch = datetime.utcfromtimestamp(0)
         payload = {
-            "btc_addr": self.btc_addr,
+            "nodeid": self.nodeid,
             "payout_addr": self.payout_addr,
             "nodeid": self.nodeid,
             "last_seen": (datetime.utcnow() - self.last_seen).seconds,

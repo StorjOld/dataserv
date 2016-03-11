@@ -56,18 +56,12 @@ def index():
     return "Hello World."
 
 
-@app.route('/api/register/<btc_addr>', methods=["GET"])
-def register(btc_addr):
-    logger.info("CALLED /api/register/{0}".format(btc_addr))
-    return register_with_payout(btc_addr, btc_addr)
-
-
-@app.route('/api/register/<btc_addr>/<payout_addr>', methods=["GET"])
-def register_with_payout(btc_addr, payout_addr):
-    logger.info("CALLED /api/register/{0}/{1}".format(btc_addr, payout_addr))
+@app.route('/api/register/<nodeid>/<payout_addr>', methods=["GET"])
+def register(nodeid, payout_addr):
+    logger.info("CALLED /api/register/{0}/{1}".format(nodeid, payout_addr))
     error_msg = "Registration Failed: {0}"
     try:
-        user = Farmer(btc_addr)
+        user = Farmer(nodeid)
         user.authenticate(dict(request.headers))
         user.register(payout_addr)
         return make_response(user.to_json(), 200)
@@ -85,12 +79,12 @@ def register_with_payout(btc_addr, payout_addr):
         return make_response(error_msg.format(msg), 401)
 
 
-@app.route('/api/ping/<btc_addr>', methods=["GET"])
-def ping(btc_addr):
-    logger.info("CALLED /api/ping/{0}".format(btc_addr))
+@app.route('/api/ping/<nodeid>', methods=["GET"])
+def ping(nodeid):
+    logger.info("CALLED /api/ping/{0}".format(nodeid))
     error_msg = "Ping Failed: {0}"
     try:
-        user = Farmer(btc_addr)
+        user = Farmer(nodeid)
 
         def before_commit():  # lazy authentication
             user.authenticate(dict(request.headers))
@@ -160,12 +154,12 @@ def total():
     return resp
 
 
-@app.route('/api/bandwidth/<btc_addr>/<int:bandwidth>', methods=["GET"])
-def set_bandwidth(btc_addr, bandwidth):
-    logger.info("CALLED /api/bandwidth/{0}/{1}".format(btc_addr, bandwidth))
+@app.route('/api/bandwidth/<nodeid>/<int:bandwidth>', methods=["GET"])
+def set_bandwidth(nodeid, bandwidth):
+    logger.info("CALLED /api/bandwidth/{0}/{1}".format(nodeid, bandwidth))
     error_msg = "Set height failed: {0}"
     try:
-        user = Farmer(btc_addr)
+        user = Farmer(nodeid)
         user.authenticate(dict(request.headers))
         user.set_bandwidth(bandwidth, ip=request.remote_addr)
         return make_response("Bandwidth accepted.", 200)
@@ -183,12 +177,12 @@ def set_bandwidth(btc_addr, bandwidth):
         return make_response(error_msg.format(msg), 401)
 
 
-@app.route('/api/height/<btc_addr>/<int:height>', methods=["GET"])
-def set_height(btc_addr, height):
-    logger.info("CALLED /api/height/{0}/{1}".format(btc_addr, height))
+@app.route('/api/height/<nodeid>/<int:height>', methods=["GET"])
+def set_height(nodeid, height):
+    logger.info("CALLED /api/height/{0}/{1}".format(nodeid, height))
     error_msg = "Set height failed: {0}"
     try:
-        user = Farmer(btc_addr)
+        user = Farmer(nodeid)
         user.authenticate(dict(request.headers))
         if height <= app.config["HEIGHT_LIMIT"]:
             user.set_height(height, ip=request.remote_addr)
@@ -215,18 +209,18 @@ def set_height(btc_addr, height):
         return make_response(error_msg.format(msg), 401)
 
 
-@app.route('/api/audit/<btc_addr>/<int:block_height>/<response>',
+@app.route('/api/audit/<nodeid>/<int:block_height>/<response>',
            methods=["GET"])
-def audit(btc_addr, block_height, response):
-    logger.info("CALLED /api/audit/{0}/{1}/{2}".format(btc_addr, block_height,
+def audit(nodeid, block_height, response):
+    logger.info("CALLED /api/audit/{0}/{1}/{2}".format(nodeid, block_height,
                                                        response))
     error_msg = "Audit failed: {0}"
 
     try:
-        user = Farmer(btc_addr)
+        user = Farmer(nodeid)
         user.authenticate(dict(request.headers))
 
-        audit_msg = Audit(btc_addr, block_height, response)
+        audit_msg = Audit(nodeid, block_height, response)
         if audit_msg.exists():
             msg = "Duplicate audit: Block {0}".format(block_height)
             logger.warning(msg)
