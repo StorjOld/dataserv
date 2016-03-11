@@ -5,15 +5,9 @@ from time import mktime
 from datetime import datetime
 from dataserv.run import app, db
 from btctxstore import BtcTxStore
-from dataserv.Farmer import Farmer
+from dataserv.Farmer import Farmer, address2nodeid
 from email.utils import formatdate
 from dataserv.app import secs_to_mins, online_farmers
-import binascii
-from pycoin.encoding import a2b_hashed_base58
-
-
-def addr2nodeid(addr):
-    return binascii.hexlify(a2b_hashed_base58(addr)[1:]).decode("utf-8")
 
 
 class TemplateTest(unittest.TestCase):
@@ -44,7 +38,7 @@ class RegisterTest(TemplateTest):
 
     def test_register(self):
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         payout_addr = self.gen_wallet()
         rv = self.app.get('/api/register/{0}/{1}'.format(nodeid, payout_addr))
 
@@ -55,7 +49,7 @@ class RegisterTest(TemplateTest):
 
     def test_register_no_payout(self):
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         rv = self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
 
         # good registration
@@ -82,7 +76,7 @@ class RegisterTest(TemplateTest):
 
     def test_register_w_payout(self):
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         payout_addr = self.gen_wallet()
         rv = self.app.get('/api/register/{0}/{1}'.format(nodeid, payout_addr))
         # good registration
@@ -109,7 +103,7 @@ class RegisterTest(TemplateTest):
         self.assertEqual(rv.status_code, 409)
 
         new_btc_addr = self.gen_wallet()
-        new_nodeid = addr2nodeid(new_btc_addr)
+        new_nodeid = address2nodeid(new_btc_addr)
 
         # duplicate payout address is ok
         rv = self.app.get('/api/register/{0}/{1}'.format(new_nodeid,
@@ -133,7 +127,7 @@ class RegisterTest(TemplateTest):
 
         # good nodeid, bad address
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         rv = self.app.get('/api/register/{0}/{1}'.format(nodeid,
                                                          self.bad_addr))
         self.assertEqual(b"Registration Failed: Invalid Bitcoin address.",
@@ -153,7 +147,7 @@ class PingTest(TemplateTest):
 
     def test_ping_good(self):
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         rv = self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
         self.assertEqual(rv.status_code, 200)
 
@@ -167,7 +161,7 @@ class PingTest(TemplateTest):
     def test_ping_not_found(self):
         # now test ping with no registration
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         rv = self.app.get('/api/ping/{0}'.format(nodeid))
 
         # bad ping
@@ -187,7 +181,7 @@ class OnlineTest(TemplateTest):
 
     def test_online(self):
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         rv = self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
         self.assertEqual(rv.status_code, 200)
 
@@ -202,7 +196,7 @@ class OnlineTest(TemplateTest):
 
     def test_farmer_json(self):  # test could be better
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         rv = self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
         self.assertEqual(rv.status_code, 200)
 
@@ -214,9 +208,9 @@ class OnlineTest(TemplateTest):
         addr1 = self.gen_wallet()
         addr2 = self.gen_wallet()
         addr3 = self.gen_wallet()
-        nodeid1 = addr2nodeid(addr1)
-        nodeid2 = addr2nodeid(addr2)
-        nodeid3 = addr2nodeid(addr3)
+        nodeid1 = address2nodeid(addr1)
+        nodeid2 = address2nodeid(addr2)
+        nodeid3 = address2nodeid(addr3)
 
         # register farmers
         self.app.get('/api/register/{0}/{1}'.format(nodeid1, addr1))
@@ -247,7 +241,7 @@ class BandwidthTest(TemplateTest):
     def test_farmer_set_bandwidth(self):
         # not found
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         rv = self.app.get('/api/bandwidth/{0}/1'.format(nodeid))
         self.assertEqual(rv.status_code, 404)
 
@@ -270,7 +264,7 @@ class HeightTest(TemplateTest):
     def test_farmer_set_height(self):
         # not found
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         rv = self.app.get('/api/height/{0}/1'.format(nodeid))
         self.assertEqual(rv.status_code, 404)
 
@@ -289,7 +283,7 @@ class HeightTest(TemplateTest):
 
     def test_height_limit(self):
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
 
         # set height 50
@@ -312,7 +306,7 @@ class AuditTest(TemplateTest):
 
     def test_first_audit(self):
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
 
         ha = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
@@ -327,7 +321,7 @@ class AuditTest(TemplateTest):
 
     def test_invalid_response(self):
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
 
         ha = 'invalid hash'
@@ -341,7 +335,7 @@ class AuditTest(TemplateTest):
 
     def test_farmer_not_found(self):
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         ha = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
         rv = self.app.get('/api/audit/{0}/{1}/{2}'.format(nodeid, 0, ha))
         self.assertEqual(rv.status_code, 404)
@@ -350,7 +344,7 @@ class AuditTest(TemplateTest):
         app.config["SKIP_AUTHENTICATION"] = False
 
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
 
         ha = 'c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8'
@@ -383,7 +377,7 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
         # create header date and authorization signature
         wif = self.btctxstore.create_key()
         btc_addr = self.btctxstore.get_address(wif)
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
                                  localtime=True, usegmt=True)
         message = app.config["ADDRESS"] + " " + header_date
@@ -398,14 +392,14 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
     def test_fail(self):
         # register without auth headers fails
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         rv = self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
         self.assertEqual(rv.status_code, 401)
 
         # register first because ping is lazy
         wif = self.btctxstore.get_key(self.btctxstore.create_wallet())
         btc_addr = self.btctxstore.get_address(wif)
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         header_date = formatdate(timeval=mktime(datetime.now().timetuple()),
                                  localtime=True, usegmt=True)
         message = app.config["ADDRESS"] + " " + header_date
@@ -422,7 +416,7 @@ class AppAuthenticationHeadersTest(unittest.TestCase):
 
         # set height without auth headers fails
         btc_addr = self.gen_wallet()
-        nodeid = addr2nodeid(btc_addr)
+        nodeid = address2nodeid(btc_addr)
         rv = self.app.get('/api/height/{0}/10'.format(nodeid))
         self.assertEqual(rv.status_code, 401)
 
@@ -450,10 +444,10 @@ class MiscAppTest(TemplateTest):
         addr2 = self.gen_wallet()
         addr3 = self.gen_wallet()
         addr4 = self.gen_wallet()
-        nodeid1 = addr2nodeid(addr1)
-        nodeid2 = addr2nodeid(addr2)
-        nodeid3 = addr2nodeid(addr3)
-        nodeid4 = addr2nodeid(addr4)
+        nodeid1 = address2nodeid(addr1)
+        nodeid2 = address2nodeid(addr2)
+        nodeid3 = address2nodeid(addr3)
+        nodeid4 = address2nodeid(addr4)
 
         # register farmers
         self.app.get('/api/register/{0}/{1}'.format(nodeid1, addr1))
