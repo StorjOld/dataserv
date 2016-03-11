@@ -12,7 +12,6 @@ is_btc_address = BtcTxStore().validate_address
 class Audit(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    btc_addr = db.Column(db.String(35))
     nodeid = db.Column(db.String(40))
     block = db.Column(db.Integer, index=True)
     submit_time = db.Column(DateTime, default=datetime.utcnow)
