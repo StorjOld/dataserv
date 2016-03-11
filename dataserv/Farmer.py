@@ -61,7 +61,7 @@ class Farmer(db.Model):
         self.last_seen = last_seen
 
     def __repr__(self):
-        return '<Farmer nodeid: %r>' % self.nodeid
+        return '<Farmer nodeid: %s>'.format(self.nodeid)
 
     @staticmethod
     def get_server_address():
