@@ -3,6 +3,12 @@ from dataserv.Audit import Audit
 from dataserv.app import db, app
 from btctxstore import BtcTxStore
 from dataserv.Farmer import Farmer
+import binascii
+from pycoin.encoding import a2b_hashed_base58
+
+
+def addr2nodeid(addr):
+    return binascii.hexlify(a2b_hashed_base58(addr)[1:]).decode("utf-8")
 
 
 class AuditTest(unittest.TestCase):
@@ -27,11 +33,12 @@ class AuditTest(unittest.TestCase):
     def test_register_audit(self):
         btc_addr = self.gen_btc_addr()
         btc_addr2 = self.gen_btc_addr()
+        nodeid = addr2nodeid(btc_addr)
 
         # register farmer and test db
-        farmer1 = Farmer(btc_addr)
+        farmer1 = Farmer(nodeid)
         self.assertFalse(farmer1.exists())
-        farmer1.register()
+        farmer1.register(btc_addr)
         self.assertTrue(farmer1.exists())
 
         # do callbacks to properly test errors
@@ -56,7 +63,8 @@ class AuditTest(unittest.TestCase):
 
     def test_lookup(self):
         btc_addr = self.gen_btc_addr()
-        Farmer(btc_addr).register()
+        nodeid = addr2nodeid(btc_addr)
+        Farmer(nodeid).register(btc_addr)
 
         audit = Audit(btc_addr, 0)
         audit.save()

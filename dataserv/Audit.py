@@ -2,9 +2,8 @@ from dataserv.run import db
 from datetime import datetime
 from sqlalchemy import DateTime
 from btctxstore import BtcTxStore
-from dataserv.Farmer import Farmer
+from dataserv.Farmer import Farmer, address2nodeid
 from dataserv.Validator import is_sha256
-
 from dataserv.config import logging
 logger = logging.getLogger(__name__)
 is_btc_address = BtcTxStore().validate_address
@@ -24,11 +23,11 @@ class Audit(db.Model):
             msg = "Invalid BTC Address: {0}".format(btc_addr)
             logger.warning(msg)
             raise ValueError(msg)
-        if not Farmer(btc_addr).exists():
+        if not Farmer(address2nodeid(btc_addr)).exists():
             msg = "Farmer Not Found: {0}".format(btc_addr)
             logger.warning(msg)
             raise LookupError(msg)
-        if not response is None and not is_sha256(response):
+        if response is not None and not is_sha256(response):
             msg = "Invalid Response: {0}".format(response)
             logger.warning(msg)
             raise TypeError(msg)
@@ -51,7 +50,7 @@ class Audit(db.Model):
                                       Audit.block == self.block).count() > 0
         return response
 
-    def lookup(self): 
+    def lookup(self):
         """Return the Farmer object for the bitcoin address passed."""
         audit = Audit.query.filter_by(btc_addr=self.btc_addr,
                                       block=self.block).first()

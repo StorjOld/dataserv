@@ -15,6 +15,7 @@ from dataserv.Audit import Audit  # NOQA
 from dataserv.Farmer import Farmer  # NOQA
 from dataserv.config import logging  # NOQA
 from dataserv.run import app, db, cache, manager  # NOQA
+from dataserv.Farmer import nodeid2address  # NOQA
 
 
 logger = logging.getLogger(__name__)
@@ -220,7 +221,7 @@ def audit(nodeid, block_height, response):
         user = Farmer(nodeid)
         user.authenticate(dict(request.headers))
 
-        audit_msg = Audit(nodeid, block_height, response)
+        audit_msg = Audit(nodeid2address(nodeid), block_height, response)
         if audit_msg.exists():
             msg = "Duplicate audit: Block {0}".format(block_height)
             logger.warning(msg)

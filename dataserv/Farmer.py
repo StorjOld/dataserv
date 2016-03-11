@@ -7,6 +7,9 @@ from dataserv.run import db, app
 from btctxstore import BtcTxStore
 from datetime import datetime, timedelta
 from dataserv.config import logging
+from pycoin.encoding import b2a_hashed_base58
+from pycoin.encoding import a2b_hashed_base58
+import binascii
 
 
 log = logging.getLogger(__name__)
@@ -19,10 +22,21 @@ def sha256(content):
     return hashlib.sha256(content).hexdigest()
 
 
+def nodeid2address(hexnodeid):
+    """Convert a node id to a bitcoin address."""
+    nodeid = binascii.unhexlify(hexnodeid)
+    return b2a_hashed_base58(b'\0' + nodeid)
+
+
+def address2nodeid(address):
+    """Convert a bitcoin address to a node id."""
+    return binascii.hexlify(a2b_hashed_base58(address)[1:]).decode("utf-8")
+
+
 class Farmer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
-    nodeid = db.Column(db.String(40)) # FIXME unique=True, nullable=False
+    nodeid = db.Column(db.String(40))  # FIXME unique=True, nullable=False
     payout_addr = db.Column(db.String(35))
     height = db.Column(db.Integer, default=0)
     last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
@@ -68,7 +82,7 @@ class Farmer(db.Model):
         btctxstore = BtcTxStore()
         timeout = self.get_server_authentication_timeout()
         recipient_address = self.get_server_address()
-        sender_address = self.nodeid
+        sender_address = nodeid2address(self.nodeid)
         return storjcore.auth.verify_headers(btctxstore, headers, timeout,
                                              sender_address, recipient_address)
 
@@ -85,9 +99,9 @@ class Farmer(db.Model):
             log.warning(msg)
             raise LookupError(msg)
 
-    def register(self, payout_addr=None):
+    def register(self, payout_addr):
         """Add the farmer to the database."""
-        self.payout_addr = payout_addr if payout_addr else self.nodeid
+        self.payout_addr = payout_addr
         self.validate(registering=True)
         db.session.add(self)
         db.session.commit()
