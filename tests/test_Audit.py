@@ -34,6 +34,7 @@ class AuditTest(unittest.TestCase):
         btc_addr = self.gen_btc_addr()
         btc_addr2 = self.gen_btc_addr()
         nodeid = addr2nodeid(btc_addr)
+        nodeid2 = addr2nodeid(btc_addr2)
 
         # register farmer and test db
         farmer1 = Farmer(nodeid)
@@ -46,16 +47,16 @@ class AuditTest(unittest.TestCase):
             Audit(self.bad_addr, 0)
 
         def callback_b():
-            Audit(btc_addr2, 0)
+            Audit(nodeid2, 0)
 
-        audit = Audit(btc_addr, 0)
+        audit = Audit(nodeid, 0)
         self.assertFalse(audit.exists())
         audit.save()
-        audit2 = Audit(btc_addr, 0)
+        audit2 = Audit(nodeid, 0)
         self.assertTrue(audit2.exists())
 
         def callback_c():
-            Audit(btc_addr, 1, 'invalid_sha')
+            Audit(nodeid, 1, 'invalid_sha')
 
         self.assertRaises(ValueError, callback_a)
         self.assertRaises(LookupError, callback_b)
@@ -66,14 +67,14 @@ class AuditTest(unittest.TestCase):
         nodeid = addr2nodeid(btc_addr)
         Farmer(nodeid).register(btc_addr)
 
-        audit = Audit(btc_addr, 0)
+        audit = Audit(nodeid, 0)
         audit.save()
 
         def callback_a():
-            Audit(btc_addr, 1).lookup()
+            Audit(nodeid, 1).lookup()
 
         self.assertRaises(LookupError, callback_a)
 
-        audit2 = Audit(btc_addr, 0).lookup()
-        audit3 = Audit(btc_addr, 0)
+        audit2 = Audit(nodeid, 0).lookup()
+        audit3 = Audit(nodeid, 0)
         self.assertEqual(audit2, audit3)
