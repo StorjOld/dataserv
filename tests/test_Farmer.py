@@ -34,7 +34,7 @@ class FarmerTest(unittest.TestCase):
     def test_repr(self):
         nodeid = address2nodeid('191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc')
         farmer = Farmer(nodeid)
-        ans = "<Farmer nodeid: '{0}'>".format(nodeid)
+        ans = "<Farmer nodeid: {0}>".format(nodeid)
         self.assertEqual(repr(farmer), ans)
 
     def test_sha256(self):
