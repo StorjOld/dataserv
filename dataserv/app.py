@@ -154,14 +154,16 @@ def total():
     return resp
 
 
-@app.route('/api/bandwidth/<nodeid>/<int:bandwidth>', methods=["GET"])
-def set_bandwidth(nodeid, bandwidth):
-    logger.info("CALLED /api/bandwidth/{0}/{1}".format(nodeid, bandwidth))
+@app.route('/api/bandwidth/<nodeid>/<int:upload>/<int:download>',
+           methods=["GET"])
+def set_bandwidth(nodeid, upload, download):
+    logger.info("CALLED /api/bandwidth/{0}/{1}/{2}".format(nodeid, upload,
+                                                           download))
     error_msg = "Set height failed: {0}"
     try:
         user = Farmer(nodeid)
         user.authenticate(dict(request.headers))
-        user.set_bandwidth(bandwidth, ip=request.remote_addr)
+        user.set_bandwidth(upload, download, ip=request.remote_addr)
         return make_response("Bandwidth accepted.", 200)
     except ValueError:
         msg = "Invalid Bitcoin address."

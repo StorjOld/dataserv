@@ -105,13 +105,16 @@ class FarmerTest(unittest.TestCase):
         farmer.register(btc_addr)
 
         # set height and check function output
-        self.assertEqual(farmer.bandwidth, 0)
-        self.assertEqual(farmer.set_bandwidth(5), 5)
-        self.assertEqual(farmer.bandwidth, 5)
+        self.assertEqual(farmer.bandwidth_upload, 0)
+        self.assertEqual(farmer.bandwidth_download, 0)
+        farmer.set_bandwidth(5, 6)
+        self.assertEqual(farmer.bandwidth_upload, 5)
+        self.assertEqual(farmer.bandwidth_download, 6)
 
         # check the db object as well
         farmer2 = farmer.lookup()
-        self.assertEqual(farmer2.bandwidth, 5)
+        self.assertEqual(farmer2.bandwidth_upload, 5)
+        self.assertEqual(farmer2.bandwidth_download, 6)
 
     def test_height(self):
         btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
@@ -158,12 +161,13 @@ class FarmerTest(unittest.TestCase):
 
         farmer.ping()
         farmer.set_height(50)
-        farmer.set_bandwidth(55)
+        farmer.set_bandwidth(55, 66)
 
         test_json = {
             "height": 50,
             "ip": "",
-            "bandwidth": 55,
+            "bandwidth_upload": 55,
+            "bandwidth_download": 66,
             "nodeid": nodeid,
             'payout_addr': btc_addr,
             "last_seen": 0,
@@ -332,7 +336,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": nodeid,
             'payout_addr': btc_addr,
@@ -351,7 +356,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": nodeid,
             'payout_addr': btc_addr,
@@ -371,7 +377,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": nodeid,
             'payout_addr': btc_addr,
@@ -398,7 +405,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": nodeid,
             'payout_addr': btc_addr,
@@ -425,7 +433,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": nodeid,
             'payout_addr': btc_addr,
@@ -454,7 +463,8 @@ class FarmerUpTime(unittest.TestCase):
             "height": 0,
             "nodeid": nodeid,
             'payout_addr': btc_addr,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "last_seen": 0,
             "uptime": 25,
@@ -480,7 +490,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 0,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": nodeid,
             'payout_addr': btc_addr,
@@ -507,7 +518,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 100,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": nodeid,
             'payout_addr': btc_addr,
@@ -534,7 +546,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 50,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": nodeid,
             'payout_addr': btc_addr,
@@ -561,7 +574,8 @@ class FarmerUpTime(unittest.TestCase):
 
         test_json = {
             "height": 25,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": nodeid,
             'payout_addr': btc_addr,

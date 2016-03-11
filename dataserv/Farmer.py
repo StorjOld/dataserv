@@ -176,14 +176,14 @@ class Farmer(db.Model):
         db.session.commit()
         return self.height
 
-    def set_bandwidth(self, bandwidth, ip=None):
+    def set_bandwidth(self, upload, download, ip=None):
         farmer = self.lookup()
-        farmer.bandwidth = bandwidth
+        farmer.bandwidth_upload = upload
+        farmer.bandwidth_download = download
         # better 2 db commits than implementing ping with
         # update calculation again
         self.ping(ip=ip)
         db.session.commit()
-        return self.bandwidth
 
     def calculate_uptime(self):
         """Calculate uptime from registration date."""
@@ -225,7 +225,8 @@ class Farmer(db.Model):
             "height": self.height,
             "uptime": self.calculate_uptime(),
             "reg_time": int((self.reg_time - epoch).total_seconds()),
-            "bandwidth": self.bandwidth,
+            "bandwidth_upload": self.bandwidth_upload,
+            "bandwidth_download": self.bandwidth_download,
             "ip": self.ip,
         }
         return json.dumps(payload)

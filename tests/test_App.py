@@ -57,7 +57,8 @@ class RegisterTest(TemplateTest):
         farmer = Farmer(nodeid).lookup()
         expected_data = {
             "height": 0,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": nodeid,
             'payout_addr': btc_addr,
@@ -84,7 +85,8 @@ class RegisterTest(TemplateTest):
         farmer = Farmer(nodeid).lookup()
         expected_data = {
             "height": 0,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": nodeid,
             'payout_addr': payout_addr,
@@ -112,7 +114,8 @@ class RegisterTest(TemplateTest):
         farmer = Farmer(new_nodeid).lookup()
         expected_data = {
             "height": 0,
-            "bandwidth": 0,
+            "bandwidth_upload": 0,
+            "bandwidth_download": 0,
             "ip": "",
             "nodeid": new_nodeid,
             'payout_addr': payout_addr,
@@ -242,20 +245,20 @@ class BandwidthTest(TemplateTest):
         # not found
         btc_addr = self.gen_wallet()
         nodeid = address2nodeid(btc_addr)
-        rv = self.app.get('/api/bandwidth/{0}/1'.format(nodeid))
+        rv = self.app.get('/api/bandwidth/{0}/1/2'.format(nodeid))
         self.assertEqual(rv.status_code, 404)
 
         # register farmer
         self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
 
         # correct
-        rv = self.app.get('/api/bandwidth/{0}/5'.format(nodeid))
+        rv = self.app.get('/api/bandwidth/{0}/5/6'.format(nodeid))
         self.assertEqual(rv.status_code, 200)
         # rv = self.app.get('/api/online/json'.format(nodeid))
         # self.assertTrue(b"5" in rv.data)
 
         # invalid btc address
-        rv = self.app.get('/api/bandwidth/{0}/1'.format(self.bad_addr))
+        rv = self.app.get('/api/bandwidth/{0}/1/2'.format(self.bad_addr))
         self.assertEqual(rv.status_code, 400)
 
 
