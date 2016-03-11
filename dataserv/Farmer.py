@@ -42,7 +42,8 @@ class Farmer(db.Model):
     last_seen = db.Column(DateTime, index=True, default=datetime.utcnow)
     reg_time = db.Column(DateTime, default=datetime.utcnow)
     uptime = db.Column(db.Interval, default=timedelta(seconds=0))
-    bandwidth = db.Column(db.Integer, default=0)
+    bandwidth_upload = db.Column(db.Integer, default=0)
+    bandwidth_download = db.Column(db.Integer, default=0)
     ip = db.Column(db.String(40), default="")
 
     def __init__(self, nodeid, last_seen=None):
