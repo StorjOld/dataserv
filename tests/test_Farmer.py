@@ -107,14 +107,14 @@ class FarmerTest(unittest.TestCase):
         # set height and check function output
         self.assertEqual(farmer.bandwidth_upload, 0)
         self.assertEqual(farmer.bandwidth_download, 0)
-        farmer.set_bandwidth(5, 6)
-        self.assertEqual(farmer.bandwidth_upload, 5)
-        self.assertEqual(farmer.bandwidth_download, 6)
+        farmer.set_bandwidth(5.5, 6.6)
+        self.assertEqual(farmer.bandwidth_upload, 5.5)
+        self.assertEqual(farmer.bandwidth_download, 6.6)
 
         # check the db object as well
         farmer2 = farmer.lookup()
-        self.assertEqual(farmer2.bandwidth_upload, 5)
-        self.assertEqual(farmer2.bandwidth_download, 6)
+        self.assertEqual(farmer2.bandwidth_upload, 5.5)
+        self.assertEqual(farmer2.bandwidth_download, 6.6)
 
     def test_height(self):
         btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
