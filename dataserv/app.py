@@ -154,12 +154,12 @@ def total():
     return resp
 
 
-@app.route('/api/bandwidth/<nodeid>/<int:upload>/<int:download>',
+@app.route('/api/bandwidth/<nodeid>/<float:upload>/<float:download>',
            methods=["GET"])
 def set_bandwidth(nodeid, upload, download):
     logger.info("CALLED /api/bandwidth/{0}/{1}/{2}".format(nodeid, upload,
                                                            download))
-    error_msg = "Set height failed: {0}"
+    error_msg = "Set bandwidth failed: {0}"
     try:
         user = Farmer(nodeid)
         user.authenticate(dict(request.headers))
