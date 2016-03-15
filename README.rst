@@ -69,31 +69,26 @@ as the payout address.
 
 ::
 
-    GET /api/register/<bitcoin address>/<(optional)payout address>
+    GET /api/register/<nodeid>/<payout address>
 
 Examples:
 
 ::
 
-    GET /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm
+    GET /api/register/e61ea5a799707fb9133cc2978f4c9f37da73db88/1Mym8X3heKx1sZTDyM9z9djcRCq2g715BL
     RESPONSE:
         Status Code: 200
-        Text: {"last_seen": 0, "btc_addr": "12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm, "height": 0, "payout_addr": "12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm"}
+        Text: Json encoded node information
 
-    GET /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm/1BZR9GHs9a1bBfh6cwnDtvq6GEvNwVWxFa
-    RESPONSE:
-        Status Code: 200
-        Text: {"last_seen": 0, "btc_addr": "12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm", "height": 0, "payout_addr": "1BZR9GHs9a1bBfh6cwnDtvq6GEvNwVWxFa"}
-
-+-------------+----------------------------+-------------------------------------------------+
-| Error Codes | What probably happened     | Example                                         |
-+=============+============================+=================================================+
-|     400     | Invalid Bitcoin address    | /api/register/notvalidaddress                   |
-+-------------+----------------------------+-------------------------------------------------+
-|     409     | Address already registered | /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm|
-+-------------+----------------------------+-------------------------------------------------+
-|     401     | Bad authentication headers | /api/register/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm|
-+-------------+----------------------------+-------------------------------------------------+
++-------------+-------------------------------------+
+| Error Codes | What happened                       |
++=============+=====================================+
+|     400     | Invalid nodeid or payout address    |
++-------------+-------------------------------------+
+|     409     | Nodeid already registered           |
++-------------+-------------------------------------+
+|     401     | Bad authentication headers          |
++-------------+-------------------------------------+
 
 
 Ping-Pong
@@ -104,26 +99,26 @@ has gone offline, and that we should not issue more challenges.
 
 ::
 
-    GET /api/ping/<bitcoin address>
+    GET /api/ping/<nodeid>
 
 Example:
 
 ::
 
-    GET /api/ping/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc
+    GET /api/ping/e61ea5a799707fb9133cc2978f4c9f37da73db88
     RESPONSE:
-       Status Code: 200
-       Text: Ping accepted.
+        Status Code: 200
+        Text: Ping accepted.
         
-+-------------+----------------------------+-------------------------------------------------+
-| Error Codes | What probably happened     | Example                                         |
-+=============+============================+=================================================+
-|     400     | Invalid Bitcoin address    | /api/ping/notvalidaddress                       |
-+-------------+----------------------------+-------------------------------------------------+
-|     401     | Bad authentication headers | /api/ping/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm    |
-+-------------+----------------------------+-------------------------------------------------+
-|     404     | Farmer not found           | /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd    |
-+-------------+----------------------------+-------------------------------------------------+
++-------------+----------------------------+
+| Error Codes | What happened              |
++=============+============================+
+|     400     | Invalid nodeid             |
++-------------+----------------------------+
+|     401     | Bad authentication headers |
++-------------+----------------------------+
+|     404     | Farmer not found           |
++-------------+----------------------------+
 
 
 Online Status - JSON
@@ -148,21 +143,16 @@ Example:
         Text:
             {
               "farmers": [
-                {
-                  "btc_addr": "1JdEaubcd36ufmT64drdVsGu5SN65A3Z1L",
-                  "height": 0,
-                  "last_seen": 30,
-                  "payout_addr": "1GTfrYEi9cRzMNAsz6DESXihTnaJpYxJot",
-                  "reg_time": 1445459786,
-                  "uptime": 59.0
-                },
-                {
-                  "btc_addr": "1GTfrYEi9cRzMNAsz6DESXihTnaJpYxJot",
-                  "height": 0,
-                  "last_seen": 58,
-                  "payout_addr": "1GTfrYEi9cRzMNAsz6DESXihTnaJpYxJot",
-                  "reg_time": 1445459756,
-                  "uptime": 99.0
+                 {
+                    "bandwidth_download": 2931613.02135,
+                    "bandwidth_upload": 201626.607889,
+                    "height": 8,
+                    "ip": "10.0.3.1",
+                    "last_seen": 47,
+                    "nodeid": "20316fca18a31a5975ea260ce5557a48ee1e42c4",
+                    "payout_addr": "13wDr4Rxgmka5ej1igvqUwA2HYAA2V18h2",
+                    "reg_time": 1457995707,
+                    "uptime": 25.5
                 }
               ]
             }
@@ -213,26 +203,26 @@ Allows the user to let the node know how much space they have generated via the 
 
 ::
 
-    GET /api/height/<bitcoin address>/<height>
+    GET /api/height/<nodeid>/<height>
 
 Example:
 
 ::
 
-    GET /api/height/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/50
+    GET /api/height/e61ea5a799707fb9133cc2978f4c9f37da73db88
     RESPONSE:
        Status Code: 200
        Text: Height accepted.
         
-+-------------+----------------------------+-------------------------------------------------+
-| Error Codes | What probably happened     | Example                                         |
-+=============+============================+=================================================+
-|     400     | Invalid Bitcoin address    | /api/height/notvalidaddress/50                  |
-+-------------+----------------------------+-------------------------------------------------+
-|     401     | Bad authentication headers | /api/ping/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm    |
-+-------------+----------------------------+-------------------------------------------------+
-|     404     | Farmer not found           | /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd    |
-+-------------+----------------------------+-------------------------------------------------+
++-------------+----------------------------+
+| Error Codes | What happened              |
++=============+============================+
+|     400     | Invalid nodeid             |
++-------------+----------------------------+
+|     401     | Bad authentication headers |
++-------------+----------------------------+
+|     404     | Farmer not found           |
++-------------+----------------------------+
 
 
 Block Audit
@@ -243,26 +233,26 @@ this once per block.
 
 ::
 
-    GET /api/audit/<btc_addr>/<int:block_height>/<response>
+    GET /api/audit/<nodeid>/<int:block_height>/<response>
 
 Example:
 
 ::
 
-    GET /api/audit/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/381737/c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8
+    GET /api/audit/e61ea5a799707fb9133cc2978f4c9f37da73db88/381737/c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8
     RESPONSE:
        Status Code: 201
        Text: Audit accepted.
 
-+-------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------+
-| Error Codes | What probably happened     | Example                                                                                                               |
-+=============+============================+=======================================================================================================================+
-|     400     | Invalid Bitcoin address    | /api/audit/notvalidaddress/381737/c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8                    |
-+-------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------+
-|     400     | Invalid response           | /api/audit/12guBkWfVjiqBnu5yRdTseBB7wBM5WSWnm/381737/invalidhash                                                      |
-+-------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------+
-|     401     | Bad authentication headers | /api/audit/191GVvAaTRxLmz3rW3nU5jAV1rF186VxQc/381737/c059c8035bbd74aa81f4c787c39390b57b974ec9af25a7248c46a3ebfe0f9dc8 |
-+-------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------+
-|     404     | Farmer not found           | /api/ping/1EawBV7n7f2wDbgxJfNzo1eHyQ9Gj77oJd                                                                          |
-+-------------+----------------------------+-----------------------------------------------------------------------------------------------------------------------+
++-------------+----------------------------+
+| Error Codes | What happened              |
++=============+============================+
+|     400     | Invalid nodeid             |
++-------------+----------------------------+
+|     400     | Invalid response           |
++-------------+----------------------------+
+|     401     | Bad authentication headers |
++-------------+----------------------------+
+|     404     | Farmer not found           |
++-------------+----------------------------+
 

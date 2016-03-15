@@ -66,11 +66,11 @@ def register(nodeid, payout_addr):
         user.register(payout_addr)
         return make_response(user.to_json(), 200)
     except ValueError:
-        msg = "Invalid Bitcoin address."
+        msg = "Invalid nodeid or payout address."
         logger.warning(msg)
         return make_response(error_msg.format(msg), 400)
     except LookupError:
-        msg = "Address already is registered."
+        msg = "Nodeid already is registered."
         logger.warning(msg)
         return make_response(error_msg.format(msg), 409)
     except storjcore.auth.AuthError:
@@ -92,7 +92,7 @@ def ping(nodeid):
         user.ping(before_commit_callback=before_commit, ip=request.remote_addr)
         return make_response("Ping accepted.", 200)
     except ValueError:
-        msg = "Invalid Bitcoin address."
+        msg = "Invalid nodeid."
         logger.warning(msg)
         return make_response(error_msg.format(msg), 400)
     except LookupError:
@@ -172,7 +172,7 @@ def set_bandwidth(nodeid, upload, download):
         user.set_bandwidth(upload, download, ip=request.remote_addr)
         return make_response("Bandwidth accepted.", 200)
     except ValueError:
-        msg = "Invalid Bitcoin address."
+        msg = "Invalid nodeid."
         logger.warning(msg)
         return make_response(msg, 400)
     except LookupError:
@@ -204,7 +204,7 @@ def set_height(nodeid, height):
         logger.warning(msg)
         return make_response(msg, 413)
     except ValueError:
-        msg = "Invalid Bitcoin address."
+        msg = "Invalid nodeid."
         logger.warning(msg)
         return make_response(msg, 400)
     except LookupError:
@@ -243,7 +243,7 @@ def audit(nodeid, block_height, response):
         return make_response(msg, 400)
 
     except ValueError:
-        msg = "Invalid Bitcoin address."
+        msg = "Invalid nodeid."
         logger.warning(msg)
         return make_response(msg, 400)
 
