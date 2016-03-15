@@ -71,7 +71,7 @@ class RegisterTest(TemplateTest):
 
         # duplicate registration
         rv = self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
-        self.assertEqual(b"Registration Failed: Address already is registered.",
+        self.assertEqual(b"Registration Failed: Nodeid already is registered.",
                          rv.data)
         self.assertEqual(rv.status_code, 409)
 
@@ -100,7 +100,7 @@ class RegisterTest(TemplateTest):
         # duplicate registration
         rv = self.app.get('/api/register/{0}/{1}'.format(nodeid,
                                                          payout_addr))
-        self.assertEqual(b"Registration Failed: Address already is registered.",
+        self.assertEqual(b"Registration Failed: Nodeid already is registered.",
                          rv.data)
         self.assertEqual(rv.status_code, 409)
 
@@ -133,7 +133,7 @@ class RegisterTest(TemplateTest):
         nodeid = address2nodeid(btc_addr)
         rv = self.app.get('/api/register/{0}/{1}'.format(nodeid,
                                                          self.bad_addr))
-        self.assertEqual(b"Registration Failed: Invalid Bitcoin address.",
+        self.assertEqual(b"Registration Failed: Invalid nodeid or payout address.",
                          rv.data)
         self.assertEqual(rv.status_code, 400)
 
@@ -141,7 +141,7 @@ class RegisterTest(TemplateTest):
         payout_addr = self.gen_wallet()
         rv = self.app.get('/api/register/{0}/{1}'.format(self.bad_addr,
                                                          payout_addr))
-        self.assertEqual(b"Registration Failed: Invalid Bitcoin address.",
+        self.assertEqual(b"Registration Failed: Invalid nodeid or payout address.",
                          rv.data)
         self.assertEqual(rv.status_code, 400)
 
@@ -176,7 +176,7 @@ class PingTest(TemplateTest):
         rv = self.app.get('/api/ping/{0}'.format(self.bad_addr))
 
         # bad ping
-        self.assertEqual(b"Ping Failed: Invalid Bitcoin address.", rv.data)
+        self.assertEqual(b"Ping Failed: Invalid nodeid.", rv.data)
         self.assertEqual(rv.status_code, 400)
 
 
