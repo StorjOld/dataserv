@@ -97,7 +97,26 @@ class FarmerTest(unittest.TestCase):
         delta_seconds = int((farmer.last_seen - register_time).seconds)
         self.assertEqual(delta_seconds, 0)
 
-    def test_bandwidth(self):
+    def test_bandwidth_int(self):
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
+        nodeid = address2nodeid(btc_addr)
+        farmer = Farmer(nodeid)
+        farmer.register(btc_addr)
+
+        # set height and check function output
+        self.assertEqual(farmer.bandwidth_upload, 0)
+        self.assertEqual(farmer.bandwidth_download, 0)
+        farmer.set_bandwidth(5, 6)
+        self.assertEqual(farmer.bandwidth_upload, 5)
+        self.assertEqual(farmer.bandwidth_download, 6)
+
+        # check the db object as well
+        farmer2 = farmer.lookup()
+        self.assertEqual(farmer2.bandwidth_upload, 5)
+        self.assertEqual(farmer2.bandwidth_download, 6)
+
+    def test_bandwidth_float(self):
         btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
                                         self.btctxstore.create_wallet()))
         nodeid = address2nodeid(btc_addr)
@@ -115,6 +134,44 @@ class FarmerTest(unittest.TestCase):
         farmer2 = farmer.lookup()
         self.assertEqual(farmer2.bandwidth_upload, 5.5)
         self.assertEqual(farmer2.bandwidth_download, 6.6)
+
+    def test_bandwidth_mixed_int_float(self):
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
+        nodeid = address2nodeid(btc_addr)
+        farmer = Farmer(nodeid)
+        farmer.register(btc_addr)
+
+        # set height and check function output
+        self.assertEqual(farmer.bandwidth_upload, 0)
+        self.assertEqual(farmer.bandwidth_download, 0)
+        farmer.set_bandwidth(5, 6.6)
+        self.assertEqual(farmer.bandwidth_upload, 5)
+        self.assertEqual(farmer.bandwidth_download, 6.6)
+
+        # check the db object as well
+        farmer2 = farmer.lookup()
+        self.assertEqual(farmer2.bandwidth_upload, 5)
+        self.assertEqual(farmer2.bandwidth_download, 6.6)
+
+    def test_bandwidth_mixed_float_int(self):
+        btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(
+                                        self.btctxstore.create_wallet()))
+        nodeid = address2nodeid(btc_addr)
+        farmer = Farmer(nodeid)
+        farmer.register(btc_addr)
+
+        # set height and check function output
+        self.assertEqual(farmer.bandwidth_upload, 0)
+        self.assertEqual(farmer.bandwidth_download, 0)
+        farmer.set_bandwidth(5.5, 6)
+        self.assertEqual(farmer.bandwidth_upload, 5.5)
+        self.assertEqual(farmer.bandwidth_download, 6)
+
+        # check the db object as well
+        farmer2 = farmer.lookup()
+        self.assertEqual(farmer2.bandwidth_upload, 5.5)
+        self.assertEqual(farmer2.bandwidth_download, 6)
 
     def test_height(self):
         btc_addr = self.btctxstore.get_address(self.btctxstore.get_key(

@@ -241,7 +241,7 @@ class OnlineTest(TemplateTest):
 
 class BandwidthTest(TemplateTest):
 
-    def test_farmer_set_bandwidth(self):
+    def test_farmer_set_bandwidth_float(self):
         # not found
         btc_addr = self.gen_wallet()
         nodeid = address2nodeid(btc_addr)
@@ -259,6 +259,66 @@ class BandwidthTest(TemplateTest):
 
         # invalid btc address
         rv = self.app.get('/api/bandwidth/{0}/1.1/2.2'.format(self.bad_addr))
+        self.assertEqual(rv.status_code, 400)
+
+    def test_farmer_set_bandwidth_int(self):
+        # not found
+        btc_addr = self.gen_wallet()
+        nodeid = address2nodeid(btc_addr)
+        rv = self.app.get('/api/bandwidth/{0}/1/2'.format(nodeid))
+        self.assertEqual(rv.status_code, 404)
+
+        # register farmer
+        self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
+
+        # correct
+        rv = self.app.get('/api/bandwidth/{0}/5/6'.format(nodeid))
+        self.assertEqual(rv.status_code, 200)
+        # rv = self.app.get('/api/online/json'.format(nodeid))
+        # self.assertTrue(b"5" in rv.data)
+
+        # invalid btc address
+        rv = self.app.get('/api/bandwidth/{0}/1/2'.format(self.bad_addr))
+        self.assertEqual(rv.status_code, 400)
+
+    def test_farmer_set_bandwidth_mixed_float_int(self):
+        # not found
+        btc_addr = self.gen_wallet()
+        nodeid = address2nodeid(btc_addr)
+        rv = self.app.get('/api/bandwidth/{0}/1.1/2'.format(nodeid))
+        self.assertEqual(rv.status_code, 404)
+
+        # register farmer
+        self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
+
+        # correct
+        rv = self.app.get('/api/bandwidth/{0}/5.5/6'.format(nodeid))
+        self.assertEqual(rv.status_code, 200)
+        # rv = self.app.get('/api/online/json'.format(nodeid))
+        # self.assertTrue(b"5" in rv.data)
+
+        # invalid btc address
+        rv = self.app.get('/api/bandwidth/{0}/1.1/2'.format(self.bad_addr))
+        self.assertEqual(rv.status_code, 400)
+
+    def test_farmer_set_bandwidth_mixed_int_float(self):
+        # not found
+        btc_addr = self.gen_wallet()
+        nodeid = address2nodeid(btc_addr)
+        rv = self.app.get('/api/bandwidth/{0}/1/2.2'.format(nodeid))
+        self.assertEqual(rv.status_code, 404)
+
+        # register farmer
+        self.app.get('/api/register/{0}/{1}'.format(nodeid, btc_addr))
+
+        # correct
+        rv = self.app.get('/api/bandwidth/{0}/5/6.6'.format(nodeid))
+        self.assertEqual(rv.status_code, 200)
+        # rv = self.app.get('/api/online/json'.format(nodeid))
+        # self.assertTrue(b"5" in rv.data)
+
+        # invalid btc address
+        rv = self.app.get('/api/bandwidth/{0}/1/2.2'.format(self.bad_addr))
         self.assertEqual(rv.status_code, 400)
 
 

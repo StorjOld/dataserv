@@ -154,6 +154,12 @@ def total():
     return resp
 
 
+@app.route('/api/bandwidth/<nodeid>/<int:upload>/<int:download>',
+           methods=["GET"])
+@app.route('/api/bandwidth/<nodeid>/<int:upload>/<float:download>',
+           methods=["GET"])
+@app.route('/api/bandwidth/<nodeid>/<float:upload>/<int:download>',
+           methods=["GET"])
 @app.route('/api/bandwidth/<nodeid>/<float:upload>/<float:download>',
            methods=["GET"])
 def set_bandwidth(nodeid, upload, download):
