@@ -237,6 +237,7 @@ Allows the user to let the node know how much upload and download bandwidth they
 Example:
 
 ::
+
     GET /api/bandwidth/e61ea5a799707fb9133cc2978f4c9f37da73db88/123/456
     RESPONSE:
         Status Code: 200
