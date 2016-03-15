@@ -78,7 +78,7 @@ Examples:
     GET /api/register/e61ea5a799707fb9133cc2978f4c9f37da73db88/1Mym8X3heKx1sZTDyM9z9djcRCq2g715BL
     RESPONSE:
         Status Code: 200
-        Text: Json encoded node information
+        Text: {"bandwidth_download": 0, "payout_addr": "1Mym8X3heKx1sZTDyM9z9djcRCq2g715BL", "bandwidth_upload": 0, "last_seen": 0, "height": 0, "uptime": 100.0, "nodeid": "e61ea5a799707fb9133cc2978f4c9f37da73db88", "reg_time": 1458079196, "ip": ""}
 
 +-------------+-------------------------------------+
 | Error Codes | What happened                       |
@@ -119,7 +119,6 @@ Example:
 +-------------+----------------------------+
 |     404     | Farmer not found           |
 +-------------+----------------------------+
-
 
 Online Status - JSON
 ********************
@@ -214,6 +213,36 @@ Example:
        Status Code: 200
        Text: Height accepted.
         
++-------------+----------------------------+
+| Error Codes | What happened              |
++=============+============================+
+|     400     | Invalid nodeid             |
++-------------+----------------------------+
+|     401     | Bad authentication headers |
++-------------+----------------------------+
+|     404     | Farmer not found           |
++-------------+----------------------------+
+
+
+Advertise bandwidth
+*******************
+
+Allows the user to let the node know how much upload and download bandwidth they have avaivable.
+
+::
+
+    GET /api/bandwidth/<nodeid>/<upload>/<download>
+
+
+Example:
+
+::
+    GET /api/bandwidth/e61ea5a799707fb9133cc2978f4c9f37da73db88/123/456
+    RESPONSE:
+        Status Code: 200
+        Text: Bandwidth accepted.
+
+
 +-------------+----------------------------+
 | Error Codes | What happened              |
 +=============+============================+
