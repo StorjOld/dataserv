@@ -26,7 +26,8 @@ Session = sa.orm.sessionmaker()
 class Farmer(Base):
     __tablename__ = 'farmer'
     id = sa.Column(sa.Integer, primary_key=True)
-    btc_addr = sa.Column(sa.String(35), unique=True)  # TODO change to node_id
+    btc_addr = sa.Column(sa.String(35), unique=True)
+    nodeid = sa.Column(sa.String(40))
     payout_addr = sa.Column(sa.String(35))
     height = sa.Column(sa.Integer, default=0)
     last_seen = sa.Column(sa.DateTime, index=True, default=datetime.utcnow)
@@ -37,10 +38,10 @@ class Farmer(Base):
 
 
 def upgrade():
-    bind = op.get_bind()
-    session = Session(bind=bind)
     op.add_column('farmer', sa.Column('nodeid', sa.String(length=40),
                                       nullable=True))
+    bind = op.get_bind()
+    session = Session(bind=bind)
     for farmer in session.query(Farmer):
         nodeid = hexlify(a2b_hashed_base58(farmer.btc_addr)[1:])
         if isinstance(nodeid, bytes):
